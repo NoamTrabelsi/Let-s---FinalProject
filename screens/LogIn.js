@@ -1,7 +1,12 @@
 import React from 'react';
 import { SafeAreaView, StyleSheet, TextInput, View, Text, TouchableOpacity } from 'react-native';
 
+// Create a stack navigator
+import { useNavigation } from '@react-navigation/native';
+
+
 function LogIn() {
+    const navigation = useNavigation();
   return (
     <SafeAreaView style={styles.container}>
       <View>
@@ -33,7 +38,10 @@ function LogIn() {
         </TouchableOpacity>
 
         {/* Create Account */}
-        <TouchableOpacity style={styles.button} onPress={() => console.log('Create Account pressed')}>
+        <TouchableOpacity
+          style={styles.button}
+          onPress={() => navigation.navigate('Registration')}
+        >
           <Text style={styles.buttonText}>Create Account</Text>
         </TouchableOpacity>
       </View>
