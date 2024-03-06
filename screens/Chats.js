@@ -1,6 +1,6 @@
 import { StyleSheet } from "react-native";
-function Info() {
+function Chats() {
   return;
 }
-export default Info;
+export default Chats;
 const styles = StyleSheet.create({});
