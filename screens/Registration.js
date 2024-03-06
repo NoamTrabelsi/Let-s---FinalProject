@@ -10,6 +10,13 @@ function Registration() {
   const [userPassword, setUserPassword] = useState('');
   const [selectedGender, setSelectedGender] = useState(null);
 
+  const [open, setOpen] = useState(false);
+  const [value, setValue] = useState(null);
+  const [items, setItems] = useState([
+    {label: 'Male', value: 'male'},
+    {label: 'Female', value: 'female'}
+  ]);
+
   const handleRegistration = () => {
     // Perform registration logic with the entered data
     console.log('Register pressed', {
@@ -20,9 +27,8 @@ function Registration() {
   };
 
     return (
-      <View>
-        <Text>Welcome to Registration Page!</Text>
-        
+      <SafeAreaView style={styles.container}>
+
         <Text>First Name</Text>
         <TextInput
           placeholder="Enter your first name"
@@ -39,22 +45,14 @@ function Registration() {
           textContentType="username"
         />
 
-         {/* Gender */}
-        <Text>Gender</Text>
         <DropDownPicker
-          items={[
-            { label: 'Male', value: 'male' },
-            { label: 'Female', value: 'female' },
-            { label: 'Other', value: 'other' },
-          ]}
-          defaultValue={selectedGender}
-          containerStyle={{ height: 50, marginTop: 10, width: '60%' }}
-          style={{ backgroundColor: '#fafafa' }}
-          itemStyle={{
-            justifyContent: 'flex-start',
-          }}
-          dropDownStyle={{ backgroundColor: '#fafafa' }}
-          onChangeItem={(item) => setSelectedGender(item.value)}
+          open={open}
+          value={value}
+          items={items}
+          setOpen={setOpen}
+          setValue={setValue}
+          setItems={setItems}
+          style={styles.input_container}
         />
 
         {/* User email */}
@@ -86,7 +84,7 @@ function Registration() {
 
 
 
-      </View>
+      </SafeAreaView>
     );
   }
 
@@ -98,22 +96,26 @@ const styles = StyleSheet.create({
       marginTop: '30%',
     },
     input_container: {
-    padding: 5,
-    textAlign: 'center',
-    borderRadius: 10,
-    backgroundColor: '#fafafa',
-    borderWidth: 1,
-    marginTop: 10,
-    width: '60%',
-  },
+      padding: 5,
+      textAlign: 'center',
+      borderRadius: 10,
+      backgroundColor: '#fafafa',
+      borderWidth: 1,
+      marginTop: 2,
+      width: '60%',
+      marginBottom: 15,
+    },
     button: {
       backgroundColor: 'blue',
       padding: 10,
-      margin: 10,
+      borderRadius: 10,
+      marginTop: 20,
       alignItems: 'center',
+      width: '60%',
     },
     buttonText: {
       color: 'white',
+      fontWeight: 'bold',    
     },
   });
 

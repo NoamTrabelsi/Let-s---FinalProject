@@ -11,8 +11,7 @@ function LogIn() {
     <SafeAreaView style={styles.container}>
       <View>
         {/* User email */}
-        <Text>User email</Text>
-        <View>
+        <Text >User email</Text>
           <TextInput
             placeholder="Enter your email"
             style={styles.input_container}
@@ -44,7 +43,6 @@ function LogIn() {
         >
           <Text style={styles.buttonText}>Create Account</Text>
         </TouchableOpacity>
-      </View>
     </SafeAreaView>
   );
 }
@@ -55,6 +53,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     marginLeft: '20%',
     marginTop: '30%',
+    
   },
   input_container: {
     padding: 5,
@@ -62,8 +61,9 @@ const styles = StyleSheet.create({
     borderRadius: 10,
     backgroundColor: '#fafafa',
     borderWidth: 1,
-    marginTop: 10,
+    marginTop: 2,
     width: '60%',
+    marginBottom: 15,
   },
   button: {
     backgroundColor: 'blue',
@@ -75,8 +75,7 @@ const styles = StyleSheet.create({
   },
   buttonText: {
     color: 'white',
-    fontWeight: 'bold',
-    
+    fontWeight: 'bold',    
   },
 });
 
