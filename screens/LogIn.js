@@ -3,6 +3,7 @@ import { SafeAreaView, StyleSheet, TextInput, View, Text, TouchableOpacity } fro
 
 // Create a stack navigator
 import { useNavigation } from '@react-navigation/native';
+import { CommonActions } from '@react-navigation/native';
 
 
 function LogIn() {
@@ -32,7 +33,7 @@ function LogIn() {
         </View>
 
         {/* Log In Button */}
-        <TouchableOpacity style={styles.button} onPress={() => console.log('Login pressed')}>
+        <TouchableOpacity style={styles.button} onPress={() => navigation.dispatch(CommonActions.reset({index: 0, routes: [{name: 'UserNav'}]}))}>
           <Text style={styles.buttonText}>Log In</Text>
         </TouchableOpacity>
 
