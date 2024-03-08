@@ -6,6 +6,8 @@ import DropDownPicker from 'react-native-dropdown-picker';
 
 function Registration() {
 
+  const [userName, setUserName] = useState('');
+  const [userLastName, setUserLastName] = useState('');
   const [userEmail, setUserEmail] = useState('');
   const [userPassword, setUserPassword] = useState('');
   const [selectedGender, setSelectedGender] = useState(null);
@@ -20,6 +22,8 @@ function Registration() {
   const handleRegistration = () => {
     // Perform registration logic with the entered data
     console.log('Register pressed', {
+      first_name : userName,
+      last_name: userLastName,
       email: userEmail,
       password: userPassword,
       gender: selectedGender,
@@ -35,6 +39,8 @@ function Registration() {
           style={styles.input_container}
           autoCapitalize="none"
           textContentType="username"
+          value={userName}
+          onChangeText={(text) => setUserName(text)}
         />
 
         <Text>Last Name</Text>
@@ -43,6 +49,8 @@ function Registration() {
           style={styles.input_container}
           autoCapitalize="none"
           textContentType="username"
+          value={userLastName}
+          onChangeText={(text) => setUserLastName(text)}
         />
 
         <DropDownPicker
