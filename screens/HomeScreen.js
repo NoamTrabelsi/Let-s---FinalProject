@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
-import { SafeAreaView, StyleSheet, Text, View, TextInput, Button, Platform, TouchableOpacity, Modal } from 'react-native';
+import { SafeAreaView, StyleSheet, Text, View, TextInput, Button, Platform, TouchableOpacity, Modal} from 'react-native';
 import DateTimePicker from '@react-native-community/datetimepicker';
+import Slider from '@react-native-community/slider';
 import { Ionicons } from '@expo/vector-icons';
 
 function HomeScreen() {
@@ -11,6 +12,8 @@ function HomeScreen() {
     const [showEndDatePicker, setShowEndDatePicker] = useState(true);
 
     const [modalVisible, setModalVisible] = useState(false);
+
+    const [ageRange, setAgeRange] = useState([18, 24]);
 
     const handleStartDateChange = (event, selectedDate) => {
         const currentDate = selectedDate || startDate;
@@ -49,7 +52,7 @@ function HomeScreen() {
             </TouchableOpacity>
 
             <Modal
-                animationType="slide"
+                animationType="fade"
                 transparent={true}
                 visible={modalVisible}
                 onRequestClose={() => {
@@ -61,7 +64,20 @@ function HomeScreen() {
                     <View style={styles.modalView}>
                         {/* Ваше содержимое модального окна */}
                         <Text>Choose age and gender</Text>
-                        {/* Здесь можно добавить элементы выбора возраста и пола */}
+                        {/* Add age scale */}
+                        <Text>Age: </Text>
+                            <Slider
+                                style={{width: 200, height: 40}}
+                                minimumValue={1}
+                                maximumValue={100}
+                                minimumTrackTintColor="#000000"
+                                maximumTrackTintColor="#000000"
+                                step={1}
+                                values={ageRange}
+                                onValueChange={(values) => setAgeRange(values)}
+                            />
+
+                        
                         <TouchableOpacity
                             style={[styles.button, styles.buttonClose]}
                             onPress={toggleModal}
