@@ -1,73 +1,177 @@
-// //create a new page called HomeScreen.js
-// import React from 'react';
-// import { SafeAreaView, StyleSheet, Text, View } from 'react-native';
-// import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
-// import { createStackNavigator } from '@react-navigation/stack';
-// import { NavigationContainer } from '@react-navigation/native';
-// import Profile from './Profile';
-// import Home from './Home';
-// import Settings from './Settings';
-// import { Ionicons } from '@expo/vector-icons';
-
-// const Tab = createBottomTabNavigator();
-// const Stack = createStackNavigator();
-
-// function HomeScreen() {
-//     return (
-//         <Tab.Navigator
-//         initialRouteName="Home"
-//         screenOptions={({ route }) => ({
-//             tabBarIcon: ({ focused, color, size }) => {
-//             let iconName;
-    
-//             if (route.name === 'Home') {
-//                 iconName = focused ? 'home' : 'home-outline';
-//             } else if (route.name === 'Profile') {
-//                 iconName = focused ? 'person' : 'person-outline';
-//             } else if (route.name === 'Settings') {
-//                 iconName = focused ? 'settings' : 'settings-outline';
-//             }
-    
-//             return <Ionicons name={iconName} size={size} color={color} />;
-//             },
-//         })}
-//         tabBarOptions={{
-//             activeTintColor: 'tomato',
-//             inactiveTintColor: 'gray',
-//         }}
-//         >
-//         <Tab.Screen name="Home" component={Home} />
-//         <Tab.Screen name="Profile" component={Profile} />
-//         <Tab.Screen name="Settings" component={Settings} />
-//         </Tab.Navigator>
-//     );
-//     }
-
-// export default HomeScreen;
-
-// enpty page called HomeScreen.js
- import React from 'react';
-import { SafeAreaView, StyleSheet, Text, View } from 'react-native';
-import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
-import { createStackNavigator } from '@react-navigation/stack';
-import { NavigationContainer } from '@react-navigation/native';
-import Profile from './Profile';
-
+import React, { useState } from 'react';
+import { SafeAreaView, StyleSheet, Text, View, TextInput, Button, Platform, TouchableOpacity, Modal } from 'react-native';
+import DateTimePicker from '@react-native-community/datetimepicker';
+import { Ionicons } from '@expo/vector-icons';
 
 function HomeScreen() {
+    const [city, setCity] = useState('');
+    const [startDate, setStartDate] = useState(new Date());
+    const [endDate, setEndDate] = useState(new Date());
+    const [showStartDatePicker, setShowStartDatePicker] = useState(true);
+    const [showEndDatePicker, setShowEndDatePicker] = useState(true);
+
+    const [modalVisible, setModalVisible] = useState(false);
+
+    const handleStartDateChange = (event, selectedDate) => {
+        const currentDate = selectedDate || startDate;
+        setShowStartDatePicker(Platform.OS === 'ios');
+        setStartDate(currentDate);
+    };
+
+    const handleEndDateChange = (event, selectedDate) => {
+        const currentDate = selectedDate || endDate;
+        setShowEndDatePicker(Platform.OS === 'ios');
+        setEndDate(currentDate);
+    };
+
+    const handleSearch = () => {
+        // Handle search functionality here
+        console.log("Searching for:", city);
+        console.log("Start Date:", startDate.toISOString().split('T')[0]);
+        console.log("End Date:", endDate.toISOString().split('T')[0]);
+    };
+
+    const toggleModal = () => {
+        setModalVisible(!modalVisible);
+    };
+
     return (
         <SafeAreaView style={styles.container}>
-            <Text>Home Screen</Text>
+            <View style={{flexDirection: 'row'}}>
+            <TextInput
+                style={styles.input}
+                placeholder="Enter City"
+                onChangeText={text => setCity(text)}
+                value={city}
+            />
+            <TouchableOpacity style={styles.filterButton} onPress={toggleModal}>
+                <Ionicons name="filter" size={24} color="black" />
+            </TouchableOpacity>
+
+            <Modal
+                animationType="slide"
+                transparent={true}
+                visible={modalVisible}
+                onRequestClose={() => {
+                    Alert.alert("Modal has been closed.");
+                    setModalVisible(!modalVisible);
+                }}
+>
+                <View style={styles.centeredView}>
+                    <View style={styles.modalView}>
+                        {/* Ваше содержимое модального окна */}
+                        <Text>Choose age and gender</Text>
+                        {/* Здесь можно добавить элементы выбора возраста и пола */}
+                        <TouchableOpacity
+                            style={[styles.button, styles.buttonClose]}
+                            onPress={toggleModal}
+                        >
+                            <Text style={styles.textStyle}>Close</Text>
+                        </TouchableOpacity>
+                    </View>
+                </View>
+            </Modal>
+
+            </View>
+            <View style={styles.datePickerContainer}>
+                <Text style={styles.dateLabel}>From:</Text>                
+                {showStartDatePicker && (
+                    <DateTimePicker
+                        value={startDate}
+                        mode="date"
+                        display="default"
+                        minimumDate = {new Date()}
+                        onChange={handleStartDateChange}
+                    />
+                )}
+                <Text style={styles.dateLabel}>To:</Text>
+                {showEndDatePicker && (
+                    <DateTimePicker
+                        value={endDate}
+                        mode="date"
+                        display="default"
+                        minimumDate={startDate}
+                        onChange={handleEndDateChange}
+                    />
+                )}
+            </View>
+            
+            <TouchableOpacity style={styles.button} onPress={handleSearch}>
+                <Text style={styles.buttonText}>Search</Text>
+            </TouchableOpacity>
         </SafeAreaView>
     );
-    }
+}
 
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        justifyContent: 'center',
+        justifyContent: 'flex-start',
         alignItems: 'center',
+        padding: '30%'
     },
+    input: {
+        alignSelf: 'flex-start',
+        height: 40,
+        width: '50%',
+        borderColor: 'gray',
+        borderWidth: 1,
+        marginBottom: 10,
+        paddingHorizontal: 10
+    },
+    datePickerContainer: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        marginBottom: 10
+    },
+    dateLabel: {
+        marginRight: 10
+    },
+    button: {
+        backgroundColor: 'blue',
+        padding: 10,
+        borderRadius: 10,
+        marginTop: 20,
+        alignItems: 'center',
+        width: '60%',
+    },
+    buttonText: {
+        color: 'white',
+        fontWeight: 'bold',    
+    },
+    filterButton: {
+        padding: 10,
+        borderRadius: 10,
+    },
+    centeredView: {
+        flex: 1,
+        justifyContent: "center",
+        alignItems: "center",
+        marginTop: 22
+    },
+    modalView: {
+        margin: 20,
+        backgroundColor: "white",
+        borderRadius: 20,
+        padding: 35,
+        alignItems: "center",
+        shadowColor: "#000",
+        shadowOffset: {
+            width: 0,
+            height: 2
+        },
+        shadowOpacity: 0.25,
+        shadowRadius: 4,
+        elevation: 5
+    },
+    buttonClose: {
+        backgroundColor: "#2196F3",
+    },
+    textStyle: {
+        color: "white",
+        fontWeight: "bold",
+        textAlign: "center"
+    }
 });
 
 export default HomeScreen;
