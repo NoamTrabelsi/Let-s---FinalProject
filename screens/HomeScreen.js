@@ -29,6 +29,10 @@ function HomeScreen() {
     setFilterModalVisible(!isFilterModalVisible);
   };
 
+  const handleSearch = () => {
+    console.log(`City: ${city}, Start Date: ${formatDate(startDate)}, End Date: ${formatDate(endDate)}`);
+  };
+
   return (
     <SafeAreaView style={styles.container}>
       <View style={styles.searchContainer}>
@@ -55,7 +59,13 @@ function HomeScreen() {
             <Text style={styles.dateButtonText}>Select End Date</Text>
         </TouchableOpacity>
         <Text style={styles.dateText}>{formatDate(endDate)}</Text>
-      </View>
+        </View>
+
+        {/* Search Button */}
+      <TouchableOpacity onPress={handleSearch} style={[styles.dateButton, styles.searchButton]}>
+        <Text style={styles.dateButtonText}>Search</Text>
+      </TouchableOpacity>
+
 
       <DateTimePickerModal
         isVisible={isStartDatePickerVisible}
