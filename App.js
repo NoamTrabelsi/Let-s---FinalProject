@@ -8,12 +8,14 @@ import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { Octicons } from '@expo/vector-icons';
 import { Ionicons } from '@expo/vector-icons';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
+import { SimpleLineIcons } from '@expo/vector-icons';
 
 import LogIn from "./screens/LogIn";
 import Registration from "./screens/Registration";
 import HomeScreen from "./screens/HomeScreen";
 import Profile from "./screens/Profile";
 import Chat from "./screens/Chat";
+import Settings from "./screens/Settings";
 
 const Stack = createStackNavigator();
 const Tab = createBottomTabNavigator();
@@ -24,6 +26,7 @@ function UserNav() {
       <Tab.Screen name="Search" component={HomeScreen} options = {{tabBarIcon:({color, size}) => (<Octicons name="search" size={size} color={color} />)}}/>
       <Tab.Screen name="Chat" component={Chat} options = {{tabBarIcon:({color, size}) => (<Ionicons name="chatbubble-outline" size={size} color={color} />)}}/>
       <Tab.Screen name="Profile" component={Profile} options = {{tabBarIcon:({color, size}) => (<MaterialCommunityIcons name="account" size={size} color={color} />)}}/>
+      <Tab.Screen name="Settings" component={Settings} options = {{tabBarIcon:({color, size}) => (<SimpleLineIcons name="settings" size={size} color={color} />)}}/>
     </Tab.Navigator>
   );
 }
