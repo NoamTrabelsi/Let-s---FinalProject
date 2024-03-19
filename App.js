@@ -16,6 +16,7 @@ import HomeScreen from "./screens/HomeScreen";
 import Profile from "./screens/Profile";
 import Chat from "./screens/Chat";
 import Settings from "./screens/Settings";
+import ProfileInfo from "./screens/ProfileInfo";
 
 const Stack = createStackNavigator();
 const Tab = createBottomTabNavigator();
@@ -38,6 +39,7 @@ export default function App() {
         <Stack.Screen name="LogIn" component={LogIn} />
         <Stack.Screen name="Registration" component={Registration} />
         <Stack.Screen name="UserNav" component={UserNav} />
+        <Stack.Screen name="ProfileInfo" component={ProfileInfo} />
       </Stack.Navigator>
     </NavigationContainer>
   );
