@@ -9,8 +9,12 @@ import {
   TouchableOpacity,
 } from "react-native";
 import DropDownPicker from "react-native-dropdown-picker";
+import { useNavigation } from '@react-navigation/native';
 
 function Registration() {
+
+  const navigation = useNavigation();
+
   const [userName, setUserName] = useState("");
   const [userLastName, setUserLastName] = useState("");
   const [userEmail, setUserEmail] = useState("");
@@ -27,6 +31,9 @@ function Registration() {
 
   const handleRegistration = () => {
     // Perform registration logic with the entered data
+
+    navigation.navigate('ProfileInfo')
+
     console.log("Register pressed", {
       first_name: userName,
       last_name: userLastName,

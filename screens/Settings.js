@@ -6,6 +6,7 @@ import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { createStackNavigator } from '@react-navigation/stack';
 import { NavigationContainer } from '@react-navigation/native';
 import { Ionicons } from '@expo/vector-icons';
+import ProfileInfo from './ProfileInfo';
 
 
 function Settings() {
@@ -14,6 +15,7 @@ function Settings() {
 
     return (
         <SafeAreaView style={styles.container}>
+            <ProfileInfo />
             {/* Log Out Button */}
             <TouchableOpacity style={styles.button} onPress={() => navigation.dispatch(CommonActions.reset({index: 0, routes: [{name: 'LogIn'}]}))}>
                 <Text style={styles.buttonText}>Log Out</Text>
@@ -25,16 +27,20 @@ function Settings() {
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        justifyContent: 'center',
-        alignItems: 'center',
+        backgroundColor: "#FF8C00",
+        //justifyContent: 'center',
+        //alignItems: 'center',
     },
     button: {
         backgroundColor: 'red',
         padding: 10,
         borderRadius: 10,
         marginTop: 20,
+        marginBottom: 20,
         alignItems: 'center',
         width: '60%',
+        justifyContent: 'center',
+        alignSelf: 'center',
     },
     buttonText: {
     color: 'white',
