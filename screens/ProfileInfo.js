@@ -3,26 +3,37 @@ import {
   Text,
   StyleSheet,
   TouchableOpacity,
-  TextInput,
+  ScrollView,
 } from "react-native";
+import Destination from "../components/ProfileInfo/Destination";
+import Food from "../components/ProfileInfo/Food";
+import Sleep from "../components/ProfileInfo/Sleep";
+import GetKnow from "../components/ProfileInfo/GetKnow";
+import Adventure from "../components/ProfileInfo/Adventure";
+import { useNavigation } from "@react-navigation/native";
 
 function ProfileInfo() {
+  const navigation = useNavigation();
+
+  const handleLogIn = () => {
+    navigation.navigate("LogIn");
+  };
   return (
     <View style={styles.container}>
-      <Text style={styles.text}>Get to know you</Text>
-      <View style={styles.view1}>
-        <TouchableOpacity style={styles.roundButton}>
-          <Text style={styles.buttonText}>Add picture</Text>
-        </TouchableOpacity>
+      <ScrollView>
         <View>
-          <TouchableOpacity style={styles.locationBtn}>
-            <Text style={styles.buttonText}>Current Location</Text>
-          </TouchableOpacity>
-          <TouchableOpacity style={styles.locationBtn}>
-            <Text style={styles.buttonText}>Age</Text>
+          <GetKnow />
+          <Destination />
+          <Food />
+          <Sleep />
+          <Adventure />
+        </View>
+        <View style={styles.viewBtn}>
+          <TouchableOpacity style={styles.createBtm} onPress={handleLogIn}>
+            <Text style={styles.buttonText}>Create</Text>
           </TouchableOpacity>
         </View>
-      </View>
+      </ScrollView>
     </View>
   );
 }
@@ -31,39 +42,24 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: "#FF8C00",
+    paddingBottom: 24,
+    paddingTop: 24,
   },
-  text: {
-    marginTop: 36,
-    fontSize: 24,
-    padding: 12,
-    fontWeight: "bold",
-  },
-  view1: {
-    flexDirection: "row",
+  viewBtn: {
     alignItems: "center",
-    justifyContent: "space-around",
-  },
-  roundButton: {
-    margin: 12,
-    width: 90,
-    height: 90,
-    borderRadius: 75, // חצי גובה הכפתור - יציב ליצירת עיגול
-    backgroundColor: "white", // צבע רקע של הכפתור
     justifyContent: "center",
-    alignItems: "center",
   },
-  locationBtn: {
-    margin: 12,
-    width: 150,
-    height: 35,
-    backgroundColor: "white",
+  createBtm: {
+    marginTop: 32,
+    width: 180,
+    height: 50,
+    backgroundColor: "#808080",
     borderRadius: 20, // ניתן לשנות את עצמו ליצירת פינות מעוגלות
-    justifyContent: "center",
     alignItems: "center",
+    justifyContent: "center",
   },
   buttonText: {
-    color: "black",
-    fontSize: 12,
+    color: "white",
     fontWeight: "bold",
   },
 });
