@@ -15,6 +15,7 @@ function LogIn() {
         <Text >User email</Text>
           <TextInput
             placeholder="Enter your email"
+            placeholderTextColor="gray"
             style={styles.input_container}
             autoCapitalize="none"
             textContentType="username"
@@ -26,6 +27,7 @@ function LogIn() {
           <Text>Password</Text>
           <TextInput
             placeholder="Enter your password"
+            placeholderTextColor="gray"
             style={styles.input_container}
             secureTextEntry={true}
             textContentType="password"

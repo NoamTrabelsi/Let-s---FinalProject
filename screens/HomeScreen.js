@@ -1,25 +1,17 @@
 import React, { useState } from 'react';
 import { SafeAreaView, StyleSheet, Text, View, TextInput, TouchableOpacity, Modal } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
-import DateTimePickerModal from 'react-native-modal-datetime-picker';
+import Slider from '../components/Slider';
+import DatePicker from '../components/DatePicker'; // Импорт нового компонента для выбора даты
 
 function HomeScreen() {
   const [city, setCity] = useState('');
   const [startDate, setStartDate] = useState(new Date());
   const [endDate, setEndDate] = useState(new Date());
-  const [isStartDatePickerVisible, setStartDatePickerVisibility] = useState(false);
-  const [isEndDatePickerVisible, setEndDatePickerVisibility] = useState(false);
   const [isFilterModalVisible, setFilterModalVisible] = useState(false);
 
-  const handleConfirmStartDate = (date) => {
-    setStartDate(date);
-    setStartDatePickerVisibility(false);
-  };
-
-  const handleConfirmEndDate = (date) => {
-    setEndDate(date);
-    setEndDatePickerVisibility(false);
-  };
+  const [minAge, setMinAge] = useState(18);
+  const [maxAge, setMaxAge] = useState(60);
 
   const formatDate = (date) => {
     return date.toLocaleDateString();
@@ -31,6 +23,7 @@ function HomeScreen() {
 
   const handleSearch = () => {
     console.log(`City: ${city}, Start Date: ${formatDate(startDate)}, End Date: ${formatDate(endDate)}`);
+    console.log(`Min Age: ${minAge}, Max Age: ${maxAge}`);
   };
 
   return (
@@ -39,6 +32,7 @@ function HomeScreen() {
         <TextInput
           style={styles.input}
           placeholder="Enter City"
+          placeholderTextColor="gray"
           onChangeText={setCity}
           value={city}
         />
@@ -47,43 +41,14 @@ function HomeScreen() {
         </TouchableOpacity>
       </View>
 
-      <View style={styles.dateRow}>
-        <TouchableOpacity onPress={() => setStartDatePickerVisibility(true)} style={styles.dateButton}>
-            <Text style={styles.dateButtonText}>Select Start Date</Text>
-        </TouchableOpacity>
-            <Text style={styles.dateText}>{formatDate(startDate)}</Text>
-        </View>
+      {/* Использование DatePicker для выбора начальной и конечной даты */}
+      <DatePicker label="Select Start Date" date={startDate} onConfirm={setStartDate} />
+      <DatePicker label="Select End Date" date={endDate} onConfirm={setEndDate} minimumDate={startDate} />
 
-        <View style={styles.dateRow}>
-        <TouchableOpacity onPress={() => setEndDatePickerVisibility(true)} style={styles.dateButton}>
-            <Text style={styles.dateButtonText}>Select End Date</Text>
-        </TouchableOpacity>
-        <Text style={styles.dateText}>{formatDate(endDate)}</Text>
-        </View>
-
-        {/* Search Button */}
       <TouchableOpacity onPress={handleSearch} style={[styles.dateButton, styles.searchButton]}>
         <Text style={styles.dateButtonText}>Search</Text>
       </TouchableOpacity>
 
-
-      <DateTimePickerModal
-        isVisible={isStartDatePickerVisible}
-        mode="date"
-        onConfirm={handleConfirmStartDate}
-        onCancel={() => setStartDatePickerVisibility(false)}
-        minimumDate={new Date()}
-      />
-
-      <DateTimePickerModal
-        isVisible={isEndDatePickerVisible}
-        mode="date"
-        onConfirm={handleConfirmEndDate}
-        onCancel={() => setEndDatePickerVisibility(false)}
-        minimumDate={startDate}
-      />
-
-      {/* filter model window */}
       <Modal
         animationType='fade'
         transparent={true}
@@ -92,14 +57,20 @@ function HomeScreen() {
       >
         <View style={styles.centeredView}>
           <View style={styles.modalView}>
-            <Text style={styles.modalText}>Your Filters</Text>
+            <View style={{ flex: 1 }}>
+              <Slider 
+                onValuesChange={(values) => {
+                  setMinAge(values[0]);
+                  setMaxAge(values[1]);
+                }}
+              />
+            </View>
             <TouchableOpacity style={[styles.button, styles.buttonClose]} onPress={toggleFilterModal}>
               <Text style={styles.textStyle}>Filter</Text>
             </TouchableOpacity>
           </View>
         </View>
       </Modal>
-
     </SafeAreaView>
   );
 }
@@ -111,10 +82,12 @@ const styles = StyleSheet.create({
     padding: 20,
   },
   searchContainer: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    marginBottom: 20,
+    alignSelf: 'center', // Выравниваем по центру
+    flexDirection: 'row', // Элементы в строку
+    justifyContent: 'space-between', // Разнести элементы по краям
+    alignItems: 'center', // Выровнять элементы по центру по вертикали
+    marginTop: 10,
+    width: '70%', // Задаем полную ширину для контейнера
   },
   input: {
     flex: 1,
@@ -168,7 +141,9 @@ const styles = StyleSheet.create({
     },
     shadowOpacity: 0.25,
     shadowRadius: 4,
-    elevation: 5
+    elevation: 5,
+    width: '80%', // Adjust width if necessary
+    height: '50%', // Adjust height if necessary
   },
   buttonClose: {
     backgroundColor: 'blue', // Красный фон, как у вашей кнопки 'Search'
