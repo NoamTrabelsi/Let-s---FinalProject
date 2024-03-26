@@ -1,8 +1,8 @@
 import React, { useState } from 'react';
 import { SafeAreaView, StyleSheet, Text, View, TextInput, TouchableOpacity, Modal } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
-import Slider from '../components/Slider';
-import DatePicker from '../components/DatePicker'; // Импорт нового компонента для выбора даты
+import Slider from '../components/HomeScreen/Slider';
+import DatePicker from '../components/HomeScreen/DatePicker'; // Импорт нового компонента для выбора даты
 
 function HomeScreen() {
   const [city, setCity] = useState('');
