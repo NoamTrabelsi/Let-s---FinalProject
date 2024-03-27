@@ -1,18 +1,43 @@
-import { StyleSheet, View, Text, TouchableOpacity } from "react-native";
+import React, { useState } from 'react';
+import { StyleSheet, View, Text, TouchableOpacity, Alert } from 'react-native';
+// Assuming necessary libraries for working with date, picture, and location have been imported
 
-function Sleep() {
+function GetKnow() {
+  // States for demonstrating functionality without actual implementation
+  const [location, setLocation] = useState('Unknown');
+  const [age, setAge] = useState('Select your age');
+  const [picture, setPicture] = useState(null);
+
+  // Placeholder function for adding a picture
+  const addPicture = () => {
+    // Code to choose a picture would go here
+    Alert.alert('Add Picture', 'Function to add a picture would be here.');
+  };
+
+  // Placeholder function for getting the current location
+  const getCurrentLocation = () => {
+    // Code to get the location would go here
+    Alert.alert('Location', 'Function to get current location would be here.');
+  };
+
+  // Placeholder function for selecting an age
+  const selectAge = () => {
+    // Code to select a date would go here
+    Alert.alert('Age', 'Function to select age would be here.');
+  };
+
   return (
-    <View>
+    <View style={styles.container}>
       <Text style={styles.text}>Get to know you</Text>
       <View style={styles.view1}>
-        <TouchableOpacity style={styles.roundButton}>
+        <TouchableOpacity style={styles.roundButton} onPress={addPicture}>
           <Text style={styles.buttonText}>Add picture</Text>
         </TouchableOpacity>
         <View>
-          <TouchableOpacity style={styles.locationBtn}>
+          <TouchableOpacity style={styles.locationBtn} onPress={getCurrentLocation}>
             <Text style={styles.buttonText}>Current Location</Text>
           </TouchableOpacity>
-          <TouchableOpacity style={styles.locationBtn}>
+          <TouchableOpacity style={styles.locationBtn} onPress={selectAge}>
             <Text style={styles.buttonText}>Age</Text>
           </TouchableOpacity>
         </View>
@@ -20,7 +45,7 @@ function Sleep() {
     </View>
   );
 }
-export default Sleep;
+
 const styles = StyleSheet.create({
   text: {
     marginTop: 36,
@@ -37,8 +62,8 @@ const styles = StyleSheet.create({
     margin: 12,
     width: 90,
     height: 90,
-    borderRadius: 75, // חצי גובה הכפתור - יציב ליצירת עיגול
-    backgroundColor: "white", // צבע רקע של הכפתור
+    borderRadius: 75, // Half the height of the button - stable for creating a circle
+    backgroundColor: "white", // Button background color
     justifyContent: "center",
     alignItems: "center",
   },
@@ -47,7 +72,7 @@ const styles = StyleSheet.create({
     width: 150,
     height: 35,
     backgroundColor: "white",
-    borderRadius: 20, // ניתן לשנות את עצמו ליצירת פינות מעוגלות
+    borderRadius: 20, // Can be adjusted to create rounded corners
     justifyContent: "center",
     alignItems: "center",
   },
@@ -57,3 +82,5 @@ const styles = StyleSheet.create({
     fontWeight: "bold",
   },
 });
+
+export default GetKnow;

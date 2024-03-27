@@ -1,16 +1,16 @@
 import React, { useState, useEffect } from "react";
 import { StyleSheet, View, Text, TouchableOpacity } from "react-native";
 
-const sleepOptions = [
-  "hotel", "hostel", "rental", "out-door"
+const transportOptions = [
+  "on foot", "public transport", "bicycle", "moped", "rental car"
 ];
 
-function Sleep() {
-  const [selectedSleepOptions, setSelectedSleepOptions] = useState([]);
-  const [sleepOptionsVector, setSleepOptionsVector] = useState(new Array(sleepOptions.length).fill(0));
+function Movement() {
+  const [selectedOptions, setSelectedOptions] = useState([]);
+  const [optionsVector, setOptionsVector] = useState(new Array(transportOptions.length).fill(0));
 
-  const toggleSleepOption = (option) => {
-    setSelectedSleepOptions(prevOptions =>
+  const toggleOption = (option) => {
+    setSelectedOptions(prevOptions =>
       prevOptions.includes(option)
         ? prevOptions.filter((opt) => opt !== option)
         : [...prevOptions, option]
@@ -18,28 +18,26 @@ function Sleep() {
   };
 
   useEffect(() => {
-    // Обновляем векторное представление при изменении selectedSleepOptions
-    const vector = sleepOptions.map((option) => selectedSleepOptions.includes(option) ? 1 : 0);
-    setSleepOptionsVector(vector);
-    console.log("Sleep options vector:", vector);
-  }, [selectedSleepOptions]);
+    const vector = transportOptions.map((option) => selectedOptions.includes(option) ? 1 : 0);
+    setOptionsVector(vector);
+    console.log("Movement options vector:", vector);
+  }, [selectedOptions]);
 
   return (
     <View style={styles.container}>
-      <Text style={styles.textContainer}>Sleep</Text>
-      <Text style={styles.text}>Where do you dream?</Text>
-      <View style={styles.view1}>
-        {sleepOptions.map((option, index) => (
+      <Text style={styles.textContainer}>Movement</Text>
+      <Text style={styles.text}>How do you prefer to get around?</Text>
+      <View style={styles.choicesContainer}>
+        {transportOptions.map((option, index) => (
           <TouchableOpacity
             key={index}
-            style={[styles.locationBtn, selectedSleepOptions.includes(option) ? styles.selected : {}]}
-            onPress={() => toggleSleepOption(option)}
+            style={[styles.locationBtn, selectedOptions.includes(option) ? styles.selected : {}]}
+            onPress={() => toggleOption(option)}
           >
             <Text style={styles.buttonText}>{option}</Text>
           </TouchableOpacity>
         ))}
       </View>
-      {/* Здесь можете выводить sleepOptionsVector на экран, если это необходимо */}
     </View>
   );
 }
@@ -57,7 +55,7 @@ const styles = StyleSheet.create({
     fontSize: 16,
     marginBottom: 12,
   },
-  view1: {
+  choicesContainer: {
     flexDirection: "row",
     flexWrap: "wrap",
     justifyContent: "flex-start",
@@ -83,4 +81,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default Sleep;
+export default Movement;

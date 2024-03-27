@@ -45,6 +45,7 @@ function Registration() {
 
   return (
     <SafeAreaView style={styles.container}>
+      <View style={styles.formContainer}>
       <Text>First Name</Text>
       <TextInput
         placeholder="Enter your first name"
@@ -65,6 +66,7 @@ function Registration() {
         onChangeText={(text) => setUserLastName(text)}
       />
 
+      <Text>Gender</Text>
       <DropDownPicker
         open={open}
         value={value}
@@ -111,34 +113,39 @@ function Registration() {
       <TouchableOpacity style={styles.button} onPress={handleRegistration}>
         <Text style={styles.buttonText}>Register</Text>
       </TouchableOpacity>
+      </View>
     </SafeAreaView>
   );
 }
 
 const styles = StyleSheet.create({
   container: {
-    padding: 20,
-    justifyContent: "center",
-    marginLeft: "20%",
-    marginTop: "30%",
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: '#FF8C00'
   },
+  formContainer: {
+    width: '50%', // Container takes 80% of the screen width
+    alignItems: 'center',
+},
   input_container: {
-    padding: 5,
-    textAlign: "center",
-    borderRadius: 10,
-    backgroundColor: "#fafafa",
+    height: 40,
+    borderColor: 'gray',
     borderWidth: 1,
-    marginTop: 2,
-    width: "60%",
+    borderRadius: 20, // Rounded corners for input fields
+    backgroundColor: 'white', // White background for input fields
+    width: '100%', // Input fields take the full width of their container
     marginBottom: 15,
-  },
+    paddingHorizontal: 10,
+},
   button: {
-    backgroundColor: "blue",
+    backgroundColor: "#808080", // Matching HomeScreen's button color
     padding: 10,
-    borderRadius: 10,
-    marginTop: 20,
+    borderRadius: 20,
+    width: "80%",
     alignItems: "center",
-    width: "60%",
+    marginTop: 20,
   },
   buttonText: {
     color: "white",

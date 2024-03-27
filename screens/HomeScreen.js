@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { SafeAreaView, StyleSheet, Text, View, TextInput, TouchableOpacity, Modal } from 'react-native';
+import { SafeAreaView, StyleSheet, Text, View, TextInput, TouchableOpacity, Modal, ScrollView } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import Slider from '../components/HomeScreen/Slider';
 import DatePicker from '../components/HomeScreen/DatePicker'; // Импорт нового компонента для выбора даты
@@ -28,6 +28,7 @@ function HomeScreen() {
 
   return (
     <SafeAreaView style={styles.container}>
+      <ScrollView>
       <View style={styles.searchContainer}>
         <TextInput
           style={styles.input}
@@ -39,7 +40,7 @@ function HomeScreen() {
         <TouchableOpacity style={styles.filterButton} onPress={toggleFilterModal}>
           <Ionicons name="filter" size={24} color="black" />
         </TouchableOpacity>
-      </View>
+      </View>      
 
       {/* Использование DatePicker для выбора начальной и конечной даты */}
       <DatePicker label="Select Start Date" date={startDate} onConfirm={setStartDate} />
@@ -71,6 +72,7 @@ function HomeScreen() {
           </View>
         </View>
       </Modal>
+      </ScrollView>
     </SafeAreaView>
   );
 }
@@ -78,16 +80,17 @@ function HomeScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+    backgroundColor: "#FF8C00",
     justifyContent: 'flex-start',
     padding: 20,
   },
   searchContainer: {
-    alignSelf: 'center', // Выравниваем по центру
-    flexDirection: 'row', // Элементы в строку
-    justifyContent: 'space-between', // Разнести элементы по краям
-    alignItems: 'center', // Выровнять элементы по центру по вертикали
+    alignSelf: 'center',
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
     marginTop: 10,
-    width: '70%', // Задаем полную ширину для контейнера
+    width: '70%',
   },
   input: {
     flex: 1,
@@ -96,6 +99,9 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     marginRight: 10,
     paddingHorizontal: 10,
+    borderRadius: 20, // Скругление краёв
+    backgroundColor: 'white', // Белый цвет фона
+    color: 'black', // Цвет текста
   },
   filterButton: {
     padding: 10,
@@ -107,13 +113,13 @@ const styles = StyleSheet.create({
     marginBottom: 10,
   },
   dateButton: {
-    backgroundColor: 'blue', // Красный фон, как у вашей кнопки 'Search'
+    backgroundColor: '#808080', // Изменено на синий фон
     padding: 10,
-    borderRadius: 10,
+    borderRadius: 20, // Изменены радиусы для создания более круглых углов
     marginTop: 10,
     alignItems: 'center',
-    width: '45%', // Задаем ширину кнопки
-    alignSelf: 'center', // Центрируем кнопку
+    width: '45%',
+    alignSelf: 'center',
   },
   dateButtonText: {
     color: 'white',
@@ -142,17 +148,17 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.25,
     shadowRadius: 4,
     elevation: 5,
-    width: '80%', // Adjust width if necessary
-    height: '50%', // Adjust height if necessary
+    width: '80%',
+    height: '50%',
   },
   buttonClose: {
-    backgroundColor: 'blue', // Красный фон, как у вашей кнопки 'Search'
+    backgroundColor: '#808080', // Изменено на синий фон, исправлен комментарий на актуальный
     padding: 10,
-    borderRadius: 10,
+    borderRadius: 20, // Согласовано с кнопками dateButton для единообразия стиля
     marginTop: 10,
     alignItems: 'center',
-    width: '45%', // Задаем ширину кнопки
-    alignSelf: 'center', // Центрируем кнопку
+    width: '45%',
+    alignSelf: 'center',
   },
   textStyle: {
     color: "white",
@@ -164,5 +170,6 @@ const styles = StyleSheet.create({
     textAlign: "center"
   },
 });
+
 
 export default HomeScreen;

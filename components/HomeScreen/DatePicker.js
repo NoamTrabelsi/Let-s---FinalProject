@@ -33,26 +33,26 @@ const DatePicker = ({ label, date, onConfirm, minimumDate }) => {
 
 const styles = StyleSheet.create({
   container: {
-    alignSelf: 'center', // Выравниваем по центру
-    flexDirection: 'row', // Элементы в строку
-    justifyContent: 'space-between', // Разнести элементы по краям
-    alignItems: 'center', // Выровнять элементы по центру по вертикали
+    alignSelf: 'center', // Center align
+    flexDirection: 'row', // Arrange elements in a row
+    justifyContent: 'space-between', // Space out elements at the edges
+    alignItems: 'center', // Vertically align elements in the middle
     marginTop: 10,
-    width: '70%', // Задаем полную ширину для контейнера
+    width: '70%', // Set the container's full width
   },
   dateButton: {
-    backgroundColor: 'blue',
+    backgroundColor: '#808080', // Adjusted to skyblue for consistency
     padding: 10,
-    borderRadius: 10,
-    // Убираем ширину и alignSelf, чтобы кнопка адаптировалась к тексту
+    borderRadius: 20, // Rounded corners for a modern look
+    // Removed width and alignSelf for the button to adjust according to the text
   },
   dateButtonText: {
     color: 'white',
     fontWeight: 'bold',
   },
   dateText: {
-    // Стиль для текста с датой, если требуется
-    color: 'black', // Пример цвета текста
+    // Style for the date text, if needed
+    color: 'black', // Example text color
   },
 });
 

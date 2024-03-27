@@ -10,22 +10,24 @@ import Food from "../components/ProfileInfo/Food";
 import Sleep from "../components/ProfileInfo/Sleep";
 import GetKnow from "../components/ProfileInfo/GetKnow";
 import Adventure from "../components/ProfileInfo/Adventure";
+import Movement from "../components/ProfileInfo/Movement";
 import { useNavigation } from "@react-navigation/native";
+import { CommonActions } from '@react-navigation/native';
 
 function ProfileInfo() {
   const navigation = useNavigation();
 
   const handleLogIn = () => {
-    navigation.navigate("LogIn");
+    navigation.dispatch(CommonActions.reset({index: 0, routes: [{name: 'UserNav'}]}))
   };
   return (
     <View style={styles.container}>
       <ScrollView>
         <View>
           <GetKnow />
-          <Destination />
           <Food />
           <Sleep />
+          <Movement />
           <Adventure />
         </View>
         <View style={styles.viewBtn}>
