@@ -4,6 +4,8 @@ npm install @react-navigation/bottom-tabs
 npm install @react-native-community/datetimepicker --save
 npm install react-native-modal-datetime-picker @react-native-community/datetimepicker
 
+npm install react-native-paper
+
 
 npm install --save @ptomasroos/react-native-multi-slider
 

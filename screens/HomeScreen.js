@@ -2,7 +2,8 @@ import React, { useState } from 'react';
 import { SafeAreaView, StyleSheet, Text, View, TextInput, TouchableOpacity, Modal, ScrollView } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import Slider from '../components/HomeScreen/Slider';
-import DatePicker from '../components/HomeScreen/DatePicker'; // Импорт нового компонента для выбора даты
+import DatePicker from '../components/HomeScreen/DatePicker';
+import GenderFilter from '../components/HomeScreen/GenderFilter';
 
 function HomeScreen() {
   const [city, setCity] = useState('');
@@ -12,6 +13,7 @@ function HomeScreen() {
 
   const [minAge, setMinAge] = useState(18);
   const [maxAge, setMaxAge] = useState(60);
+  const [gender, setGender] = useState('all');
 
   const formatDate = (date) => {
     return date.toLocaleDateString();
@@ -24,6 +26,7 @@ function HomeScreen() {
   const handleSearch = () => {
     console.log(`City: ${city}, Start Date: ${formatDate(startDate)}, End Date: ${formatDate(endDate)}`);
     console.log(`Min Age: ${minAge}, Max Age: ${maxAge}`);
+    console.log(`Gender: ${gender}`);
   };
 
   return (
@@ -42,7 +45,7 @@ function HomeScreen() {
         </TouchableOpacity>
       </View>      
 
-      {/* Использование DatePicker для выбора начальной и конечной даты */}
+
       <DatePicker label="Select Start Date" date={startDate} onConfirm={setStartDate} />
       <DatePicker label="Select End Date" date={endDate} onConfirm={setEndDate} minimumDate={startDate} />
 
@@ -59,11 +62,18 @@ function HomeScreen() {
         <View style={styles.centeredView}>
           <View style={styles.modalView}>
             <View style={{ flex: 1 }}>
-              <Slider 
+              <Slider
+                defaultValues={[minAge, maxAge]}
                 onValuesChange={(values) => {
                   setMinAge(values[0]);
                   setMaxAge(values[1]);
                 }}
+              />
+            </View>
+            <View style={{ flex: 1 }}>
+              <GenderFilter
+                defaultValue = {gender}
+                onValueChange={(value) => setGender(value)}
               />
             </View>
             <TouchableOpacity style={[styles.button, styles.buttonClose]} onPress={toggleFilterModal}>

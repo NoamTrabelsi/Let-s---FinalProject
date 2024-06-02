@@ -2,10 +2,11 @@ import React, { useState } from 'react';
 import { View, Text } from 'react-native';
 import MultiSlider from '@ptomasroos/react-native-multi-slider';
 
-const Slider = ({onValuesChange}) => {
-  const [values, setValues] = useState([18, 60]); // Example range
+const Slider = ({onValuesChange, defaultValues}) => {
+
   const heandleValuesChange = (values) => {
-    setValues(values);
+    defaultValues[0] = values[0];
+    defaultValues[1] = values[1];
     onValuesChange(values);
   };
 
@@ -14,11 +15,11 @@ const Slider = ({onValuesChange}) => {
         <View style={styles.container}>
             <Text>Age Rangee:</Text>
             <Text>
-                {values[0]} - {values[1]}
+                {defaultValues[0]} - {defaultValues[1]}
             </Text>
         </View>
       <MultiSlider
-        values={values}
+        values={[defaultValues[0], defaultValues[1]]}
         sliderLength={200}
         onValuesChange={heandleValuesChange}
         min={18}
@@ -37,4 +38,5 @@ const styles = {
         marginHorizontal: 20,
     },
 };
+
 export default Slider;
