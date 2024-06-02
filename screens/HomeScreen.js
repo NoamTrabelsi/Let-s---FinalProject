@@ -1,6 +1,8 @@
 import React, { useState } from 'react';
 import { SafeAreaView, StyleSheet, Text, View, TextInput, TouchableOpacity, Modal, ScrollView } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
+import { AntDesign } from '@expo/vector-icons';
+import { Entypo } from '@expo/vector-icons';
 import Slider from '../components/HomeScreen/Slider';
 import DatePicker from '../components/HomeScreen/DatePicker';
 import GenderFilter from '../components/HomeScreen/GenderFilter';
@@ -41,7 +43,9 @@ function HomeScreen() {
           value={city}
         />
         <TouchableOpacity style={styles.filterButton} onPress={toggleFilterModal}>
-          <Ionicons name="filter" size={24} color="black" />
+          {/* <Ionicons name="funnel" size={26} color='white' borderRadius={2}/> */}
+          {/* <AntDesign name="filter" size={24} color="black" /> */}
+          <Entypo name="sound-mix" size={30} color='#808080' />
         </TouchableOpacity>
       </View>      
 
