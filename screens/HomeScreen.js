@@ -16,11 +16,9 @@ import {
   FlatList,
   Animated,
 } from "react-native";
-import { Entypo } from "@expo/vector-icons";
-import Slider from "../components/HomeScreen/Slider";
-import DatePicker from "../components/HomeScreen/DatePicker";
-import GenderFilter from "../components/HomeScreen/GenderFilter";
-import { Skeleton } from "moti/skeleton";
+import FilterModal from "../components/HomeScreen/FilterModal";
+import SearchBar from "../components/HomeScreen/SearchBar";
+import UsersList from "../components/HomeScreen/UsersList";
 
 function HomeScreen() {
   const [city, setCity] = useState("");
@@ -84,160 +82,36 @@ function HomeScreen() {
 
   return (
     <SafeAreaView style={styles.container}>
-      <Animated.View
-        style={[
-          styles.inputContainer,
-          { transform: [{ translateY: inputContainerTranslateY }] },
-        ]}
-        onLayout={(event) => {
-          const { height } = event.nativeEvent.layout;
-          setInputContainerHeight(height);
-        }}
-      >
-        <View style={styles.searchContainer}>
-          <TextInput
-            style={styles.input}
-            placeholder="Enter City"
-            placeholderTextColor="gray"
-            onChangeText={setCity}
-            value={city}
-          />
-          <TouchableOpacity
-            style={styles.filterButton}
-            onPress={toggleFilterModal}
-          >
-            <Entypo name="sound-mix" size={30} color="#808080" />
-          </TouchableOpacity>
-        </View>
+      <FilterModal
+        isVisible={isFilterModalVisible}
+        toggleModal={toggleFilterModal}
+        minAge={minAge}
+        maxAge={maxAge}
+        setMinAge={setMinAge}
+        setMaxAge={setMaxAge}
+        gender={gender}
+        setGender={setGender}
+      />
 
-        <DatePicker
-          label="Select Start Date"
-          date={startDate}
-          onConfirm={setStartDate}
-        />
-        <DatePicker
-          label="Select End Date"
-          date={endDate}
-          onConfirm={setEndDate}
-          minimumDate={startDate}
-        />
+      <SearchBar
+        city={city}
+        setCity={setCity}
+        startDate={startDate}
+        setStartDate={setStartDate}
+        endDate={endDate}
+        setEndDate={setEndDate}
+        toggleFilterModal={toggleFilterModal}
+        handleSearch={handleSearch}
+        inputContainerTranslateY={inputContainerTranslateY}
+        setInputContainerHeight={setInputContainerHeight}
+      />
 
-        <TouchableOpacity
-          onPress={handleSearch}
-          style={[styles.dateButton, styles.searchButton]}
-        >
-          <Text style={styles.dateButtonText}>Search</Text>
-        </TouchableOpacity>
-      </Animated.View>
-
-      <Modal
-        animationType="fade"
-        transparent={true}
-        visible={isFilterModalVisible}
-        onRequestClose={toggleFilterModal}
-      >
-        <View style={styles.centeredView}>
-          <View style={styles.modalView}>
-            <View style={{ flex: 1 }}>
-              <Slider
-                defaultValues={[minAge, maxAge]}
-                onValuesChange={(values) => {
-                  setMinAge(values[0]);
-                  setMaxAge(values[1]);
-                }}
-              />
-            </View>
-            <View style={{ flex: 1 }}>
-              <GenderFilter
-                defaultValue={gender}
-                onValueChange={(value) => setGender(value)}
-              />
-            </View>
-            <TouchableOpacity
-              style={[styles.button, styles.buttonClose]}
-              onPress={toggleFilterModal}
-            >
-              <Text style={styles.textStyle}>Filter</Text>
-            </TouchableOpacity>
-          </View>
-        </View>
-      </Modal>
-
-      <Animated.FlatList
-        contentContainerStyle={{ paddingTop: inputContainerHeight }}
-        data={users.length > 0 ? users : usersPlaceholderList}
-        ItemSeparatorComponent={() => (
-          <View style={{ width: "100%", height: 1, backgroundColor: "gray" }} />
-        )}
-        renderItem={({ item }) => {
-          const isLoading = users.length === 0;
-          return (
-            <View
-              style={{
-                width: "100%",
-                height: 120,
-                flexDirection: "row",
-                alignItems: "center",
-                paddingHorizontal: 10,
-              }}
-            >
-              <Skeleton.Group show={isLoading}>
-                <Skeleton
-                  height={70}
-                  width={70}
-                  radius="round"
-                  colorMode="light"
-                >
-                  {!isLoading && (
-                    <View
-                      style={{
-                        height: 70,
-                        aspectRatio: 1,
-                        backgroundColor: "#808080",
-                        borderRadius: 35,
-                        justifyContent: "center",
-                        alignItems: "center",
-                      }}
-                    >
-                      <Text style={{ fontSize: 25, color: "white" }}>
-                        {item.name?.[0]}
-                      </Text>
-                    </View>
-                  )}
-                </Skeleton>
-                <View style={{ marginLeft: 15 }}>
-                  <Skeleton
-                    height={30}
-                    width="85%"
-                    colorMode="light"
-                    backgroundColor="#D4D4D4"
-                  >
-                    {!isLoading && (
-                      <Text style={{ fontSize: 20 }}>{item.name}</Text>
-                    )}
-                  </Skeleton>
-                  <View style={{ height: 5 }} />
-                  <Skeleton
-                    height={30}
-                    width="85%"
-                    colorMode="light"
-                    backgroundColor="#D4D4D4"
-                  >
-                    {!isLoading && (
-                      <Text style={{ fontSize: 15 }}>{item.email}</Text>
-                    )}
-                  </Skeleton>
-                </View>
-              </Skeleton.Group>
-            </View>
-          );
-        }}
-        keyExtractor={(item) => item.id.toString()}
-        ListFooterComponent={loading && <Text>Loading more users...</Text>}
-        onScroll={Animated.event(
-          [{ nativeEvent: { contentOffset: { y: scrollY } } }],
-          { useNativeDriver: true }
-        )}
+      <UsersList
+        users={users}
+        usersPlaceholderList={usersPlaceholderList}
+        loading={loading}
+        scrollY={scrollY}
+        inputContainerHeight={inputContainerHeight}
       />
     </SafeAreaView>
   );
@@ -249,90 +123,6 @@ const styles = StyleSheet.create({
     backgroundColor: "#FF8C00",
     justifyContent: "flex-start",
     padding: 20,
-  },
-  inputContainer: {
-    backgroundColor: "#FF8C00",
-    marginBottom: 10,
-    zIndex: 1,
-    position: "absolute",
-    width: "100%",
-    top: 0,
-    left: 0,
-    right: 0,
-    paddingHorizontal: 20,
-    paddingTop: 20,
-  },
-  searchContainer: {
-    alignSelf: "center",
-    flexDirection: "row",
-    justifyContent: "space-between",
-    alignItems: "center",
-    marginTop: 10,
-    width: "70%",
-  },
-  input: {
-    flex: 1,
-    height: 40,
-    borderColor: "gray",
-    borderWidth: 1,
-    marginRight: 10,
-    paddingHorizontal: 10,
-    borderRadius: 20,
-    backgroundColor: "white",
-    color: "black",
-  },
-  filterButton: {
-    padding: 10,
-  },
-  dateButton: {
-    backgroundColor: "#808080",
-    padding: 10,
-    borderRadius: 20,
-    marginTop: 10,
-    alignItems: "center",
-    width: "45%",
-    alignSelf: "center",
-  },
-  dateButtonText: {
-    color: "white",
-    fontWeight: "bold",
-  },
-  centeredView: {
-    flex: 1,
-    justifyContent: "center",
-    alignItems: "center",
-    marginTop: 22,
-  },
-  modalView: {
-    margin: 20,
-    backgroundColor: "white",
-    borderRadius: 20,
-    padding: 35,
-    alignItems: "center",
-    shadowColor: "#000",
-    shadowOffset: {
-      width: 0,
-      height: 2,
-    },
-    shadowOpacity: 0.25,
-    shadowRadius: 4,
-    elevation: 5,
-    width: "80%",
-    height: "50%",
-  },
-  buttonClose: {
-    backgroundColor: "#808080",
-    padding: 10,
-    borderRadius: 20,
-    marginTop: 10,
-    alignItems: "center",
-    width: "45%",
-    alignSelf: "center",
-  },
-  textStyle: {
-    color: "white",
-    fontWeight: "bold",
-    textAlign: "center",
   },
 });
 
