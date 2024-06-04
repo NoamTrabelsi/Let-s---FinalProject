@@ -14,6 +14,7 @@ const UsersList = ({
 
   return (
     <Animated.FlatList
+      showsVerticalScrollIndicator={false}
       contentContainerStyle={{ paddingTop: inputContainerHeight }}
       data={users.length > 0 ? users : usersPlaceholderList}
       ItemSeparatorComponent={() => <View style={styles.separator} />}

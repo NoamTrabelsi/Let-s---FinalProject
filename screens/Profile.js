@@ -51,7 +51,7 @@ const ProfilePage = () => {
 
   return (
     <SafeAreaView style={styles.container}>
-      <ScrollView>
+      <ScrollView showsVerticalScrollIndicator={false}>
         <View style={styles.profileHeader}>
           <Image
             source={{
@@ -156,6 +156,7 @@ const ProfilePage = () => {
           </Text>
           <FlatList
             horizontal={true}
+            showsHorizontalScrollIndicator={false}
             data={userInformation.reviews}
             keyExtractor={(item, index) => `key-${index}`}
             renderItem={({ item }) => (
