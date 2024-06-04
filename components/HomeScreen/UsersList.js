@@ -1,6 +1,7 @@
 import React from "react";
 import { View, Text, Animated, StyleSheet } from "react-native";
 import { Skeleton } from "moti/skeleton";
+import { FontAwesome, Entypo } from "@expo/vector-icons";
 
 const UsersList = ({
   users,
@@ -9,6 +10,8 @@ const UsersList = ({
   scrollY,
   inputContainerHeight,
 }) => {
+  const tripMatch = Math.floor(Math.random() * 100);
+
   return (
     <Animated.FlatList
       contentContainerStyle={{ paddingTop: inputContainerHeight }}
@@ -45,7 +48,21 @@ const UsersList = ({
                   backgroundColor="#D4D4D4"
                 >
                   {!isLoading && (
-                    <Text style={styles.itemEmail}>{item.email}</Text>
+                    <View style={styles.ratingContainer}>
+                      <Text style={styles.matchLabel}>Match</Text>
+                      <View style={styles.ratingBar}>
+                        <View
+                          style={{
+                            width: tripMatch.toString() + "%",
+                            height: "100%",
+                            backgroundColor: "orange",
+                          }}
+                        />
+                      </View>
+                      <Text style={styles.matchPercentage}>
+                        {tripMatch.toString() + "%"}
+                      </Text>
+                    </View>
                   )}
                 </Skeleton>
               </View>
@@ -87,6 +104,28 @@ const styles = StyleSheet.create({
   avatarText: {
     fontSize: 25,
     color: "white",
+  },
+  ratingContainer: {
+    flexDirection: "row",
+    alignItems: "center",
+    marginTop: 10,
+  },
+  matchLabel: {
+    fontSize: 14,
+    color: "black",
+    marginRight: 10,
+  },
+  matchPercentage: {
+    marginLeft: 10,
+    fontSize: 14,
+    color: "black",
+  },
+  ratingBar: {
+    width: 100,
+    height: 10,
+    backgroundColor: "#EDEDED",
+    borderRadius: 5,
+    overflow: "hidden",
   },
   itemDetails: {
     marginLeft: 15,
