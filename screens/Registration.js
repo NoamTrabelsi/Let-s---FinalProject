@@ -1,5 +1,4 @@
-import React from "react";
-import { useState } from "react";
+import React, { useState } from "react";
 import {
   SafeAreaView,
   StyleSheet,
@@ -9,10 +8,10 @@ import {
   TouchableOpacity,
 } from "react-native";
 import DropDownPicker from "react-native-dropdown-picker";
-import { useNavigation } from '@react-navigation/native';
+import { useNavigation } from "@react-navigation/native";
+import { userInformationTamplate } from "./LogIn";
 
 function Registration() {
-
   const navigation = useNavigation();
 
   const [userName, setUserName] = useState("");
@@ -30,9 +29,16 @@ function Registration() {
   ]);
 
   const handleRegistration = () => {
-    // Perform registration logic with the entered data
+    // create a new object with the entered data
+    const userInformation = { ...userInformationTamplate };
+    userInformation.firstName = userName;
+    userInformation.lastName = userLastName;
+    userInformation.email = userEmail;
+    userInformation.password = userPassword;
+    userInformation.gender = selectedGender;
 
-    navigation.navigate('ProfileInfo')
+    // Perform registration logic with the entered data
+    navigation.navigate("ProfileInfo", { userInformation });
 
     console.log("Register pressed", {
       first_name: userName,
@@ -46,73 +52,70 @@ function Registration() {
   return (
     <SafeAreaView style={styles.container}>
       <View style={styles.formContainer}>
-      <Text>First Name</Text>
-      <TextInput
-        placeholder="Enter your first name"
-        style={styles.input_container}
-        autoCapitalize="none"
-        textContentType="username"
-        value={userName}
-        onChangeText={(text) => setUserName(text)}
-      />
+        <Text>First Name</Text>
+        <TextInput
+          placeholder="Enter your first name"
+          style={styles.input_container}
+          autoCapitalize="none"
+          textContentType="username"
+          value={userName}
+          onChangeText={(text) => setUserName(text)}
+        />
 
-      <Text>Last Name</Text>
-      <TextInput
-        placeholder="Enter your last name"
-        style={styles.input_container}
-        autoCapitalize="none"
-        textContentType="username"
-        value={userLastName}
-        onChangeText={(text) => setUserLastName(text)}
-      />
+        <Text>Last Name</Text>
+        <TextInput
+          placeholder="Enter your last name"
+          style={styles.input_container}
+          autoCapitalize="none"
+          textContentType="username"
+          value={userLastName}
+          onChangeText={(text) => setUserLastName(text)}
+        />
 
-      <Text>Gender</Text>
-      <DropDownPicker
-        open={open}
-        value={value}
-        items={items}
-        setOpen={setOpen}
-        setValue={setValue}
-        setItems={setItems}
-        style={styles.input_container}
-      />
+        <Text>Gender</Text>
+        <DropDownPicker
+          open={open}
+          value={selectedGender}
+          items={items}
+          setOpen={setOpen}
+          setValue={setSelectedGender}
+          setItems={setItems}
+          style={styles.input_container}
+        />
 
-      {/* User email */}
-      <Text>User email</Text>
-      <TextInput
-        placeholder="Enter your email"
-        style={styles.input_container}
-        autoCapitalize="none"
-        textContentType="username"
-        value={userEmail}
-        onChangeText={(text) => setUserEmail(text)}
-      />
+        <Text>User email</Text>
+        <TextInput
+          placeholder="Enter your email"
+          style={styles.input_container}
+          autoCapitalize="none"
+          textContentType="username"
+          value={userEmail}
+          onChangeText={(text) => setUserEmail(text)}
+        />
 
-      {/* Password */}
-      <Text>Password</Text>
-      <TextInput
-        placeholder="Enter your password"
-        style={styles.input_container}
-        secureTextEntry={true}
-        textContentType="password"
-        value={userPassword}
-        onChangeText={(text) => setUserPassword(text)}
-      />
-      {/* Confirm Password */}
-      <Text>Confirm Password</Text>
-      <TextInput
-        placeholder="Confirm your password"
-        style={styles.input_container}
-        secureTextEntry={true}
-        textContentType="password"
-        value={userPassword}
-        onChangeText={(text) => setUserConfirmPassword(text)}
-      />
+        <Text>Password</Text>
+        <TextInput
+          placeholder="Enter your password"
+          style={styles.input_container}
+          secureTextEntry={true}
+          textContentType="password"
+          value={userPassword}
+          onChangeText={(text) => setUserPassword(text)}
+        />
 
-      {/* Register Button */}
-      <TouchableOpacity style={styles.button} onPress={handleRegistration}>
-        <Text style={styles.buttonText}>Register</Text>
-      </TouchableOpacity>
+        <Text>Confirm Password</Text>
+        <TextInput
+          placeholder="Confirm your password"
+          style={styles.input_container}
+          secureTextEntry={true}
+          textContentType="password"
+          value={userConfirmPassword}
+          onChangeText={(text) => setUserConfirmPassword(text)}
+        />
+
+        <TouchableOpacity style={styles.button} onPress={handleRegistration}>
+          <Text style={styles.buttonText}>Register</Text>
+        </TouchableOpacity>
       </View>
     </SafeAreaView>
   );
@@ -121,26 +124,26 @@ function Registration() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    backgroundColor: '#FF8C00'
+    justifyContent: "center",
+    alignItems: "center",
+    backgroundColor: "#FF8C00",
   },
   formContainer: {
-    width: '50%', // Container takes 80% of the screen width
-    alignItems: 'center',
-},
+    width: "50%",
+    alignItems: "center",
+  },
   input_container: {
     height: 40,
-    borderColor: 'gray',
+    borderColor: "gray",
     borderWidth: 1,
-    borderRadius: 20, // Rounded corners for input fields
-    backgroundColor: 'white', // White background for input fields
-    width: '100%', // Input fields take the full width of their container
+    borderRadius: 20,
+    backgroundColor: "white",
+    width: "100%",
     marginBottom: 15,
     paddingHorizontal: 10,
-},
+  },
   button: {
-    backgroundColor: "#808080", // Matching HomeScreen's button color
+    backgroundColor: "#808080",
     padding: 10,
     borderRadius: 20,
     width: "80%",

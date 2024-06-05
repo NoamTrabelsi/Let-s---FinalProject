@@ -1,16 +1,22 @@
 import React, { useState, useEffect } from "react";
 import { StyleSheet, View, Text, TouchableOpacity } from "react-native";
 
-const transportOptions = [
-  "on foot", "public transport", "bicycle", "moped", "rental car"
+export const transportOptions = [
+  "on foot",
+  "public transport",
+  "bicycle",
+  "moped",
+  "rental car",
 ];
 
 function Movement() {
   const [selectedOptions, setSelectedOptions] = useState([]);
-  const [optionsVector, setOptionsVector] = useState(new Array(transportOptions.length).fill(0));
+  const [optionsVector, setOptionsVector] = useState(
+    new Array(transportOptions.length).fill(0)
+  );
 
   const toggleOption = (option) => {
-    setSelectedOptions(prevOptions =>
+    setSelectedOptions((prevOptions) =>
       prevOptions.includes(option)
         ? prevOptions.filter((opt) => opt !== option)
         : [...prevOptions, option]
@@ -18,7 +24,9 @@ function Movement() {
   };
 
   useEffect(() => {
-    const vector = transportOptions.map((option) => selectedOptions.includes(option) ? 1 : 0);
+    const vector = transportOptions.map((option) =>
+      selectedOptions.includes(option) ? 1 : 0
+    );
     setOptionsVector(vector);
     console.log("Movement options vector:", vector);
   }, [selectedOptions]);
@@ -31,7 +39,10 @@ function Movement() {
         {transportOptions.map((option, index) => (
           <TouchableOpacity
             key={index}
-            style={[styles.locationBtn, selectedOptions.includes(option) ? styles.selected : {}]}
+            style={[
+              styles.locationBtn,
+              selectedOptions.includes(option) ? styles.selected : {},
+            ]}
             onPress={() => toggleOption(option)}
           >
             <Text style={styles.buttonText}>{option}</Text>

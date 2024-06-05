@@ -15,22 +15,30 @@ import { useNavigation } from "@react-navigation/native";
 import { CommonActions } from "@react-navigation/native";
 import { useRoute } from "@react-navigation/native";
 
-function ProfileInfo() {
+function ProfileInfo({ route }) {
   const navigation = useNavigation();
-  const route = useRoute();
-  let { userInformation } = route.params;
+  const { userInformation } = route.params;
+
+  // const [foodPreferences, setFoodPreferences] = useState([]);
+  // const [sleepPreferences, setSleepPreferences] = useState([]);
+  // const [movementPreferences, setMovementPreferences] = useState([]);
+  // const [adventurePreferences, setAdventurePreferences] = useState([]);
 
   const handleLogIn = () => {
     navigation.dispatch(
-      CommonActions.reset({ index: 0, routes: [{ name: "UserNav" }] })
+      CommonActions.reset({
+        index: 0,
+        routes: [{ name: "UserNav", params: { userInformation } }],
+      })
     );
   };
+
   return (
     <View style={styles.container}>
       <ScrollView>
         <View>
           <GetKnow />
-          <Food userFoodInfo={userInformation.interests.food} />
+          <Food />
           <Sleep />
           <Movement />
           <Adventure />

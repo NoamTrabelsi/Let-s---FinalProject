@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { StyleSheet, View, Text, TouchableOpacity } from "react-native";
 
-const foodOptions = ["everything", "vegetarian", "vegan"];
+export const foodOptions = ["everything", "vegetarian", "vegan"];
 
 function Food() {
   const [selectedOptions, setSelectedOptions] = useState([]);

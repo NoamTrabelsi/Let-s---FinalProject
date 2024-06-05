@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { StyleSheet, View, Text, TouchableOpacity } from "react-native";
 
-const adventureOptins = [
+export const adventureOptions = [
   "museum",
   "concert",
   "culinary",
@@ -25,7 +25,7 @@ const adventureOptins = [
 function Adventure() {
   const [selectedAdventures, setSelectedAdventures] = useState([]);
   const [adventuresVector, setAdventuresVector] = useState(
-    new Array(adventureOptins.length).fill(0)
+    new Array(adventureOptions.length).fill(0)
   );
 
   const toggleLocation = (adventure) => {
@@ -37,7 +37,7 @@ function Adventure() {
   };
 
   useEffect(() => {
-    const vector = adventureOptins.map((adventure) =>
+    const vector = adventureOptions.map((adventure) =>
       selectedAdventures.includes(adventure) ? 1 : 0
     );
     setAdventuresVector(vector);
@@ -49,7 +49,7 @@ function Adventure() {
       <Text style={styles.textContainer}>Adventure</Text>
       <Text style={styles.text}>Where do you party?</Text>
       <View style={styles.choicesContainer}>
-        {adventureOptins.map((adventure, index) => (
+        {adventureOptions.map((adventure, index) => (
           <TouchableOpacity
             key={index}
             style={[

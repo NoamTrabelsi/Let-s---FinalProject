@@ -14,7 +14,8 @@ import { NavigationContainer } from "@react-navigation/native";
 import { Ionicons } from "@expo/vector-icons";
 import ProfileInfo from "./ProfileInfo";
 
-function Settings() {
+function Settings({ route }) {
+  const { userInformation } = route.params;
   const navigation = useNavigation();
 
   return (
@@ -23,7 +24,10 @@ function Settings() {
         style={styles.button}
         onPress={() =>
           navigation.dispatch(
-            CommonActions.reset({ index: 0, routes: [{ name: "ProfileInfo" }] })
+            CommonActions.reset({
+              index: 0,
+              routes: [{ name: "ProfileInfo", params: { userInformation } }],
+            })
           )
         }
       >

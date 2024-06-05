@@ -1,16 +1,16 @@
 import React, { useState, useEffect } from "react";
 import { StyleSheet, View, Text, TouchableOpacity } from "react-native";
 
-const sleepOptions = [
-  "hotel", "hostel", "rental", "out-door"
-];
+export const sleepOptions = ["hotel", "hostel", "rental", "out-door"];
 
 function Sleep() {
   const [selectedSleepOptions, setSelectedSleepOptions] = useState([]);
-  const [sleepOptionsVector, setSleepOptionsVector] = useState(new Array(sleepOptions.length).fill(0));
+  const [sleepOptionsVector, setSleepOptionsVector] = useState(
+    new Array(sleepOptions.length).fill(0)
+  );
 
   const toggleSleepOption = (option) => {
-    setSelectedSleepOptions(prevOptions =>
+    setSelectedSleepOptions((prevOptions) =>
       prevOptions.includes(option)
         ? prevOptions.filter((opt) => opt !== option)
         : [...prevOptions, option]
@@ -19,7 +19,9 @@ function Sleep() {
 
   useEffect(() => {
     // Обновляем векторное представление при изменении selectedSleepOptions
-    const vector = sleepOptions.map((option) => selectedSleepOptions.includes(option) ? 1 : 0);
+    const vector = sleepOptions.map((option) =>
+      selectedSleepOptions.includes(option) ? 1 : 0
+    );
     setSleepOptionsVector(vector);
     console.log("Sleep options vector:", vector);
   }, [selectedSleepOptions]);
@@ -32,7 +34,10 @@ function Sleep() {
         {sleepOptions.map((option, index) => (
           <TouchableOpacity
             key={index}
-            style={[styles.locationBtn, selectedSleepOptions.includes(option) ? styles.selected : {}]}
+            style={[
+              styles.locationBtn,
+              selectedSleepOptions.includes(option) ? styles.selected : {},
+            ]}
             onPress={() => toggleSleepOption(option)}
           >
             <Text style={styles.buttonText}>{option}</Text>

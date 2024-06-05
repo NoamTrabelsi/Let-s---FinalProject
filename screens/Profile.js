@@ -12,40 +12,15 @@ import {
 import { FontAwesome, Entypo } from "@expo/vector-icons";
 import { FlatList } from "react-native-gesture-handler";
 
-const ProfilePage = () => {
-  const userInformation = {
-    firstName: "Cara",
-    lastName: "Delevingne",
-    age: 24,
-    image:
-      "https://encrypted-tbn1.gstatic.com/images?q=tbn:ANd9GcSlvrOvImP4NFWKUoqMAkbtrN3Hrg6mA88lIcdEhy2avwz0qKfI",
-    location: "Israel",
-    about:
-      "It's about time you fell in love with something that will love you back. And that, my friends, is house music. It doesn't judge you, and I won't either.",
-    reviews: [
-      {
-        name: "Liron",
-        age: 25,
-        location: "Iceland",
-        rating: 4,
-        text: "This girl is the best. I had such a wonderful and funny time with her.",
-      },
-      {
-        name: "Roi",
-        age: 24,
-        location: "Russia",
-        rating: 5,
-        text: "She is the best. I had such a wonderful and funny time with her.",
-      },
-      {
-        name: "Shir",
-        age: 25,
-        location: "Iceland",
-        rating: 3,
-        text: "She is the best. I had such a wonderful and funny time with her.",
-      },
-    ],
-  };
+import { transportOptions } from "../components/ProfileInfo/Movement";
+import { foodOptions } from "../components/ProfileInfo/Food";
+import { sleepOptions } from "../components/ProfileInfo/Sleep";
+import { adventureOptions } from "../components/ProfileInfo/Adventure";
+
+const ProfilePage = ({ route }) => {
+  const { userInformation } = route.params;
+
+  console.log(transportOptions);
 
   const tripMatch = 80;
 
@@ -101,41 +76,71 @@ const ProfilePage = () => {
         </View>
         <View style={styles.interestsContainer}>
           <View style={styles.interestSubContainer}>
-            <Text style={styles.interestLabel}>Destination</Text>
-            <TouchableOpacity style={styles.interestTag} disabled={true}>
-              <Text>Nature</Text>
-            </TouchableOpacity>
-            <TouchableOpacity style={styles.interestTag} disabled={true}>
-              <Text>Bar</Text>
-            </TouchableOpacity>
+            <Text style={styles.interestLabel}>Movement</Text>
+            {userInformation.interests.movement.map((movement, index) => {
+              if (movement === 1) {
+                return (
+                  <TouchableOpacity
+                    key={index}
+                    style={styles.interestTag}
+                    disabled={true}
+                  >
+                    <Text>{transportOptions[index]}</Text>
+                  </TouchableOpacity>
+                );
+              }
+            })}
           </View>
 
           <View style={styles.interestSubContainer}>
             <Text style={styles.interestLabel}>Food</Text>
-            <TouchableOpacity style={styles.interestTag} disabled={true}>
-              <Text>Local</Text>
-            </TouchableOpacity>
+            {userInformation.interests.food.map((food, index) => {
+              if (food === 1) {
+                return (
+                  <TouchableOpacity
+                    key={index}
+                    style={styles.interestTag}
+                    disabled={true}
+                  >
+                    <Text>{foodOptions[index]}</Text>
+                  </TouchableOpacity>
+                );
+              }
+            })}
           </View>
 
           <View style={styles.interestSubContainer}>
             <Text style={styles.interestLabel}>Sleep</Text>
-            <TouchableOpacity style={styles.interestTag} disabled={true}>
-              <Text>Hostel</Text>
-            </TouchableOpacity>
+            {userInformation.interests.sleep.map((sleep, index) => {
+              if (sleep === 1) {
+                return (
+                  <TouchableOpacity
+                    key={index}
+                    style={styles.interestTag}
+                    disabled={true}
+                  >
+                    <Text>{sleepOptions[index]}</Text>
+                  </TouchableOpacity>
+                );
+              }
+            })}
           </View>
 
           <View style={styles.interestSubContainer}>
             <Text style={styles.interestLabel}>Adventure</Text>
-            <TouchableOpacity style={styles.interestTag} disabled={true}>
-              <Text>Hiking</Text>
-            </TouchableOpacity>
-          </View>
-
-          <View style={styles.interestSubContainer}>
-            <Text style={styles.interestLabel}>Language</Text>
-            <TouchableOpacity style={styles.interestTag} disabled={true}>
-              <Text>English</Text>
-            </TouchableOpacity>
+            {userInformation.interests.adventure.map((adventure, index) => {
+              if (adventure === 1) {
+                return (
+                  <TouchableOpacity
+                    key={index}
+                    style={styles.interestTag}
+                    disabled={true}
+                  >
+                    <Text>{adventureOptions[index]}</Text>
+                  </TouchableOpacity>
+                );
+              }
+            })}
           </View>
         </View>
 
