@@ -1,49 +1,67 @@
 import React, { useState, useEffect } from "react";
 import { StyleSheet, View, Text, TouchableOpacity } from "react-native";
 
-const locations = [
-  "museum", "concert", "culinary", "spa",
-  "beach", "sport", "extreme", "trips",
-  "climbing", "chill", "casino", "bar",
-  "clubs", "coffee shop", "new places", "nature",
-  "renaissance", "shopping"
+const adventureOptins = [
+  "museum",
+  "concert",
+  "culinary",
+  "spa",
+  "beach",
+  "sport",
+  "extreme",
+  "trips",
+  "climbing",
+  "chill",
+  "casino",
+  "bar",
+  "clubs",
+  "coffee shop",
+  "new places",
+  "nature",
+  "renaissance",
+  "shopping",
 ];
 
 function Adventure() {
-  const [selectedLocations, setSelectedLocations] = useState([]);
-  const [locationsVector, setLocationsVector] = useState(new Array(locations.length).fill(0));
+  const [selectedAdventures, setSelectedAdventures] = useState([]);
+  const [adventuresVector, setAdventuresVector] = useState(
+    new Array(adventureOptins.length).fill(0)
+  );
 
-  const toggleLocation = (location) => {
-    setSelectedLocations(prevLocations =>
-      prevLocations.includes(location)
-        ? prevLocations.filter((loc) => loc !== location)
-        : [...prevLocations, location]
+  const toggleLocation = (adventure) => {
+    setSelectedAdventures((prevAdventures) =>
+      prevAdventures.includes(adventure)
+        ? prevAdventures.filter((loc) => loc !== adventure)
+        : [...prevAdventures, adventure]
     );
   };
 
   useEffect(() => {
-    // Обновляем векторное представление при изменении selectedLocations
-    const vector = locations.map((location) => selectedLocations.includes(location) ? 1 : 0);
-    setLocationsVector(vector);
+    const vector = adventureOptins.map((adventure) =>
+      selectedAdventures.includes(adventure) ? 1 : 0
+    );
+    setAdventuresVector(vector);
     console.log("Adventure options vector:", vector);
-  }, [selectedLocations]); // Зависимость от selectedLocations для пересчёта вектора
+  }, [selectedAdventures]);
 
   return (
     <View style={styles.container}>
       <Text style={styles.textContainer}>Adventure</Text>
       <Text style={styles.text}>Where do you party?</Text>
       <View style={styles.choicesContainer}>
-        {locations.map((location, index) => (
+        {adventureOptins.map((adventure, index) => (
           <TouchableOpacity
             key={index}
-            style={[styles.locationBtn, selectedLocations.includes(location) ? styles.selected : {}]}
-            onPress={() => toggleLocation(location)}
+            style={[
+              styles.adventureBtn,
+              selectedAdventures.includes(adventure) ? styles.selected : {},
+            ]}
+            onPress={() => toggleLocation(adventure)}
           >
-            <Text style={styles.buttonText}>{location}</Text>
+            <Text style={styles.buttonText}>{adventure}</Text>
           </TouchableOpacity>
         ))}
       </View>
-      {/* Здесь можете выводить locationsVector на экран, если это необходимо */}
     </View>
   );
 }
@@ -66,7 +84,7 @@ const styles = StyleSheet.create({
     flexWrap: "wrap",
     justifyContent: "flex-start",
   },
-  locationBtn: {
+  adventureBtn: {
     margin: 5,
     paddingVertical: 8,
     paddingHorizontal: 10,

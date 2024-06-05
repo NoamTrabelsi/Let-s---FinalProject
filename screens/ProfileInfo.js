@@ -12,20 +12,25 @@ import GetKnow from "../components/ProfileInfo/GetKnow";
 import Adventure from "../components/ProfileInfo/Adventure";
 import Movement from "../components/ProfileInfo/Movement";
 import { useNavigation } from "@react-navigation/native";
-import { CommonActions } from '@react-navigation/native';
+import { CommonActions } from "@react-navigation/native";
+import { useRoute } from "@react-navigation/native";
 
 function ProfileInfo() {
   const navigation = useNavigation();
+  const route = useRoute();
+  let { userInformation } = route.params;
 
   const handleLogIn = () => {
-    navigation.dispatch(CommonActions.reset({index: 0, routes: [{name: 'UserNav'}]}))
+    navigation.dispatch(
+      CommonActions.reset({ index: 0, routes: [{ name: "UserNav" }] })
+    );
   };
   return (
     <View style={styles.container}>
       <ScrollView>
         <View>
           <GetKnow />
-          <Food />
+          <Food userFoodInfo={userInformation.interests.food} />
           <Sleep />
           <Movement />
           <Adventure />
@@ -39,7 +44,9 @@ function ProfileInfo() {
     </View>
   );
 }
+
 export default ProfileInfo;
+
 const styles = StyleSheet.create({
   container: {
     flex: 1,
@@ -56,7 +63,7 @@ const styles = StyleSheet.create({
     width: 180,
     height: 50,
     backgroundColor: "#808080",
-    borderRadius: 20, // ניתן לשנות את עצמו ליצירת פינות מעוגלות
+    borderRadius: 20,
     alignItems: "center",
     justifyContent: "center",
   },

@@ -1,18 +1,16 @@
 import React, { useState, useEffect } from "react";
 import { StyleSheet, View, Text, TouchableOpacity } from "react-native";
 
-const foodOptions = [
-  "everything",
-  "vegetarian",
-  "vegan",
-];
+const foodOptions = ["everything", "vegetarian", "vegan"];
 
 function Food() {
   const [selectedOptions, setSelectedOptions] = useState([]);
-  const [optionsVector, setOptionsVector] = useState(new Array(foodOptions.length).fill(0));
+  const [optionsVector, setOptionsVector] = useState(
+    new Array(foodOptions.length).fill(0)
+  );
 
   const toggleOption = (option) => {
-    setSelectedOptions(prevOptions =>
+    setSelectedOptions((prevOptions) =>
       prevOptions.includes(option)
         ? prevOptions.filter((opt) => opt !== option)
         : [...prevOptions, option]
@@ -20,7 +18,9 @@ function Food() {
   };
 
   useEffect(() => {
-    const vector = foodOptions.map((option) => selectedOptions.includes(option) ? 1 : 0);
+    const vector = foodOptions.map((option) =>
+      selectedOptions.includes(option) ? 1 : 0
+    );
     setOptionsVector(vector);
     console.log("Food options vector:", vector);
   }, [selectedOptions]);
@@ -33,7 +33,10 @@ function Food() {
         {foodOptions.map((option, index) => (
           <TouchableOpacity
             key={index}
-            style={[styles.locationBtn, selectedOptions.includes(option) ? styles.selected : {}]}
+            style={[
+              styles.locationBtn,
+              selectedOptions.includes(option) ? styles.selected : {},
+            ]}
             onPress={() => toggleOption(option)}
           >
             <Text style={styles.buttonText}>{option}</Text>
