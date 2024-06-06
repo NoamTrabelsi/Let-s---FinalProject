@@ -1,3 +1,4 @@
+import React, { useContext } from "react";
 import {
   View,
   Text,
@@ -13,22 +14,17 @@ import Adventure from "../components/ProfileInfo/Adventure";
 import Movement from "../components/ProfileInfo/Movement";
 import { useNavigation } from "@react-navigation/native";
 import { CommonActions } from "@react-navigation/native";
-import { useRoute } from "@react-navigation/native";
+import { UserContext } from "../components/UserContext/UserContext";
 
-function ProfileInfo({ route }) {
+function ProfileInfo() {
   const navigation = useNavigation();
-  const { userInformation } = route.params;
-
-  // const [foodPreferences, setFoodPreferences] = useState([]);
-  // const [sleepPreferences, setSleepPreferences] = useState([]);
-  // const [movementPreferences, setMovementPreferences] = useState([]);
-  // const [adventurePreferences, setAdventurePreferences] = useState([]);
+  const { user } = useContext(UserContext);
 
   const handleLogIn = () => {
     navigation.dispatch(
       CommonActions.reset({
         index: 0,
-        routes: [{ name: "UserNav", params: { userInformation } }],
+        routes: [{ name: "UserNav" }],
       })
     );
   };

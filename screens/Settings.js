@@ -1,22 +1,12 @@
-import React from "react";
-import {
-  SafeAreaView,
-  StyleSheet,
-  Text,
-  View,
-  TouchableOpacity,
-} from "react-native";
+import React, { useContext } from "react";
+import { SafeAreaView, StyleSheet, Text, TouchableOpacity } from "react-native";
 import { useNavigation } from "@react-navigation/native";
 import { CommonActions } from "@react-navigation/native";
-import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
-import { createStackNavigator } from "@react-navigation/stack";
-import { NavigationContainer } from "@react-navigation/native";
-import { Ionicons } from "@expo/vector-icons";
-import ProfileInfo from "./ProfileInfo";
+import { UserContext } from "../components/UserContext/UserContext";
 
-function Settings({ route }) {
-  const { userInformation } = route.params;
+function Settings() {
   const navigation = useNavigation();
+  const { user } = useContext(UserContext);
 
   return (
     <SafeAreaView style={styles.container}>
@@ -26,7 +16,7 @@ function Settings({ route }) {
           navigation.dispatch(
             CommonActions.reset({
               index: 0,
-              routes: [{ name: "ProfileInfo", params: { userInformation } }],
+              routes: [{ name: "ProfileInfo" }],
             })
           )
         }

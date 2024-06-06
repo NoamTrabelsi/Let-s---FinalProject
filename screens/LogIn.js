@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useContext } from "react";
 import {
   SafeAreaView,
   StyleSheet,
@@ -10,40 +10,12 @@ import {
 } from "react-native";
 import { useNavigation } from "@react-navigation/native";
 import { CommonActions } from "@react-navigation/native";
-
-export const userInformationTamplate = {
-  firstName: "",
-  lastName: "",
-  email: "",
-  password: "",
-  age: 0,
-  gender: "",
-  image: "",
-  location: "",
-  interests: {
-    food: [],
-    sleep: [],
-    movement: [],
-    adventure: [],
-  },
-  about: "",
-  reviews: [
-    {
-      name: "",
-      age: 0,
-      location: "",
-      rating: 0,
-      text: "",
-    },
-  ],
-};
+import { UserContext } from "../components/UserContext/UserContext";
 
 function LogIn() {
   const navigation = useNavigation();
+  const { setUser } = useContext(UserContext);
 
-  {
-    /*It will be get from data base*/
-  }
   const userInformation = {
     firstName: "Cara",
     lastName: "Delevingne",
@@ -87,13 +59,22 @@ function LogIn() {
     ],
   };
 
+  const handleLogin = () => {
+    setUser(userInformation);
+    navigation.dispatch(
+      CommonActions.reset({
+        index: 0,
+        routes: [{ name: "UserNav" }],
+      })
+    );
+  };
+
   return (
     <ImageBackground
       source={require("../assets/splash.png")}
       style={styles.container}
     >
       <View style={styles.formContainer}>
-        {/* User email */}
         <Text style={styles.label}>User email</Text>
         <TextInput
           placeholder="Enter your email"
@@ -102,8 +83,6 @@ function LogIn() {
           autoCapitalize="none"
           textContentType="username"
         />
-
-        {/* Password (placeholder for future implementation) */}
         <Text style={styles.label}>Password</Text>
         <TextInput
           placeholder="Enter your password"
@@ -112,39 +91,16 @@ function LogIn() {
           secureTextEntry={true}
           textContentType="password"
         />
-
-        {/* Log In Button */}
-        <TouchableOpacity
-          style={styles.button}
-          onPress={() =>
-            navigation.dispatch(
-              CommonActions.reset({
-                index: 0,
-                routes: [
-                  {
-                    name: "UserNav",
-                    params: { userInformation },
-                  },
-                ],
-              })
-            )
-          }
-        >
+        <TouchableOpacity style={styles.button} onPress={handleLogin}>
           <Text style={styles.buttonText}>Log In</Text>
         </TouchableOpacity>
-
-        {/* Create Account */}
         <TouchableOpacity
           style={styles.button}
           onPress={() =>
             navigation.dispatch(
               CommonActions.reset({
                 index: 0,
-                routes: [
-                  {
-                    name: "Registration",
-                  },
-                ],
+                routes: [{ name: "Registration" }],
               })
             )
           }
@@ -161,31 +117,30 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: "center",
     alignItems: "center",
-    //backgroundColor: '#FF8C00', // Light background color
   },
   formContainer: {
-    width: "50%", // Container takes 80% of the screen width
+    width: "50%",
     alignItems: "center",
   },
   label: {
-    alignSelf: "flex-start", // Align labels to the start
+    alignSelf: "flex-start",
     marginVertical: 5,
   },
   input: {
     height: 40,
     borderColor: "gray",
     borderWidth: 1,
-    borderRadius: 20, // Rounded corners for input fields
-    backgroundColor: "white", // White background for input fields
-    width: "100%", // Input fields take the full width of their container
+    borderRadius: 20,
+    backgroundColor: "white",
+    width: "100%",
     marginBottom: 15,
     paddingHorizontal: 10,
   },
   button: {
-    backgroundColor: "#808080", // Consistent button background color
+    backgroundColor: "#808080",
     padding: 10,
-    borderRadius: 20, // Rounded corners for buttons
-    width: "100%", // Buttons take the full width of their container
+    borderRadius: 20,
+    width: "100%",
     alignItems: "center",
     marginVertical: 5,
   },

@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useContext } from "react";
 import {
   SafeAreaView,
   View,
@@ -9,18 +9,16 @@ import {
   TextInput,
   ScrollView,
 } from "react-native";
-import { FontAwesome, Entypo } from "@expo/vector-icons";
+import { FontAwesome } from "@expo/vector-icons";
 import { FlatList } from "react-native-gesture-handler";
-
+import { UserContext } from "../components/UserContext/UserContext";
 import { transportOptions } from "../components/ProfileInfo/Movement";
 import { foodOptions } from "../components/ProfileInfo/Food";
 import { sleepOptions } from "../components/ProfileInfo/Sleep";
 import { adventureOptions } from "../components/ProfileInfo/Adventure";
 
-const ProfilePage = ({ route }) => {
-  const { userInformation } = route.params;
-
-  console.log(transportOptions);
+const ProfilePage = () => {
+  const { user } = useContext(UserContext);
 
   const tripMatch = 80;
 
@@ -30,17 +28,17 @@ const ProfilePage = ({ route }) => {
         <View style={styles.profileHeader}>
           <Image
             source={{
-              uri: userInformation.image,
+              uri: user.image,
             }}
             style={styles.profileImage}
           />
         </View>
         <View style={styles.profileInfo}>
           <Text style={styles.name}>
-            {userInformation.firstName + " " + userInformation.lastName}
+            {user.firstName + " " + user.lastName}
           </Text>
           <View style={styles.ageLocationContainer}>
-            <Text style={styles.age}>{userInformation.age}</Text>
+            <Text style={styles.age}>{user.age}</Text>
             <FontAwesome
               name="circle"
               size={4}
@@ -49,7 +47,7 @@ const ProfilePage = ({ route }) => {
             />
             <Text style={styles.location}>
               <FontAwesome name="map-marker" size={16} color="black" />{" "}
-              {userInformation.location}
+              {user.location}
             </Text>
           </View>
           <View style={styles.ratingContainer}>
@@ -77,7 +75,7 @@ const ProfilePage = ({ route }) => {
         <View style={styles.interestsContainer}>
           <View style={styles.interestSubContainer}>
             <Text style={styles.interestLabel}>Movement</Text>
-            {userInformation.interests.movement.map((movement, index) => {
+            {user.interests.movement.map((movement, index) => {
               if (movement === 1) {
                 return (
                   <TouchableOpacity
@@ -91,10 +89,9 @@ const ProfilePage = ({ route }) => {
               }
             })}
           </View>
-
           <View style={styles.interestSubContainer}>
             <Text style={styles.interestLabel}>Food</Text>
-            {userInformation.interests.food.map((food, index) => {
+            {user.interests.food.map((food, index) => {
               if (food === 1) {
                 return (
                   <TouchableOpacity
@@ -108,10 +105,9 @@ const ProfilePage = ({ route }) => {
               }
             })}
           </View>
-
           <View style={styles.interestSubContainer}>
             <Text style={styles.interestLabel}>Sleep</Text>
-            {userInformation.interests.sleep.map((sleep, index) => {
+            {user.interests.sleep.map((sleep, index) => {
               if (sleep === 1) {
                 return (
                   <TouchableOpacity
@@ -125,10 +121,9 @@ const ProfilePage = ({ route }) => {
               }
             })}
           </View>
-
           <View style={styles.interestSubContainer}>
             <Text style={styles.interestLabel}>Adventure</Text>
-            {userInformation.interests.adventure.map((adventure, index) => {
+            {user.interests.adventure.map((adventure, index) => {
               if (adventure === 1) {
                 return (
                   <TouchableOpacity
@@ -145,24 +140,22 @@ const ProfilePage = ({ route }) => {
         </View>
 
         <View style={styles.aboutContainer}>
-          <Text style={styles.aboutTitle}>
-            About {userInformation.firstName}
-          </Text>
+          <Text style={styles.aboutTitle}>About {user.firstName}</Text>
           <TextInput
             style={styles.aboutInput}
             multiline={true}
             editable={false}
-            value={userInformation.about}
+            value={user.about}
           />
         </View>
         <View style={styles.reviewsContainer}>
           <Text style={styles.reviewsTitle}>
-            {userInformation.firstName}'s Top Reviews
+            {user.firstName}'s Top Reviews
           </Text>
           <FlatList
             horizontal={true}
             showsHorizontalScrollIndicator={false}
-            data={userInformation.reviews}
+            data={user.reviews}
             keyExtractor={(item, index) => `key-${index}`}
             renderItem={({ item }) => (
               <View style={styles.reviewItem}>
@@ -294,17 +287,17 @@ const styles = StyleSheet.create({
     color: "black",
     fontSize: 12,
     fontWeight: "bold",
-    margin: 5, // Match locationBtn's margin
-    paddingVertical: 8, // Match locationBtn's paddingVertical
-    paddingHorizontal: 10, // Match locationBtn's paddingHorizontal
-    backgroundColor: "#808080", // Match locationBtn's backgroundColor
-    borderWidth: 1, // Match locationBtn's borderWidth
-    borderColor: "grey", // Match locationBtn's borderColor
-    borderRadius: 20, // Match locationBtn's borderRadius
-    justifyContent: "center", // Match locationBtn's justifyContent
-    alignItems: "center", // Match locationBtn's alignItems
-    fontSize: 12, // Adjust font size as needed
-    fontWeight: "bold", // Adjust font weight as needed
+    margin: 5,
+    paddingVertical: 8,
+    paddingHorizontal: 10,
+    backgroundColor: "#808080",
+    borderWidth: 1,
+    borderColor: "grey",
+    borderRadius: 20,
+    justifyContent: "center",
+    alignItems: "center",
+    fontSize: 12,
+    fontWeight: "bold",
   },
   aboutContainer: {
     padding: 20,

@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useContext } from "react";
 import {
   SafeAreaView,
   StyleSheet,
@@ -9,10 +9,11 @@ import {
 } from "react-native";
 import DropDownPicker from "react-native-dropdown-picker";
 import { useNavigation } from "@react-navigation/native";
-import { userInformationTamplate } from "./LogIn";
+import { UserContext } from "../components/UserContext/UserContext";
 
 function Registration() {
   const navigation = useNavigation();
+  const { setUser, userInformationTemplate } = useContext(UserContext);
 
   const [userName, setUserName] = useState("");
   const [userLastName, setUserLastName] = useState("");
@@ -22,31 +23,22 @@ function Registration() {
   const [selectedGender, setSelectedGender] = useState(null);
 
   const [open, setOpen] = useState(false);
-  const [value, setValue] = useState(null);
   const [items, setItems] = useState([
     { label: "Male", value: "male" },
     { label: "Female", value: "female" },
   ]);
 
   const handleRegistration = () => {
-    // create a new object with the entered data
-    const userInformation = { ...userInformationTamplate };
+    const userInformation = { ...userInformationTemplate };
     userInformation.firstName = userName;
     userInformation.lastName = userLastName;
     userInformation.email = userEmail;
     userInformation.password = userPassword;
     userInformation.gender = selectedGender;
 
-    // Perform registration logic with the entered data
-    navigation.navigate("ProfileInfo", { userInformation });
+    setUser(userInformation);
 
-    console.log("Register pressed", {
-      first_name: userName,
-      last_name: userLastName,
-      email: userEmail,
-      password: userPassword,
-      gender: selectedGender,
-    });
+    navigation.navigate("ProfileInfo");
   };
 
   return (
@@ -61,7 +53,6 @@ function Registration() {
           value={userName}
           onChangeText={(text) => setUserName(text)}
         />
-
         <Text>Last Name</Text>
         <TextInput
           placeholder="Enter your last name"
@@ -71,7 +62,6 @@ function Registration() {
           value={userLastName}
           onChangeText={(text) => setUserLastName(text)}
         />
-
         <Text>Gender</Text>
         <DropDownPicker
           open={open}
@@ -82,7 +72,6 @@ function Registration() {
           setItems={setItems}
           style={styles.input_container}
         />
-
         <Text>User email</Text>
         <TextInput
           placeholder="Enter your email"
@@ -92,7 +81,6 @@ function Registration() {
           value={userEmail}
           onChangeText={(text) => setUserEmail(text)}
         />
-
         <Text>Password</Text>
         <TextInput
           placeholder="Enter your password"
@@ -102,7 +90,6 @@ function Registration() {
           value={userPassword}
           onChangeText={(text) => setUserPassword(text)}
         />
-
         <Text>Confirm Password</Text>
         <TextInput
           placeholder="Confirm your password"
@@ -112,7 +99,6 @@ function Registration() {
           value={userConfirmPassword}
           onChangeText={(text) => setUserConfirmPassword(text)}
         />
-
         <TouchableOpacity style={styles.button} onPress={handleRegistration}>
           <Text style={styles.buttonText}>Register</Text>
         </TouchableOpacity>
