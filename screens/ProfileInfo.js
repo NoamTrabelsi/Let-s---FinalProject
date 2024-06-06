@@ -1,4 +1,4 @@
-import React, { useContext } from "react";
+import React, { useContext, useState } from "react";
 import {
   View,
   Text,
@@ -18,9 +18,13 @@ import { UserContext } from "../components/UserContext/UserContext";
 
 function ProfileInfo() {
   const navigation = useNavigation();
-  const { user } = useContext(UserContext);
+  const { user, updateUser } = useContext(UserContext);
+
+  const [userFoodInfo, setUserFoodInfo] = useState(user.interests.food);
 
   const handleLogIn = () => {
+    updateUser("interests.food", userFoodInfo);
+
     navigation.dispatch(
       CommonActions.reset({
         index: 0,
@@ -34,7 +38,7 @@ function ProfileInfo() {
       <ScrollView>
         <View>
           <GetKnow />
-          <Food />
+          <Food userFoodInfo={userFoodInfo} setUserFoodInfo={setUserFoodInfo} />
           <Sleep />
           <Movement />
           <Adventure />

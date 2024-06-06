@@ -32,8 +32,28 @@ const userInformationTemplate = {
 const UserProvider = ({ children }) => {
   const [user, setUser] = useState(userInformationTemplate);
 
+  const updateUser = (path, value) => {
+    setUser((prevUser) => {
+      const userCopy = { ...prevUser };
+      const keys = Array.isArray(path) ? path : path.split(".");
+
+      keys.reduce((acc, key, index) => {
+        if (index === keys.length - 1) {
+          acc[key] = value;
+        } else {
+          if (!acc[key]) acc[key] = {};
+          return acc[key];
+        }
+      }, userCopy);
+
+      return userCopy;
+    });
+  };
+
   return (
-    <UserContext.Provider value={{ user, setUser, userInformationTemplate }}>
+    <UserContext.Provider
+      value={{ user, setUser, userInformationTemplate, updateUser }}
+    >
       {children}
     </UserContext.Provider>
   );
