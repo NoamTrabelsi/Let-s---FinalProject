@@ -1,11 +1,18 @@
 import React, { useState, useEffect } from "react";
 import { StyleSheet, View, Text, TouchableOpacity } from "react-native";
 
-export const foodOptions = ["everything", "vegetarian", "vegan"];
+export const foodOptions = ["everything", "vegetarian", "vegan", "Gluten-free"];
 
 function Food({ userFoodInfo, setUserFoodInfo }) {
   if (userFoodInfo.length === 0) {
     setUserFoodInfo(new Array(foodOptions.length).fill(0));
+  } else if (userFoodInfo.length !== foodOptions.length) {
+    const oldOptions = [...userFoodInfo];
+    const newOptions = new Array(foodOptions.length).fill(0);
+    oldOptions.forEach((option, index) => {
+      newOptions[index] = option;
+    });
+    setUserFoodInfo(newOptions);
   }
 
   const toggleOption = (index) => {
