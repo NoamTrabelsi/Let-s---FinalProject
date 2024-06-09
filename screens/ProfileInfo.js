@@ -5,8 +5,10 @@ import {
   StyleSheet,
   TouchableOpacity,
   ScrollView,
+  TextInput,
 } from "react-native";
 import Destination from "../components/ProfileInfo/Destination";
+import About from "../components/ProfileInfo/About";
 import Food from "../components/ProfileInfo/Food";
 import Sleep from "../components/ProfileInfo/Sleep";
 import GetKnow from "../components/ProfileInfo/GetKnow";
@@ -28,12 +30,14 @@ function ProfileInfo() {
   const [userAdventureInfo, setUserAdventureInfo] = useState(
     user.interests.adventure
   );
+  const [aboutUser, setAboutUser] = useState(user.about);
 
   const handleLogIn = () => {
     updateUser("interests.food", userFoodInfo);
     updateUser("interests.sleep", userSleepInfo);
     updateUser("interests.movement", userMovementInfo);
     updateUser("interests.adventure", userAdventureInfo);
+    updateUser("about", aboutUser);
 
     navigation.dispatch(
       CommonActions.reset({
@@ -48,6 +52,7 @@ function ProfileInfo() {
       <ScrollView>
         <View>
           <GetKnow />
+          <About aboutUser={aboutUser} setAboutUser={setAboutUser} />
           <Food userFoodInfo={userFoodInfo} setUserFoodInfo={setUserFoodInfo} />
           <Sleep
             userSleepInfo={userSleepInfo}
