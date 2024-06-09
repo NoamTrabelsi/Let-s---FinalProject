@@ -1,14 +1,5 @@
-import React, { useContext } from "react";
-import {
-  SafeAreaView,
-  View,
-  Text,
-  Image,
-  StyleSheet,
-  TouchableOpacity,
-  TextInput,
-  ScrollView,
-} from "react-native";
+import React from "react";
+import { View, Text, TextInput, StyleSheet } from "react-native";
 
 const About = ({ aboutUser, setAboutUser }) => {
   return (
@@ -27,13 +18,12 @@ const About = ({ aboutUser, setAboutUser }) => {
 };
 
 const styles = StyleSheet.create({
-  aboutContainer: {
+  container: {
     padding: 12,
-    backgroundColor: "#FF8C00",
-    borderBottomColor: "#EDEDED",
   },
-  aboutTitle: {
-    fontSize: 18,
+  textContainer: {
+    marginTop: 12,
+    fontSize: 20,
     fontWeight: "bold",
   },
   aboutInput: {
@@ -45,11 +35,8 @@ const styles = StyleSheet.create({
     borderRadius: 5,
     padding: 10,
     backgroundColor: "#F5F5F5",
-  },
-  textContainer: {
-    marginTop: 12,
-    fontSize: 20,
-    fontWeight: "bold",
+    textAlignVertical: "top",
+    height: 100,
   },
 });
 

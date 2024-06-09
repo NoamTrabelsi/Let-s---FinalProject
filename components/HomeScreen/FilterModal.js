@@ -36,7 +36,7 @@ const FilterModal = ({
       visible={isVisible}
       onRequestClose={toggleModal}
     >
-      <View style={styles.centeredView}>
+      <View style={styles.modalContainer}>
         <View style={styles.modalView}>
           <View style={{ flex: 1 }}>
             <Slider
@@ -88,6 +88,12 @@ const styles = StyleSheet.create({
     elevation: 5,
     width: "80%",
     height: "50%",
+  },
+  modalContainer: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+    backgroundColor: "rgba(0,0,0,0.5)",
   },
   buttonClose: {
     backgroundColor: "#808080",

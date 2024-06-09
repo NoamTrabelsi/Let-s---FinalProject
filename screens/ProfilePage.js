@@ -1,4 +1,4 @@
-import React, { useContext } from "react";
+import React, { useContext, useState } from "react";
 import {
   SafeAreaView,
   View,
@@ -8,6 +8,7 @@ import {
   TouchableOpacity,
   TextInput,
   ScrollView,
+  Modal,
 } from "react-native";
 import { FontAwesome } from "@expo/vector-icons";
 import { FlatList } from "react-native-gesture-handler";
@@ -18,12 +19,99 @@ import { sleepOptions } from "../components/ProfileInfo/Sleep";
 import { adventureOptions } from "../components/ProfileInfo/Adventure";
 
 const ProfilePage = () => {
-  const { user } = useContext(UserContext);
+  const { user, updateUser } = useContext(UserContext); // Убедитесь, что updateUser доступна
+
+  const [isModalVisible, setModalVisible] = useState(false);
+  const [newReviewText, setNewReviewText] = useState("");
+  const [userReviews, setUserReviews] = useState(user.reviews || []);
+  const [reviewRating, setReviewRating] = useState(1);
+  const [errorMessage, setErrorMessage] = useState("");
+
+  const handleSaveReview = () => {
+    if (newReviewText.trim() === "") {
+      setErrorMessage("Review cannot be empty");
+      return;
+    }
+
+    const newReview = {
+      name: user.firstName || "Anonymous", // Используйте имя текущего пользователя или "Anonymous"
+      age: user.age,
+      location: user.location,
+      rating: reviewRating,
+      text: newReviewText,
+    };
+
+    const updatedReviews = [newReview, ...userReviews];
+    setUserReviews(updatedReviews);
+    updateUser("reviews", updatedReviews); // Обновляем контекст пользователя
+    setModalVisible(false);
+    setNewReviewText(""); // Очистите поле ввода после сохранения
+    setReviewRating(1); // Сброс рейтинга после сохранения
+  };
+
+  const StarRating = ({ rating, setRating }) => {
+    return (
+      <View style={styles.starRatingContainer}>
+        {Array.from({ length: 5 }).map((_, index) => (
+          <TouchableOpacity
+            key={index}
+            onPressIn={() => setRating(Math.max(1, index + 1))}
+          >
+            <FontAwesome
+              name={index < rating ? "star" : "star-o"}
+              size={32}
+              color="orange"
+            />
+          </TouchableOpacity>
+        ))}
+      </View>
+    );
+  };
 
   const tripMatch = 80;
 
   return (
     <SafeAreaView style={styles.container}>
+      <Modal
+        animationType="fade"
+        transparent={true}
+        visible={isModalVisible}
+        onRequestClose={() => setModalVisible(false)}
+      >
+        <View style={styles.modalContainer}>
+          <View style={styles.modalContent}>
+            <Text style={styles.modalTitle}>Add Review</Text>
+            {errorMessage ? (
+              <Text style={{ color: "red", marginBottom: 10 }}>
+                {errorMessage}
+              </Text>
+            ) : null}
+            <TextInput
+              style={styles.reviewInput}
+              multiline={true}
+              placeholder="Write your review here"
+              value={newReviewText}
+              blurOnSubmit={true}
+              onChangeText={(text) => setNewReviewText(text)}
+            />
+            <StarRating rating={reviewRating} setRating={setReviewRating} />
+            <View style={styles.reviewBtnContainer}>
+              <TouchableOpacity
+                style={styles.saveButton}
+                onPress={handleSaveReview}
+              >
+                <Text style={styles.buttonText}>Save Review</Text>
+              </TouchableOpacity>
+              <TouchableOpacity
+                style={styles.closeButton}
+                onPress={() => setModalVisible(false)}
+              >
+                <Text style={styles.buttonText}>Close</Text>
+              </TouchableOpacity>
+            </View>
+          </View>
+        </View>
+      </Modal>
       <ScrollView showsVerticalScrollIndicator={false}>
         <View style={styles.profileHeader}>
           <Image
@@ -155,7 +243,7 @@ const ProfilePage = () => {
           <FlatList
             horizontal={true}
             showsHorizontalScrollIndicator={false}
-            data={user.reviews}
+            data={userReviews}
             keyExtractor={(item, index) => `key-${index}`}
             renderItem={({ item }) => (
               <View style={styles.reviewItem}>
@@ -189,7 +277,10 @@ const ProfilePage = () => {
         </View>
 
         <View style={styles.buttonsContainer}>
-          <TouchableOpacity style={styles.button}>
+          <TouchableOpacity
+            style={styles.button}
+            onPress={() => setModalVisible(true)}
+          >
             <Text style={styles.buttonText}>Add Review</Text>
           </TouchableOpacity>
           <TouchableOpacity style={[styles.button, styles.chatButton]}>
@@ -296,8 +387,6 @@ const styles = StyleSheet.create({
     borderRadius: 20,
     justifyContent: "center",
     alignItems: "center",
-    fontSize: 12,
-    fontWeight: "bold",
   },
   aboutContainer: {
     padding: 20,
@@ -328,7 +417,6 @@ const styles = StyleSheet.create({
     color: "white",
     fontSize: 18,
     fontWeight: "bold",
-    height: 30,
   },
   reviewItem: {
     marginTop: 20,
@@ -380,6 +468,57 @@ const styles = StyleSheet.create({
     fontSize: 16,
     color: "white",
     fontWeight: "bold",
+  },
+  modalContainer: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+    backgroundColor: "rgba(0,0,0,0.5)",
+  },
+  modalContent: {
+    width: 300,
+    padding: 20,
+    backgroundColor: "white",
+    borderRadius: 10,
+    alignItems: "center",
+  },
+  modalTitle: {
+    fontSize: 20,
+    fontWeight: "bold",
+    marginBottom: 10,
+  },
+  reviewInput: {
+    width: "100%",
+    height: 100,
+    borderColor: "#EDEDED",
+    borderWidth: 1,
+    borderRadius: 5,
+    padding: 10,
+    marginBottom: 10,
+    backgroundColor: "#F5F5F5",
+    textAlignVertical: "top",
+  },
+  reviewBtnContainer: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    width: "100%",
+  },
+  saveButton: {
+    backgroundColor: "#FF8C00",
+    padding: 10,
+    borderRadius: 5,
+    marginTop: 20,
+  },
+  closeButton: {
+    marginTop: 20,
+    backgroundColor: "#808080",
+    padding: 10,
+    borderRadius: 5,
+  },
+  starRatingContainer: {
+    flexDirection: "row",
+    justifyContent: "center",
+    marginBottom: 10,
   },
 });
 
