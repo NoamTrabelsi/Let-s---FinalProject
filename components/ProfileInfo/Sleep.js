@@ -3,28 +3,26 @@ import { StyleSheet, View, Text, TouchableOpacity } from "react-native";
 
 export const sleepOptions = ["hotel", "hostel", "rental", "out-door"];
 
-function Sleep() {
-  const [selectedSleepOptions, setSelectedSleepOptions] = useState([]);
-  const [sleepOptionsVector, setSleepOptionsVector] = useState(
-    new Array(sleepOptions.length).fill(0)
-  );
-
-  const toggleSleepOption = (option) => {
-    setSelectedSleepOptions((prevOptions) =>
-      prevOptions.includes(option)
-        ? prevOptions.filter((opt) => opt !== option)
-        : [...prevOptions, option]
-    );
-  };
-
+function Sleep({ userSleepInfo, setUserSleepInfo }) {
   useEffect(() => {
-    // Обновляем векторное представление при изменении selectedSleepOptions
-    const vector = sleepOptions.map((option) =>
-      selectedSleepOptions.includes(option) ? 1 : 0
-    );
-    setSleepOptionsVector(vector);
-    console.log("Sleep options vector:", vector);
-  }, [selectedSleepOptions]);
+    if (userSleepInfo.length === 0) {
+      setUserSleepInfo(new Array(sleepOptions.length).fill(0));
+    } else if (userSleepInfo.length !== sleepOptions.length) {
+      const newOptions = new Array(sleepOptions.length).fill(0);
+      userSleepInfo.forEach((option, index) => {
+        if (index < sleepOptions.length) {
+          newOptions[index] = option;
+        }
+      });
+      setUserSleepInfo(newOptions);
+    }
+  });
+
+  const toggleSleepOption = (index) => {
+    const newOptions = [...userSleepInfo];
+    newOptions[index] = newOptions[index] === 0 ? 1 : 0;
+    setUserSleepInfo(newOptions);
+  };
 
   return (
     <View style={styles.container}>
@@ -36,15 +34,14 @@ function Sleep() {
             key={index}
             style={[
               styles.locationBtn,
-              selectedSleepOptions.includes(option) ? styles.selected : {},
+              userSleepInfo[index] === 1 ? styles.selected : {},
             ]}
-            onPress={() => toggleSleepOption(option)}
+            onPress={() => toggleSleepOption(index)}
           >
             <Text style={styles.buttonText}>{option}</Text>
           </TouchableOpacity>
         ))}
       </View>
-      {/* Здесь можете выводить sleepOptionsVector на экран, если это необходимо */}
     </View>
   );
 }

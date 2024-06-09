@@ -9,27 +9,26 @@ export const transportOptions = [
   "rental car",
 ];
 
-function Movement() {
-  const [selectedOptions, setSelectedOptions] = useState([]);
-  const [optionsVector, setOptionsVector] = useState(
-    new Array(transportOptions.length).fill(0)
-  );
-
-  const toggleOption = (option) => {
-    setSelectedOptions((prevOptions) =>
-      prevOptions.includes(option)
-        ? prevOptions.filter((opt) => opt !== option)
-        : [...prevOptions, option]
-    );
-  };
-
+function Movement({ userMovementInfo, setUserMovementInfo }) {
   useEffect(() => {
-    const vector = transportOptions.map((option) =>
-      selectedOptions.includes(option) ? 1 : 0
-    );
-    setOptionsVector(vector);
-    console.log("Movement options vector:", vector);
-  }, [selectedOptions]);
+    if (userMovementInfo.length === 0) {
+      setUserMovementInfo(new Array(transportOptions.length).fill(0));
+    } else if (userMovementInfo.length !== transportOptions.length) {
+      const newOptions = new Array(transportOptions.length).fill(0);
+      userMovementInfo.forEach((option, index) => {
+        if (index < transportOptions.length) {
+          newOptions[index] = option;
+        }
+      });
+      setUserMovementInfo(newOptions);
+    }
+  });
+
+  const toggleOption = (index) => {
+    const newOptions = [...userMovementInfo];
+    newOptions[index] = newOptions[index] === 0 ? 1 : 0;
+    setUserMovementInfo(newOptions);
+  };
 
   return (
     <View style={styles.container}>
@@ -41,9 +40,9 @@ function Movement() {
             key={index}
             style={[
               styles.locationBtn,
-              selectedOptions.includes(option) ? styles.selected : {},
+              userMovementInfo[index] === 1 ? styles.selected : {},
             ]}
-            onPress={() => toggleOption(option)}
+            onPress={() => toggleOption(index)}
           >
             <Text style={styles.buttonText}>{option}</Text>
           </TouchableOpacity>

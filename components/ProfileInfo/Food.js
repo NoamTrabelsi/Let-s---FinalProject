@@ -4,27 +4,25 @@ import { StyleSheet, View, Text, TouchableOpacity } from "react-native";
 export const foodOptions = ["everything", "vegetarian", "vegan", "Gluten-free"];
 
 function Food({ userFoodInfo, setUserFoodInfo }) {
-  if (userFoodInfo.length === 0) {
-    setUserFoodInfo(new Array(foodOptions.length).fill(0));
-  } else if (userFoodInfo.length !== foodOptions.length) {
-    const oldOptions = [...userFoodInfo];
-    const newOptions = new Array(foodOptions.length).fill(0);
-    oldOptions.forEach((option, index) => {
-      newOptions[index] = option;
-    });
-    setUserFoodInfo(newOptions);
-  }
+  useEffect(() => {
+    if (userFoodInfo.length === 0) {
+      setUserFoodInfo(new Array(foodOptions.length).fill(0));
+    } else if (userFoodInfo.length !== foodOptions.length) {
+      const newOptions = new Array(foodOptions.length).fill(0);
+      userFoodInfo.forEach((option, index) => {
+        if (index < foodOptions.length) {
+          newOptions[index] = option;
+        }
+      });
+      setUserFoodInfo(newOptions);
+    }
+  });
 
   const toggleOption = (index) => {
     const newOptions = [...userFoodInfo];
     newOptions[index] = newOptions[index] === 0 ? 1 : 0;
     setUserFoodInfo(newOptions);
-    console.log("New food options:", newOptions);
   };
-
-  useEffect(() => {
-    console.log("User food info:", userFoodInfo);
-  });
 
   return (
     <View style={styles.container}>

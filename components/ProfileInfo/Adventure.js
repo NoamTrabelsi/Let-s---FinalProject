@@ -22,27 +22,26 @@ export const adventureOptions = [
   "shopping",
 ];
 
-function Adventure() {
-  const [selectedAdventures, setSelectedAdventures] = useState([]);
-  const [adventuresVector, setAdventuresVector] = useState(
-    new Array(adventureOptions.length).fill(0)
-  );
-
-  const toggleLocation = (adventure) => {
-    setSelectedAdventures((prevAdventures) =>
-      prevAdventures.includes(adventure)
-        ? prevAdventures.filter((loc) => loc !== adventure)
-        : [...prevAdventures, adventure]
-    );
-  };
-
+function Adventure({ userAdventureInfo, setUserAdventureInfo }) {
   useEffect(() => {
-    const vector = adventureOptions.map((adventure) =>
-      selectedAdventures.includes(adventure) ? 1 : 0
-    );
-    setAdventuresVector(vector);
-    console.log("Adventure options vector:", vector);
-  }, [selectedAdventures]);
+    if (userAdventureInfo.length === 0) {
+      setUserAdventureInfo(new Array(adventureOptions.length).fill(0));
+    } else if (userAdventureInfo.length !== adventureOptions.length) {
+      const newOptions = new Array(adventureOptions.length).fill(0);
+      userAdventureInfo.forEach((option, index) => {
+        if (index < adventureOptions.length) {
+          newOptions[index] = option;
+        }
+      });
+      setUserAdventureInfo(newOptions);
+    }
+  });
+
+  const toggleLocation = (index) => {
+    const newOptions = [...userAdventureInfo];
+    newOptions[index] = newOptions[index] === 0 ? 1 : 0;
+    setUserAdventureInfo(newOptions);
+  };
 
   return (
     <View style={styles.container}>
@@ -54,9 +53,9 @@ function Adventure() {
             key={index}
             style={[
               styles.adventureBtn,
-              selectedAdventures.includes(adventure) ? styles.selected : {},
+              userAdventureInfo[index] === 1 ? styles.selected : {},
             ]}
-            onPress={() => toggleLocation(adventure)}
+            onPress={() => toggleLocation(index)}
           >
             <Text style={styles.buttonText}>{adventure}</Text>
           </TouchableOpacity>

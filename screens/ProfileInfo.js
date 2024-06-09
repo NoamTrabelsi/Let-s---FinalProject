@@ -21,9 +21,19 @@ function ProfileInfo() {
   const { user, updateUser } = useContext(UserContext);
 
   const [userFoodInfo, setUserFoodInfo] = useState(user.interests.food);
+  const [userSleepInfo, setUserSleepInfo] = useState(user.interests.sleep);
+  const [userMovementInfo, setUserMovementInfo] = useState(
+    user.interests.movement
+  );
+  const [userAdventureInfo, setUserAdventureInfo] = useState(
+    user.interests.adventure
+  );
 
   const handleLogIn = () => {
     updateUser("interests.food", userFoodInfo);
+    updateUser("interests.sleep", userSleepInfo);
+    updateUser("interests.movement", userMovementInfo);
+    updateUser("interests.adventure", userAdventureInfo);
 
     navigation.dispatch(
       CommonActions.reset({
@@ -39,9 +49,18 @@ function ProfileInfo() {
         <View>
           <GetKnow />
           <Food userFoodInfo={userFoodInfo} setUserFoodInfo={setUserFoodInfo} />
-          <Sleep />
-          <Movement />
-          <Adventure />
+          <Sleep
+            userSleepInfo={userSleepInfo}
+            setUserSleepInfo={setUserSleepInfo}
+          />
+          <Movement
+            userMovementInfo={userMovementInfo}
+            setUserMovementInfo={setUserMovementInfo}
+          />
+          <Adventure
+            userAdventureInfo={userAdventureInfo}
+            setUserAdventureInfo={setUserAdventureInfo}
+          />
         </View>
         <View style={styles.viewBtn}>
           <TouchableOpacity style={styles.createBtm} onPress={handleLogIn}>
