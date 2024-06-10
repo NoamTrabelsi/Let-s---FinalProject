@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import {
   View,
   TextInput,
@@ -8,7 +8,7 @@ import {
   Text,
 } from "react-native";
 import { Entypo } from "@expo/vector-icons";
-import DatePicker from "./DatePicker";
+import DateTimePicker from "@react-native-community/datetimepicker";
 
 const SearchBar = ({
   city,
@@ -22,6 +22,21 @@ const SearchBar = ({
   inputContainerTranslateY,
   setInputContainerHeight,
 }) => {
+  const [showStartDatePicker, setShowStartDatePicker] = useState(false);
+  const [showEndDatePicker, setShowEndDatePicker] = useState(false);
+
+  const handleStartDateChange = (event, selectedDate) => {
+    const currentDate = selectedDate || startDate;
+    setShowStartDatePicker(false);
+    setStartDate(currentDate);
+  };
+
+  const handleEndDateChange = (event, selectedDate) => {
+    const currentDate = selectedDate || endDate;
+    setShowEndDatePicker(false);
+    setEndDate(currentDate);
+  };
+
   return (
     <Animated.View
       style={[
@@ -36,7 +51,7 @@ const SearchBar = ({
       <View style={styles.searchContainer}>
         <TextInput
           style={styles.input}
-          placeholder="Enter City"
+          placeholder="Where to?"
           placeholderTextColor="gray"
           onChangeText={setCity}
           value={city}
@@ -45,26 +60,49 @@ const SearchBar = ({
           style={styles.filterButton}
           onPress={toggleFilterModal}
         >
-          <Entypo name="sound-mix" size={30} color="#808080" />
+          <Entypo name="sound-mix" size={24} color="black" />
         </TouchableOpacity>
       </View>
 
-      <DatePicker
-        label="Select Start Date"
-        date={startDate}
-        onConfirm={setStartDate}
-      />
-      <DatePicker
-        label="Select End Date"
-        date={endDate}
-        onConfirm={setEndDate}
-        minimumDate={startDate}
-      />
+      <View style={styles.datePickersContainer}>
+        <TouchableOpacity
+          onPress={() => setShowStartDatePicker(true)}
+          style={styles.datePicker}
+        >
+          <Text style={styles.datePickerText}>
+            {startDate ? startDate.toDateString() : "Start Date"}
+          </Text>
+        </TouchableOpacity>
+        <TouchableOpacity
+          onPress={() => setShowEndDatePicker(true)}
+          style={styles.datePicker}
+        >
+          <Text style={styles.datePickerText}>
+            {endDate ? endDate.toDateString() : "End Date"}
+          </Text>
+        </TouchableOpacity>
+      </View>
 
-      <TouchableOpacity
-        onPress={handleSearch}
-        style={[styles.dateButton, styles.searchButton]}
-      >
+      {showStartDatePicker && (
+        <DateTimePicker
+          value={startDate || new Date()}
+          mode="date"
+          display="default"
+          onChange={handleStartDateChange}
+        />
+      )}
+
+      {showEndDatePicker && (
+        <DateTimePicker
+          value={endDate || new Date()}
+          mode="date"
+          display="default"
+          onChange={handleEndDateChange}
+          minimumDate={startDate || new Date()}
+        />
+      )}
+
+      <TouchableOpacity onPress={handleSearch} style={styles.searchButton}>
         <Text style={styles.dateButtonText}>Search</Text>
       </TouchableOpacity>
     </Animated.View>
@@ -74,7 +112,7 @@ const SearchBar = ({
 const styles = StyleSheet.create({
   inputContainer: {
     backgroundColor: "#FF8C00",
-    marginBottom: 10,
+    paddingBottom: 20,
     zIndex: 1,
     position: "absolute",
     width: "100%",
@@ -82,38 +120,57 @@ const styles = StyleSheet.create({
     left: 0,
     right: 0,
     paddingHorizontal: 20,
-    paddingTop: 20,
+    paddingTop: 50,
+    borderBottomLeftRadius: 40,
+    borderBottomRightRadius: 40,
   },
   searchContainer: {
-    alignSelf: "center",
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",
-    marginTop: 10,
-    width: "70%",
+    width: "100%",
   },
   input: {
     flex: 1,
     height: 40,
-    borderColor: "gray",
+    borderColor: "black",
     borderWidth: 1,
     marginRight: 10,
     paddingHorizontal: 10,
-    borderRadius: 20,
+    borderRadius: 10,
     backgroundColor: "white",
     color: "black",
   },
   filterButton: {
     padding: 10,
   },
-  dateButton: {
+  datePickersContainer: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    marginTop: 10,
+  },
+  datePicker: {
+    flex: 1,
+    height: 40,
+    borderColor: "black",
+    borderWidth: 1,
+    marginRight: 10,
+    paddingHorizontal: 10,
+    borderRadius: 10,
+    backgroundColor: "white",
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  datePickerText: {
+    color: "black",
+  },
+  searchButton: {
     backgroundColor: "#808080",
     padding: 10,
     borderRadius: 20,
     marginTop: 10,
     alignItems: "center",
-    width: "45%",
-    alignSelf: "center",
+    width: "100%",
   },
   dateButtonText: {
     color: "white",
