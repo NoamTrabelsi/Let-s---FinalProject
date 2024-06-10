@@ -6,6 +6,8 @@ npm install react-native-modal-datetime-picker @react-native-community/datetimep
 
 npm install react-native-paper
 
+npm install react-select-country-list --save --legacy-peer-deps
+
 
 npm install --save @ptomasroos/react-native-multi-slider
 
