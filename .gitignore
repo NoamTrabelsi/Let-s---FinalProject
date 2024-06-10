@@ -33,3 +33,115 @@ yarn-error.*
 
 # typescript
 *.tsbuildinfo
+
+# Lock files
+package-lock.json
+yarn.lock
+
+# Build directories
+build/
+dist/
+
+# Personal files
+*.swp
+*~
+
+# Text backup
+*.bak
+*.tmp
+
+# IDE and Editor files
+.idea/
+*.sublime*
+.vscode/
+
+# Coverage directory used by tools like istanbul
+coverage/
+*.lcov
+
+# Dependency directories
+bower_components/
+
+# React Native packager
+*.packager
+*.react-native
+
+# Android/IntelliJ
+android/.gradle/
+android/app/build/
+android/app/.cxx/
+android/local.properties
+android/app/debug/
+android/app/release/
+android/app/.idea/
+android/build/
+*.iml
+
+# Buck files
+*.buckconfig
+buck-out/
+\.buckd/
+*.keystore
+
+# Fastlane
+fastlane/report.xml
+fastlane/Preview.html
+fastlane/screenshots
+
+# iOS
+ios/Pods/
+ios/Podfile.lock
+ios/Podfile.old
+ios/Podfile.lock.cached
+ios/fastlane/
+ios/.idea/
+ios/.build/
+
+# Windows
+*.suo
+*.user
+*.userosscache
+*.sln.docstates
+
+# node-waf configuration
+.lock-wscript
+
+# npm
+npm-debug.log
+yarn-error.log
+
+# WebStorm
+.idea/
+
+# Sublime Text
+*.sublime*
+
+# Text backup
+*.bak
+*.tmp
+*.temp
+*.pid
+*.seed
+*.pid.lock
+.idea/
+*.sublime-project
+*.sublime-workspace
+.vscode/
+.DS_Store
+
+# Lock files
+package-lock.json
+yarn.lock
+
+# Miscellaneous
+*.log
+*.tmp
+*.temp
+*.pid
+*.seed
+*.pid.lock
+.idea/
+*.sublime-project
+*.sublime-workspace
+.vscode/
+.DS_Store
