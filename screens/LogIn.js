@@ -7,6 +7,7 @@ import {
   Text,
   TouchableOpacity,
   ImageBackground,
+  Image,
 } from "react-native";
 import { useNavigation } from "@react-navigation/native";
 import { CommonActions } from "@react-navigation/native";
@@ -71,21 +72,20 @@ function LogIn() {
 
   return (
     <ImageBackground
-      source={require("../assets/splash.png")}
+      source={require("../assets/splash-simple.png")}
       style={styles.container}
     >
       <View style={styles.formContainer}>
-        <Text style={styles.label}>User email</Text>
+        <Image source={require("../assets/logo.png")} style={styles.image} />
         <TextInput
-          placeholder="Enter your email"
+          placeholder="Email"
           placeholderTextColor="gray"
           style={styles.input}
           autoCapitalize="none"
           textContentType="username"
         />
-        <Text style={styles.label}>Password</Text>
         <TextInput
-          placeholder="Enter your password"
+          placeholder="Password"
           placeholderTextColor="gray"
           style={styles.input}
           secureTextEntry={true}
@@ -122,9 +122,11 @@ const styles = StyleSheet.create({
     width: "50%",
     alignItems: "center",
   },
-  label: {
-    alignSelf: "flex-start",
-    marginVertical: 5,
+  image: {
+    width: "50%",
+    height: "50%",
+    resizeMode: "contain",
+    marginBottom: -30,
   },
   input: {
     height: 40,
@@ -137,15 +139,19 @@ const styles = StyleSheet.create({
     paddingHorizontal: 10,
   },
   button: {
-    backgroundColor: "#808080",
+    height: 50,
+    backgroundColor: "#FF8C00",
     padding: 10,
-    borderRadius: 20,
-    width: "100%",
+    borderRadius: 10,
+    borderColor: "black",
+    borderWidth: 2,
+    width: "80%",
     alignItems: "center",
-    marginVertical: 5,
+    justifyContent: "center",
+    marginTop: 20,
   },
   buttonText: {
-    color: "white",
+    color: "black",
     fontWeight: "bold",
   },
 });

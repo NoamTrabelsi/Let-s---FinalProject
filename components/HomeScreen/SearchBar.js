@@ -6,6 +6,7 @@ import {
   StyleSheet,
   Animated,
   Text,
+  Image,
 } from "react-native";
 import { Entypo } from "@expo/vector-icons";
 import DateTimePicker from "@react-native-community/datetimepicker";
@@ -34,6 +35,12 @@ const SearchBar = ({
         setInputContainerHeight(height);
       }}
     >
+      <View style={{ alignItems: "center" }}>
+        <Image
+          source={require("../../assets/lets-find.png")}
+          style={styles.image}
+        />
+      </View>
       <View style={styles.searchContainer}>
         <TextInput
           style={styles.input}
@@ -74,7 +81,7 @@ const SearchBar = ({
 const styles = StyleSheet.create({
   inputContainer: {
     backgroundColor: "#FF8C00",
-    paddingBottom: 20,
+    paddingBottom: 80,
     zIndex: 1,
     position: "absolute",
     width: "100%",
@@ -83,8 +90,8 @@ const styles = StyleSheet.create({
     right: 0,
     paddingHorizontal: 20,
     paddingTop: 50,
-    borderBottomLeftRadius: 40,
-    borderBottomRightRadius: 40,
+    borderBottomLeftRadius: 50,
+    borderBottomRightRadius: 50,
   },
   searchContainer: {
     flexDirection: "row",
@@ -142,6 +149,12 @@ const styles = StyleSheet.create({
   dateButtonText: {
     color: "white",
     fontWeight: "bold",
+  },
+  image: {
+    width: "60%",
+    height: "60%",
+    resizeMode: "contain",
+    marginBottom: -30,
   },
 });
 

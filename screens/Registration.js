@@ -6,6 +6,7 @@ import {
   View,
   Text,
   TouchableOpacity,
+  Image,
 } from "react-native";
 import DropDownPicker from "react-native-dropdown-picker";
 import { useNavigation } from "@react-navigation/native";
@@ -43,26 +44,29 @@ function Registration() {
 
   return (
     <SafeAreaView style={styles.container}>
+      <Image
+        source={require("../assets/logo-start.png")}
+        style={styles.image}
+      />
       <View style={styles.formContainer}>
-        <Text>First Name</Text>
         <TextInput
-          placeholder="Enter your first name"
+          placeholder="First name"
+          placeholderTextColor={"gray"}
           style={styles.input_container}
           autoCapitalize="none"
           textContentType="username"
           value={userName}
           onChangeText={(text) => setUserName(text)}
         />
-        <Text>Last Name</Text>
         <TextInput
-          placeholder="Enter your last name"
+          placeholder="Last name"
+          placeholderTextColor={"gray"}
           style={styles.input_container}
           autoCapitalize="none"
           textContentType="username"
           value={userLastName}
           onChangeText={(text) => setUserLastName(text)}
         />
-        <Text>Gender</Text>
         <DropDownPicker
           open={open}
           value={selectedGender}
@@ -71,28 +75,32 @@ function Registration() {
           setValue={setSelectedGender}
           setItems={setItems}
           style={styles.input_container}
+          dropDownContainerStyle={styles.dropDownContainer}
+          textStyle={styles.dropDownText}
+          placeholderStyle={styles.placeholderStyle}
+          placeholder="Select gender"
         />
-        <Text>User email</Text>
         <TextInput
-          placeholder="Enter your email"
+          placeholder="Email"
+          placeholderTextColor={"gray"}
           style={styles.input_container}
           autoCapitalize="none"
           textContentType="username"
           value={userEmail}
           onChangeText={(text) => setUserEmail(text)}
         />
-        <Text>Password</Text>
         <TextInput
-          placeholder="Enter your password"
+          placeholder="Password"
+          placeholderTextColor={"gray"}
           style={styles.input_container}
           secureTextEntry={true}
           textContentType="password"
           value={userPassword}
           onChangeText={(text) => setUserPassword(text)}
         />
-        <Text>Confirm Password</Text>
         <TextInput
-          placeholder="Confirm your password"
+          placeholder="Password Validation"
+          placeholderTextColor={"gray"}
           style={styles.input_container}
           secureTextEntry={true}
           textContentType="password"
@@ -119,7 +127,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   input_container: {
-    height: 40,
+    height: 50,
     borderColor: "gray",
     borderWidth: 1,
     borderRadius: 20,
@@ -128,17 +136,40 @@ const styles = StyleSheet.create({
     marginBottom: 15,
     paddingHorizontal: 10,
   },
+  dropDownContainer: {
+    borderColor: "gray",
+    borderWidth: 1,
+    borderRadius: 20,
+    backgroundColor: "white",
+    marginTop: 5,
+  },
+  dropDownText: {
+    color: "black",
+  },
+  placeholderStyle: {
+    color: "gray",
+  },
   button: {
+    height: 50,
     backgroundColor: "#808080",
     padding: 10,
-    borderRadius: 20,
+    borderRadius: 10,
+    borderColor: "black",
+    borderWidth: 2,
     width: "80%",
     alignItems: "center",
+    justifyContent: "center",
     marginTop: 20,
   },
   buttonText: {
     color: "white",
     fontWeight: "bold",
+  },
+  image: {
+    width: "30%",
+    height: "30%",
+    resizeMode: "contain",
+    marginBottom: -30,
   },
 });
 
