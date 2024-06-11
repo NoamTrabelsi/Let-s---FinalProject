@@ -17,7 +17,7 @@ import { UserContext } from "../UserContext/UserContext";
 function GetKnow() {
   const { user, updateUser } = useContext(UserContext);
   const [location, setLocation] = useState("");
-  const [age, setAge] = useState("Select your age");
+  const [age, setAge] = useState(18);
   const [picture, setPicture] = useState(null);
   const [filteredCountries, setFilteredCountries] = useState([]);
   const [isModalVisible, setIsModalVisible] = useState(false);
@@ -36,7 +36,7 @@ function GetKnow() {
       setFilteredCountries([]);
       return;
     }
-    const regex = new RegExp(`${query.trim()}`, "i");
+    const regex = new RegExp(`^${query.trim()}`, "i");
     const filtered = countries.filter(
       (country) => country.label.search(regex) >= 0
     );
@@ -54,8 +54,10 @@ function GetKnow() {
   };
 
   // Placeholder function for selecting an age
-  const selectAge = () => {
-    Alert.alert("Age", "Function to select age would be here.");
+  const selectAge = (textAge) => {
+    const age = parseInt(textAge);
+    setAge(age);
+    updateUser("age", age);
   };
 
   return (
@@ -85,7 +87,6 @@ function GetKnow() {
                 <View style={styles.modalContent}>
                   <TextInput
                     style={styles.locationInput}
-                    value={location}
                     placeholder="Type country name"
                     placeholderTextColor="gray"
                     onChangeText={handleQueryChange}
@@ -114,9 +115,17 @@ function GetKnow() {
                 </View>
               </View>
             </Modal>
-            <TouchableOpacity style={styles.locationBtn} onPress={selectAge}>
-              <Text style={styles.buttonText}>Age</Text>
-            </TouchableOpacity>
+
+            <TextInput
+              placeholder="Age"
+              placeholderTextColor="black"
+              style={styles.ageBtn}
+              keyboardType="numeric"
+              maxLength={2}
+              caretHidden={true}
+              value={user.age ? user.age.toString() : ""}
+              onChangeText={(text) => selectAge(text)}
+            />
           </View>
         </View>
       </View>
@@ -158,6 +167,19 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     alignItems: "center",
   },
+  ageBtn: {
+    margin: 12,
+    width: 150,
+    height: 35,
+    backgroundColor: "white",
+    borderRadius: 20, // Can be adjusted to create rounded corners
+    justifyContent: "center",
+    alignItems: "center",
+    textAlign: "center",
+    fontSize: 12,
+    color: "black",
+    fontWeight: "bold",
+  },
   buttonText: {
     color: "black",
     fontSize: 12,
@@ -190,8 +212,7 @@ const styles = StyleSheet.create({
     alignSelf: "stretch", // Make the list take full width
   },
   item: {
-    padding: 10,
-    borderBottomWidth: 1,
+    padding: 8,
     borderBottomColor: "gray",
   },
   itemText: {

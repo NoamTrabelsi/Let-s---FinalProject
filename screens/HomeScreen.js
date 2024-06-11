@@ -31,6 +31,9 @@ function HomeScreen() {
   const [gender, setGender] = useState("all");
 
   const formatDate = (date) => {
+    if (!date) {
+      return "";
+    }
     return date.toLocaleDateString();
   };
 
