@@ -1,19 +1,19 @@
 import React, { useState } from "react";
 import {
   View,
-  TextInput,
   TouchableOpacity,
   StyleSheet,
   Animated,
   Text,
   Image,
+  TextInput,
 } from "react-native";
 import { Entypo } from "@expo/vector-icons";
-import DateTimePicker from "@react-native-community/datetimepicker";
 import DatePicker from "./DatePicker";
+import countryList from "react-select-country-list";
+import Autocomplete from "react-native-autocomplete-input";
 
 const SearchBar = ({
-  city,
   setCity,
   startDate,
   setStartDate,
@@ -24,6 +24,30 @@ const SearchBar = ({
   inputContainerTranslateY,
   setInputContainerHeight,
 }) => {
+  const [suggestions, setSuggestions] = useState([]);
+  const [inputText, setInputText] = useState("");
+
+  const countries = countryList()
+    .getData()
+    .map((country) => country.label);
+
+  const handleInputChange = (query) => {
+    setInputText(query);
+    const regex = new RegExp(`^${query.trim()}`, "i");
+    const filtered = countries.filter((country) => country.search(regex) >= 0);
+    setSuggestions(filtered);
+  };
+
+  const handleSelectSuggestion = (suggestion) => {
+    setInputText(suggestion);
+    setSuggestions([]);
+  };
+
+  const handleSearchBtn = () => {
+    setCity(inputText);
+    handleSearch();
+  };
+
   return (
     <Animated.View
       style={[
@@ -42,13 +66,39 @@ const SearchBar = ({
         />
       </View>
       <View style={styles.searchContainer}>
-        <TextInput
-          style={styles.input}
-          placeholder="Where to?"
-          placeholderTextColor="gray"
-          onChangeText={setCity}
-          value={city}
-        />
+        <View style={styles.autocompleteContainer}>
+          <Autocomplete
+            value={inputText}
+            data={
+              suggestions.length > 0 && inputText.length > 0 ? suggestions : []
+            }
+            onChangeText={handleInputChange}
+            placeholder="Where to?"
+            placeholderTextColor="gray"
+            inputContainerStyle={styles.inputContainerStyle}
+            listContainerStyle={styles.autocompleteList}
+            flatListProps={{
+              keyExtractor: (_, index) => index.toString(),
+              renderItem: ({ item }) => (
+                <TouchableOpacity
+                  style={{ padding: 10 }}
+                  onPress={() => handleSelectSuggestion(item)}
+                >
+                  <View>
+                    <Text>{item}</Text>
+                  </View>
+                </TouchableOpacity>
+              ),
+            }}
+            renderTextInput={(props) => (
+              <TextInput
+                {...props}
+                style={styles.input}
+                placeholderTextColor="gray"
+              />
+            )}
+          />
+        </View>
         <TouchableOpacity
           style={styles.filterButton}
           onPress={toggleFilterModal}
@@ -71,7 +121,7 @@ const SearchBar = ({
         />
       </View>
 
-      <TouchableOpacity onPress={handleSearch} style={styles.searchButton}>
+      <TouchableOpacity onPress={handleSearchBtn} style={styles.searchButton}>
         <Text style={styles.dateButtonText}>Search</Text>
       </TouchableOpacity>
     </Animated.View>
@@ -99,17 +149,30 @@ const styles = StyleSheet.create({
     alignItems: "center",
     width: "90%",
     alignSelf: "center",
+    zIndex: 2,
   },
-  input: {
+  autocompleteContainer: {
+    position: "relative",
     flex: 1,
-    height: 40,
+  },
+  inputContainerStyle: {
     borderColor: "black",
     borderWidth: 1,
-    marginRight: 10,
-    paddingHorizontal: 10,
     borderRadius: 10,
     backgroundColor: "white",
+  },
+  input: {
+    height: 40,
+    paddingHorizontal: 10,
     color: "black",
+  },
+  autocompleteList: {
+    position: "absolute",
+    top: 40, // This should match the height of the input field
+    // Adjust the width to match the input field
+    left: 10,
+    right: 10,
+    zIndex: 1,
   },
   filterButton: {
     padding: 10,

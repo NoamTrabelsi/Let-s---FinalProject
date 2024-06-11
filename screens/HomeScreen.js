@@ -97,7 +97,6 @@ function HomeScreen() {
       />
 
       <SearchBar
-        city={city}
         setCity={setCity}
         startDate={startDate}
         setStartDate={setStartDate}
