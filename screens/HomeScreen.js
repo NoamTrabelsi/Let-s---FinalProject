@@ -22,8 +22,8 @@ import UsersList from "../components/HomeScreen/UsersList";
 
 function HomeScreen() {
   const [city, setCity] = useState("");
-  const [startDate, setStartDate] = useState(new Date());
-  const [endDate, setEndDate] = useState(new Date());
+  const [startDate, setStartDate] = useState();
+  const [endDate, setEndDate] = useState();
   const [isFilterModalVisible, setFilterModalVisible] = useState(false);
 
   const [minAge, setMinAge] = useState(18);

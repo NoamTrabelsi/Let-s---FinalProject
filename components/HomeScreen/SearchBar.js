@@ -9,6 +9,7 @@ import {
 } from "react-native";
 import { Entypo } from "@expo/vector-icons";
 import DateTimePicker from "@react-native-community/datetimepicker";
+import DatePicker from "./DatePicker";
 
 const SearchBar = ({
   city,
@@ -22,21 +23,6 @@ const SearchBar = ({
   inputContainerTranslateY,
   setInputContainerHeight,
 }) => {
-  const [showStartDatePicker, setShowStartDatePicker] = useState(false);
-  const [showEndDatePicker, setShowEndDatePicker] = useState(false);
-
-  const handleStartDateChange = (event, selectedDate) => {
-    const currentDate = selectedDate || startDate;
-    setShowStartDatePicker(false);
-    setStartDate(currentDate);
-  };
-
-  const handleEndDateChange = (event, selectedDate) => {
-    const currentDate = selectedDate || endDate;
-    setShowEndDatePicker(false);
-    setEndDate(currentDate);
-  };
-
   return (
     <Animated.View
       style={[
@@ -65,42 +51,18 @@ const SearchBar = ({
       </View>
 
       <View style={styles.datePickersContainer}>
-        <TouchableOpacity
-          onPress={() => setShowStartDatePicker(true)}
-          style={styles.datePicker}
-        >
-          <Text style={styles.datePickerText}>
-            {startDate ? startDate.toDateString() : "Start Date"}
-          </Text>
-        </TouchableOpacity>
-        <TouchableOpacity
-          onPress={() => setShowEndDatePicker(true)}
-          style={styles.datePicker}
-        >
-          <Text style={styles.datePickerText}>
-            {endDate ? endDate.toDateString() : "End Date"}
-          </Text>
-        </TouchableOpacity>
+        <DatePicker
+          label="Start Date"
+          date={startDate}
+          onConfirm={setStartDate}
+        />
+        <DatePicker
+          label="End Date"
+          date={endDate}
+          onConfirm={setEndDate}
+          minimumDate={startDate}
+        />
       </View>
-
-      {showStartDatePicker && (
-        <DateTimePicker
-          value={startDate || new Date()}
-          mode="date"
-          display="default"
-          onChange={handleStartDateChange}
-        />
-      )}
-
-      {showEndDatePicker && (
-        <DateTimePicker
-          value={endDate || new Date()}
-          mode="date"
-          display="default"
-          onChange={handleEndDateChange}
-          minimumDate={startDate || new Date()}
-        />
-      )}
 
       <TouchableOpacity onPress={handleSearch} style={styles.searchButton}>
         <Text style={styles.dateButtonText}>Search</Text>
@@ -128,7 +90,8 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",
-    width: "100%",
+    width: "90%",
+    alignSelf: "center",
   },
   input: {
     flex: 1,
@@ -148,6 +111,9 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     justifyContent: "space-between",
     marginTop: 10,
+    marginBottom: 10,
+    width: "90%",
+    alignSelf: "center",
   },
   datePicker: {
     flex: 1,
@@ -170,7 +136,8 @@ const styles = StyleSheet.create({
     borderRadius: 20,
     marginTop: 10,
     alignItems: "center",
-    width: "100%",
+    alignSelf: "center",
+    width: "30%",
   },
   dateButtonText: {
     color: "white",

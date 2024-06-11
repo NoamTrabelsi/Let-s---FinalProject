@@ -1,6 +1,6 @@
-import React, { useState } from 'react';
-import { View, TouchableOpacity, Text, StyleSheet } from 'react-native';
-import DateTimePickerModal from 'react-native-modal-datetime-picker';
+import React, { useState } from "react";
+import { View, TouchableOpacity, Text, StyleSheet } from "react-native";
+import DateTimePickerModal from "react-native-modal-datetime-picker";
 
 const DatePicker = ({ label, date, onConfirm, minimumDate }) => {
   const [isVisible, setIsVisible] = useState(false);
@@ -17,9 +17,12 @@ const DatePicker = ({ label, date, onConfirm, minimumDate }) => {
   return (
     <View style={styles.container}>
       <TouchableOpacity onPress={showDatePicker} style={styles.dateButton}>
-        <Text style={styles.dateButtonText}>{label}</Text>
+        <Text
+          style={[styles.dateButtonText, { color: date ? "black" : "gray" }]}
+        >
+          {date ? date.toLocaleDateString() : label}
+        </Text>
       </TouchableOpacity>
-      <Text style={styles.dateText}>{date.toLocaleDateString()}</Text>
       <DateTimePickerModal
         isVisible={isVisible}
         mode="date"
@@ -33,26 +36,30 @@ const DatePicker = ({ label, date, onConfirm, minimumDate }) => {
 
 const styles = StyleSheet.create({
   container: {
-    alignSelf: 'center', // Center align
-    flexDirection: 'row', // Arrange elements in a row
-    justifyContent: 'space-between', // Space out elements at the edges
-    alignItems: 'center', // Vertically align elements in the middle
+    alignSelf: "center",
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
     marginTop: 10,
-    width: '70%', // Set the container's full width
+    width: "50%",
   },
   dateButton: {
-    backgroundColor: '#808080', // Adjusted to skyblue for consistency
-    padding: 10,
-    borderRadius: 20, // Rounded corners for a modern look
-    // Removed width and alignSelf for the button to adjust according to the text
+    flex: 1,
+    height: 40,
+    borderColor: "black",
+    borderWidth: 1,
+    marginRight: 10,
+    paddingHorizontal: 10,
+    borderRadius: 10,
+    backgroundColor: "white",
+    justifyContent: "center",
+    alignItems: "center",
   },
   dateButtonText: {
-    color: 'white',
-    fontWeight: 'bold',
+    color: "black",
   },
   dateText: {
-    // Style for the date text, if needed
-    color: 'black', // Example text color
+    color: "black",
   },
 });
 
