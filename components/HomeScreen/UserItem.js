@@ -9,8 +9,8 @@ const UserItem = React.memo(({ item }) => {
 
   const handlePress = () => {
     console.log(`User ${item.firstName} ${item.lastName} clicked!`);
-    //go to profile page of the user
-    navigation.navigate("ProfilePage", { user: item });
+    // Переход на страницу профиля пользователя
+    navigation.navigate("ProfilePage", { foundUser: item });
   };
 
   return (

@@ -18,13 +18,21 @@ import { transportOptions } from "../components/ProfileInfo/Movement";
 import { foodOptions } from "../components/ProfileInfo/Food";
 import { sleepOptions } from "../components/ProfileInfo/Sleep";
 import { adventureOptions } from "../components/ProfileInfo/Adventure";
+import { useRoute } from "@react-navigation/native";
+import { useNavigation } from "@react-navigation/native";
 
 const ProfilePage = () => {
+  const navigator = useNavigation();
+
   const { user, updateUser } = useContext(UserContext);
+  const route = useRoute();
+  const viewedUserId = route.params?.foundUser;
+
+  const pageOwner = viewedUserId ? viewedUserId : user;
 
   const [isModalVisible, setModalVisible] = useState(false);
   const [newReviewText, setNewReviewText] = useState("");
-  const [userReviews, setUserReviews] = useState(user.reviews || []);
+  const [userReviews, setUserReviews] = useState(pageOwner.reviews || []);
   const [reviewRating, setReviewRating] = useState(1);
   const [errorMessage, setErrorMessage] = useState("");
 
@@ -50,6 +58,10 @@ const ProfilePage = () => {
     setReviewRating(1);
   };
 
+  const handleChatWithUser = () => {
+    navigator.navigate("ChatWithUser");
+  };
+
   return (
     <SafeAreaView style={styles.container}>
       <AddReviewModal
@@ -63,46 +75,54 @@ const ProfilePage = () => {
         errorMessage={errorMessage}
       />
       <ScrollView showsVerticalScrollIndicator={false}>
-        <UserProfileHeader imageUri={user.image} />
-        <UserInfo user={user} />
+        <UserProfileHeader imageUri={pageOwner.image} />
+        <UserInfo pageOwner={pageOwner} />
+
         <UserInterests
           title="Movement"
           icon="bus"
           airplanecar
-          interests={user.interests.movement}
+          interests={pageOwner.interests.movement}
           options={transportOptions}
         />
         <UserInterests
           title="Food"
           icon="cafe"
-          interests={user.interests.food}
+          interests={pageOwner.interests.food}
           options={foodOptions}
         />
         <UserInterests
           title="Sleep"
           icon="bed"
-          interests={user.interests.sleep}
+          interests={pageOwner.interests.sleep}
           options={sleepOptions}
         />
         <UserInterests
           title="Adventure"
           icon="business"
-          interests={user.interests.adventure}
+          interests={pageOwner.interests.adventure}
           options={adventureOptions}
         />
-        <AboutUser aboutUser={user} />
+        <AboutUser aboutUser={pageOwner} />
         <UsersReviews userReviews={userReviews} />
-        <View style={styles.buttonsContainer}>
-          <TouchableOpacity
-            style={styles.button}
-            onPress={() => setModalVisible(true)}
-          >
-            <Text style={styles.buttonText}>Add Review</Text>
-          </TouchableOpacity>
-          <TouchableOpacity style={[styles.button, styles.chatButton]}>
-            <Text style={styles.buttonText}>Chat</Text>
-          </TouchableOpacity>
-        </View>
+        {/* Add Review and Chat buttons if user is not the page owner */}
+        {pageOwner.id !== user.id && (
+          <View style={styles.buttonsContainer}>
+            <TouchableOpacity
+              style={styles.button}
+              onPress={() => setModalVisible(true)}
+            >
+              <Text style={styles.buttonText}>Add Review</Text>
+            </TouchableOpacity>
+            <TouchableOpacity
+              style={[styles.button, styles.chatButton]}
+              onPress={handleChatWithUser}
+            >
+              <Text style={styles.buttonText}>Chat</Text>
+            </TouchableOpacity>
+          </View>
+        )}
+        {/* Add Review and Chat buttons if user is the page owner */}
       </ScrollView>
     </SafeAreaView>
   );

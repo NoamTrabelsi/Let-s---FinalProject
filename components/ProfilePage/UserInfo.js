@@ -1,38 +1,41 @@
-import React from "react";
+import React, { useContext } from "react";
 import { View, Text, StyleSheet } from "react-native";
 import { FontAwesome } from "@expo/vector-icons";
+import { UserContext } from "../UserContext/UserContext";
 
-const UserInfo = ({ user }) => (
-  <View style={styles.profileInfo}>
-    <Text style={styles.name}>{user.firstName + " " + user.lastName}</Text>
-    <View style={styles.ageLocationContainer}>
-      <Text style={styles.age}>{user.age}</Text>
-      <Text style={styles.location}>
-        <FontAwesome name="map-marker" size={16} color="black" />{" "}
-        {user.location}
+const UserInfo = ({ pageOwner }) => {
+  const { user } = useContext(UserContext);
+
+  return (
+    <View style={styles.profileInfo}>
+      <Text style={styles.name}>
+        {pageOwner.firstName + " " + pageOwner.lastName}
       </Text>
-    </View>
-    <View style={styles.ratingContainer}>
-      <Text style={styles.matchLabel}>Trip Match</Text>
-      <View style={styles.ratingBar}>
-        <View
-          style={{
-            width: "80%",
-            height: "100%",
-            backgroundColor: "orange",
-          }}
-        />
+      <View style={styles.ageLocationContainer}>
+        <Text style={styles.age}>{pageOwner.age}</Text>
+        <Text style={styles.location}>
+          <FontAwesome name="map-marker" size={16} color="black" />{" "}
+          {pageOwner.location}
+        </Text>
       </View>
-      <Text style={styles.matchPercentage}>80%</Text>
-      <FontAwesome
-        name="comment"
-        size={16}
-        color="black"
-        style={styles.commentIcon}
-      />
+      {pageOwner.id !== user.id && (
+        <View style={styles.ratingContainer}>
+          <Text style={styles.matchLabel}>Trip Match</Text>
+          <View style={styles.ratingBar}>
+            <View
+              style={{
+                width: "80%",
+                height: "100%",
+                backgroundColor: "orange",
+              }}
+            />
+          </View>
+          <Text style={styles.matchPercentage}>80%</Text>
+        </View>
+      )}
     </View>
-  </View>
-);
+  );
+};
 
 const styles = StyleSheet.create({
   profileInfo: {

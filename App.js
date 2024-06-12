@@ -20,8 +20,8 @@ export default function App() {
         >
           <Stack.Screen name="LogIn" component={LogIn} />
           <Stack.Screen name="Registration" component={Registration} />
-          <Stack.Screen name="UserNav" component={UserNav} />
           <Stack.Screen name="ProfileInfo" component={ProfileInfo} />
+          <Stack.Screen name="UserNav" component={UserNav} />
           <Stack.Screen name="Settings" component={Settings} />
         </Stack.Navigator>
       </NavigationContainer>

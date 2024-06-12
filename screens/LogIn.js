@@ -18,6 +18,7 @@ function LogIn() {
   const { setUser } = useContext(UserContext);
 
   const userInformation = {
+    id: 0,
     firstName: "Cara",
     lastName: "Delevingne",
     email: "caradelevingne@gmail.com",
@@ -96,14 +97,7 @@ function LogIn() {
         </TouchableOpacity>
         <TouchableOpacity
           style={styles.button}
-          onPress={() =>
-            navigation.dispatch(
-              CommonActions.reset({
-                index: 0,
-                routes: [{ name: "Registration" }],
-              })
-            )
-          }
+          onPress={() => navigation.navigate("Registration")}
         >
           <Text style={styles.buttonText}>Create Account</Text>
         </TouchableOpacity>

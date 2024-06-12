@@ -1,4 +1,4 @@
-import React, { useContext } from "react";
+import React from "react";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import { Octicons } from "@expo/vector-icons";
 import { Ionicons } from "@expo/vector-icons";
@@ -8,13 +8,10 @@ import HomeScreen from "../../screens/HomeScreen";
 import ProfilePage from "../../screens/ProfilePage";
 import Chat from "../../screens/Chat";
 import Settings from "../../screens/Settings";
-import { UserContext } from "../UserContext/UserContext";
 
 const Tab = createBottomTabNavigator();
 
 function UserNav() {
-  const { user } = useContext(UserContext);
-
   return (
     <Tab.Navigator
       initialRouteName="HomeScreen"

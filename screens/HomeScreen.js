@@ -14,9 +14,18 @@ import {
   Modal,
   Animated,
 } from "react-native";
+import {
+  createStackNavigator,
+  CardStyleInterpolators,
+} from "@react-navigation/stack";
+import { NavigationContainer } from "@react-navigation/native";
 import FilterModal from "../components/HomeScreen/FilterModal";
 import SearchBar from "../components/HomeScreen/SearchBar";
 import UsersList from "../components/HomeScreen/UsersList";
+import ProfilePage from "./ProfilePage";
+import ChatWithUser from "./ChatWithUser";
+
+const Stack = createStackNavigator();
 
 const initialUsers = [
   {
@@ -245,7 +254,7 @@ const filterUsers = (city, minAge, maxAge, gender) => {
   });
 };
 
-function HomeScreen() {
+function SearchMainScreen() {
   const [city, setCity] = useState("");
   const [startDate, setStartDate] = useState();
   const [endDate, setEndDate] = useState();
@@ -329,6 +338,34 @@ function HomeScreen() {
         inputContainerHeight={inputContainerHeight}
       />
     </SafeAreaView>
+  );
+}
+
+function HomeScreen() {
+  return (
+    <Stack.Navigator
+      screenOptions={{
+        gestureEnabled: true,
+        gestureDirection: "horizontal",
+        cardStyleInterpolator: CardStyleInterpolators.forHorizontalIOS,
+      }}
+    >
+      <Stack.Screen
+        name="SearchMain"
+        component={SearchMainScreen}
+        options={{ headerShown: false }}
+      />
+      <Stack.Screen
+        name="ProfilePage"
+        component={ProfilePage}
+        options={{ headerShown: false }}
+      />
+      <Stack.Screen
+        name="ChatWithUser"
+        component={ChatWithUser}
+        options={{ headerShown: false }}
+      />
+    </Stack.Navigator>
   );
 }
 

@@ -57,9 +57,9 @@ const styles = StyleSheet.create({
     width: 250,
   },
   reviewHeader: {
-    flexDirection: "row",
+    flexDirection: "column",
     justifyContent: "space-between",
-    alignItems: "center",
+    alignItems: "left",
   },
   reviewName: {
     fontSize: 16,
