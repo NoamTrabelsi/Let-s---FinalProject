@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { View, TouchableOpacity, Text, StyleSheet } from "react-native";
 import DateTimePickerModal from "react-native-modal-datetime-picker";
+import { format } from "date-fns";
 
 const DatePicker = ({ label, date, onConfirm, minimumDate }) => {
   const [isVisible, setIsVisible] = useState(false);

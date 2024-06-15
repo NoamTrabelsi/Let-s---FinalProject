@@ -1,19 +1,5 @@
-import React, {
-  useCallback,
-  useState,
-  useEffect,
-  useMemo,
-  useRef,
-} from "react";
-import {
-  SafeAreaView,
-  StyleSheet,
-  Text,
-  View,
-  TouchableOpacity,
-  Modal,
-  Animated,
-} from "react-native";
+import React, { useCallback, useState, useEffect, useRef } from "react";
+import { SafeAreaView, StyleSheet, Animated } from "react-native";
 import {
   createStackNavigator,
   CardStyleInterpolators,
@@ -24,6 +10,7 @@ import SearchBar from "../components/HomeScreen/SearchBar";
 import UsersList from "../components/HomeScreen/UsersList";
 import ProfilePage from "./ProfilePage";
 import ChatWithUser from "./ChatWithUser";
+import { format, parse } from "date-fns";
 
 const Stack = createStackNavigator();
 
@@ -44,6 +31,18 @@ const initialUsers = [
       movement: [1, 1, 0, 0, 0],
       adventure: [0, 0, 1, 0, 1, 1, 0, 0, 0, 1, 0, 0, 1, 0, 0, 0, 0, 0],
     },
+    trip_planning: [
+      {
+        country: "Netherlands",
+        startDate: "Thu Jun 20 2024 20:25:40 GMT+0300",
+        endDate: "Sat Jun 22 2024 20:25:40 GMT+0300",
+      },
+      {
+        country: "Germany",
+        startDate: "Thu Jun 20 2024 20:25:40 GMT+0300",
+        endDate: "Sat Jun 22 2024 20:25:40 GMT+0300",
+      },
+    ],
     about:
       "I love exploring new places and trying out new cuisines. Life is an adventure!",
     reviews: [
@@ -87,6 +86,7 @@ const initialUsers = [
       movement: [1, 0, 1, 1, 0],
       adventure: [1, 1, 0, 0, 1, 0, 1, 1, 0, 0, 1, 1, 0, 0, 0, 1, 1, 1],
     },
+    trip_planning: [],
     about:
       "Passionate about technology and travel. Always ready for a new challenge.",
     reviews: [
@@ -130,6 +130,7 @@ const initialUsers = [
       movement: [0, 1, 1, 1, 0],
       adventure: [0, 0, 1, 1, 0, 1, 0, 0, 1, 1, 0, 0, 0, 1, 1, 0, 0, 1],
     },
+    trip_planning: [],
     about:
       "Fitness enthusiast and avid reader. Love to share knowledge and experiences.",
     reviews: [
@@ -173,6 +174,18 @@ const initialUsers = [
       movement: [1, 0, 0, 1, 1],
       adventure: [1, 1, 0, 0, 1, 1, 0, 0, 1, 0, 1, 1, 0, 1, 1, 0, 0, 0],
     },
+    trip_planning: [
+      {
+        country: "Netherlands",
+        startDate: "Thu Jun 20 2024 20:25:40 GMT+0300",
+        endDate: "Sat Jun 22 2024 20:25:40 GMT+0300",
+      },
+      {
+        country: "Georgia",
+        startDate: "Thu Jun 20 2024 20:25:40 GMT+0300",
+        endDate: "Sat Jun 22 2024 20:25:40 GMT+0300",
+      },
+    ],
     about:
       "Art lover and culture enthusiast. Always excited to learn new things.",
     reviews: [
@@ -216,6 +229,13 @@ const initialUsers = [
       movement: [1, 1, 1, 0, 1],
       adventure: [0, 1, 1, 1, 0, 1, 0, 1, 1, 0, 0, 1, 0, 0, 1, 1, 0, 0],
     },
+    trip_planning: [
+      {
+        country: "Israel",
+        startDate: "Thu Jun 20 2024 20:25:40 GMT+0300",
+        endDate: "Sat Jun 22 2024 20:25:40 GMT+0300",
+      },
+    ],
     about: "Music lover and tech geek. Always curious about the latest trends.",
     reviews: [
       {
@@ -243,14 +263,25 @@ const initialUsers = [
   },
 ];
 
-const filterUsers = (city, minAge, maxAge, gender) => {
+const filterUsers = (city, startDate, endDate, minAge, maxAge, gender) => {
   return initialUsers.filter((user) => {
-    const matchesCity =
-      !city || user.location.toLowerCase().includes(city.toLowerCase());
     const matchesAge = user.age >= minAge && user.age <= maxAge;
     const matchesGender = gender === "all" || user.gender === gender;
 
-    return matchesCity && matchesAge && matchesGender;
+    const matchesTrip = user.trip_planning.some((trip) => {
+      const tripStartDate = new Date(trip.startDate);
+      const tripEndDate = new Date(trip.endDate);
+      const matchesTripDate =
+        (!startDate || tripEndDate >= new Date(startDate)) &&
+        (!endDate || tripStartDate <= new Date(endDate));
+
+      const matchesTripCity =
+        !city || trip.country.toLowerCase().includes(city.toLowerCase());
+
+      return matchesTripCity && matchesTripDate;
+    });
+
+    return matchesTrip && matchesAge && matchesGender;
   });
 };
 
@@ -268,10 +299,8 @@ function SearchMainScreen() {
   const [loading, setLoading] = useState(false);
 
   const formatDate = (date) => {
-    if (!date) {
-      return "";
-    }
-    return date.toLocaleDateString();
+    if (!date) return "";
+    return format(new Date(date), "yyyy-MM-dd");
   };
 
   const toggleFilterModal = useCallback(() => {
@@ -280,14 +309,21 @@ function SearchMainScreen() {
 
   const handleSearch = useCallback(() => {
     console.log(
-      `City: ${city}, Start Date: ${formatDate(
-        startDate
-      )}, End Date: ${formatDate(endDate)}`
+      `City: ${city}, Start Date: ${
+        startDate ? formatDate(new Date(startDate)) : ""
+      }, End Date: ${endDate ? formatDate(new Date(endDate)) : ""}`
     );
     console.log(`Min Age: ${minAge}, Max Age: ${maxAge}`);
     console.log(`Gender: ${gender}`);
 
-    const filteredUsers = filterUsers(city, minAge, maxAge, gender);
+    const filteredUsers = filterUsers(
+      city,
+      startDate ? new Date(startDate) : null,
+      endDate ? new Date(endDate) : null,
+      minAge,
+      maxAge,
+      gender
+    );
     setUsers(filteredUsers);
   }, [city, startDate, endDate, minAge, maxAge, gender]);
 
