@@ -44,7 +44,7 @@ const SearchBar = ({
   };
 
   const handleSearchBtn = () => {
-    if (inputText !== "") {
+    if (inputText !== "" && startDate && endDate) {
       setCity(inputText);
       handleSearch();
     }

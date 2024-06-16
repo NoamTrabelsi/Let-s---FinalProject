@@ -305,6 +305,8 @@ function SearchMainScreen() {
   const [city, setCity] = useState("");
   const [startDate, setStartDate] = useState();
   const [endDate, setEndDate] = useState();
+  const [startDateHelp, setStartDateHelp] = useState();
+  const [endDateHelp, setEndDateHelp] = useState();
   const [isFilterModalVisible, setFilterModalVisible] = useState(false);
 
   const [minAge, setMinAge] = useState(18);
@@ -323,7 +325,9 @@ function SearchMainScreen() {
     setFilterModalVisible(!isFilterModalVisible);
   }, [isFilterModalVisible]);
 
-  const handleSearch = useCallback(() => {
+  const handleSearch = () => {
+    setStartDate(startDateHelp);
+    setEndDate(endDateHelp);
     console.log(
       `City: ${city}, Start Date: ${
         startDate ? formatDate(new Date(startDate)) : ""
@@ -341,12 +345,11 @@ function SearchMainScreen() {
       gender
     );
     setUsers(filteredUsers);
-  }, [city, startDate, endDate, minAge, maxAge, gender]);
+  };
 
   const addToTrip = () => {
     const updatedUser = { ...user };
 
-    // Parse startDate and endDate to "yyyy-MM-dd" format strings
     const formattedStartDate = formatISO(new Date(startDate), {
       representation: "date",
     });
@@ -354,39 +357,34 @@ function SearchMainScreen() {
       representation: "date",
     });
 
-    // Check if the new trip is already in trip_planning
-    const isTripUnique = !updatedUser.trip_planning.some(
-      (trip) =>
-        trip.country === city &&
-        trip.startDate === formattedStartDate &&
-        trip.endDate === formattedEndDate
+    const existingTripIndex = updatedUser.trip_planning.findIndex(
+      (trip) => trip.country === city
     );
 
-    if (isTripUnique) {
-      // Save the last 3 trips
+    if (existingTripIndex !== -1) {
+      updatedUser.trip_planning[existingTripIndex].startDate =
+        formattedStartDate;
+      updatedUser.trip_planning[existingTripIndex].endDate = formattedEndDate;
+    } else {
       if (updatedUser.trip_planning.length >= 3) {
-        updatedUser.trip_planning.shift();
+        updatedUser.trip_planning.pop();
       }
-      updatedUser.trip_planning.push({
+      updatedUser.trip_planning.unshift({
         country: city,
         startDate: formattedStartDate,
         endDate: formattedEndDate,
       });
-
-      updateUser("trip_planning", updatedUser.trip_planning);
-
-      console.log("User trip history updated: ", updatedUser.trip_planning);
-    } else {
-      console.log("Trip already exists in the user's trip planning.");
     }
+
+    updateUser("trip_planning", updatedUser.trip_planning);
+
+    console.log("User trip history updated: ", updatedUser.trip_planning);
   };
 
   useEffect(() => {
     if (!isFilterModalVisible && city) {
       handleSearch();
-      if (startDate && endDate) {
-        addToTrip();
-      }
+      addToTrip();
     }
   }, [isFilterModalVisible, city, startDate, endDate]);
 
@@ -414,10 +412,10 @@ function SearchMainScreen() {
 
       <SearchBar
         setCity={setCity}
-        startDate={startDate}
-        setStartDate={setStartDate}
-        endDate={endDate}
-        setEndDate={setEndDate}
+        startDate={startDateHelp}
+        setStartDate={setStartDateHelp}
+        endDate={endDateHelp}
+        setEndDate={setEndDateHelp}
         toggleFilterModal={toggleFilterModal}
         handleSearch={handleSearch}
         inputContainerTranslateY={inputContainerTranslateY}
