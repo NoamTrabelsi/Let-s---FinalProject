@@ -34,6 +34,7 @@ function LogIn() {
       movement: [0, 0, 0, 1, 1],
       adventure: [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 1],
     },
+    trip_planning: [],
     about:
       "It's about time you fell in love with something that will love you back. And that, my friends, is house music. It doesn't judge you, and I won't either.",
     reviews: [

@@ -1,4 +1,10 @@
-import React, { useCallback, useState, useEffect, useRef } from "react";
+import React, {
+  useCallback,
+  useState,
+  useEffect,
+  useRef,
+  useContext,
+} from "react";
 import { SafeAreaView, StyleSheet, Animated } from "react-native";
 import {
   createStackNavigator,
@@ -10,7 +16,8 @@ import SearchBar from "../components/HomeScreen/SearchBar";
 import UsersList from "../components/HomeScreen/UsersList";
 import ProfilePage from "./ProfilePage";
 import ChatWithUser from "./ChatWithUser";
-import { format, parse } from "date-fns";
+import { formatISO } from "date-fns";
+import { UserContext } from "../components/UserContext/UserContext";
 
 const Stack = createStackNavigator();
 
@@ -34,13 +41,13 @@ const initialUsers = [
     trip_planning: [
       {
         country: "Netherlands",
-        startDate: "Thu Jun 20 2024 20:25:40 GMT+0300",
-        endDate: "Sat Jun 22 2024 20:25:40 GMT+0300",
+        startDate: "2024-06-20",
+        endDate: "2024-06-22",
       },
       {
         country: "Germany",
-        startDate: "Thu Jun 20 2024 20:25:40 GMT+0300",
-        endDate: "Sat Jun 22 2024 20:25:40 GMT+0300",
+        startDate: "2024-06-20",
+        endDate: "2024-06-22",
       },
     ],
     about:
@@ -177,13 +184,13 @@ const initialUsers = [
     trip_planning: [
       {
         country: "Netherlands",
-        startDate: "Thu Jun 20 2024 20:25:40 GMT+0300",
-        endDate: "Sat Jun 22 2024 20:25:40 GMT+0300",
+        startDate: "2024-06-20",
+        endDate: "2024-06-22",
       },
       {
         country: "Georgia",
-        startDate: "Thu Jun 20 2024 20:25:40 GMT+0300",
-        endDate: "Sat Jun 22 2024 20:25:40 GMT+0300",
+        startDate: "2024-06-20",
+        endDate: "2024-06-22",
       },
     ],
     about:
@@ -232,8 +239,8 @@ const initialUsers = [
     trip_planning: [
       {
         country: "Israel",
-        startDate: "Thu Jun 20 2024 20:25:40 GMT+0300",
-        endDate: "Sat Jun 22 2024 20:25:40 GMT+0300",
+        startDate: "2024-06-20",
+        endDate: "2024-06-22",
       },
     ],
     about: "Music lover and tech geek. Always curious about the latest trends.",
@@ -269,11 +276,19 @@ const filterUsers = (city, startDate, endDate, minAge, maxAge, gender) => {
     const matchesGender = gender === "all" || user.gender === gender;
 
     const matchesTrip = user.trip_planning.some((trip) => {
-      const tripStartDate = new Date(trip.startDate);
-      const tripEndDate = new Date(trip.endDate);
+      const tripStartDate = formatISO(new Date(trip.startDate), {
+        representation: "date",
+      });
+      const tripEndDate = formatISO(new Date(trip.endDate), {
+        representation: "date",
+      });
       const matchesTripDate =
-        (!startDate || tripEndDate >= new Date(startDate)) &&
-        (!endDate || tripStartDate <= new Date(endDate));
+        (!startDate ||
+          tripEndDate >=
+            formatISO(new Date(startDate), { representation: "date" })) &&
+        (!endDate ||
+          tripStartDate <=
+            formatISO(new Date(endDate), { representation: "date" }));
 
       const matchesTripCity =
         !city || trip.country.toLowerCase().includes(city.toLowerCase());
@@ -286,6 +301,7 @@ const filterUsers = (city, startDate, endDate, minAge, maxAge, gender) => {
 };
 
 function SearchMainScreen() {
+  const { user, updateUser } = useContext(UserContext);
   const [city, setCity] = useState("");
   const [startDate, setStartDate] = useState();
   const [endDate, setEndDate] = useState();
@@ -300,7 +316,7 @@ function SearchMainScreen() {
 
   const formatDate = (date) => {
     if (!date) return "";
-    return format(new Date(date), "yyyy-MM-dd");
+    return formatISO(new Date(date), { representation: "date" });
   };
 
   const toggleFilterModal = useCallback(() => {
@@ -318,8 +334,8 @@ function SearchMainScreen() {
 
     const filteredUsers = filterUsers(
       city,
-      startDate ? new Date(startDate) : null,
-      endDate ? new Date(endDate) : null,
+      startDate ? formatDate(new Date(startDate)) : null,
+      endDate ? formatDate(new Date(endDate)) : null,
       minAge,
       maxAge,
       gender
@@ -327,9 +343,50 @@ function SearchMainScreen() {
     setUsers(filteredUsers);
   }, [city, startDate, endDate, minAge, maxAge, gender]);
 
+  const addToTrip = () => {
+    const updatedUser = { ...user };
+
+    // Parse startDate and endDate to "yyyy-MM-dd" format strings
+    const formattedStartDate = formatISO(new Date(startDate), {
+      representation: "date",
+    });
+    const formattedEndDate = formatISO(new Date(endDate), {
+      representation: "date",
+    });
+
+    // Check if the new trip is already in trip_planning
+    const isTripUnique = !updatedUser.trip_planning.some(
+      (trip) =>
+        trip.country === city &&
+        trip.startDate === formattedStartDate &&
+        trip.endDate === formattedEndDate
+    );
+
+    if (isTripUnique) {
+      // Save the last 3 trips
+      if (updatedUser.trip_planning.length >= 3) {
+        updatedUser.trip_planning.shift();
+      }
+      updatedUser.trip_planning.push({
+        country: city,
+        startDate: formattedStartDate,
+        endDate: formattedEndDate,
+      });
+
+      updateUser("trip_planning", updatedUser.trip_planning);
+
+      console.log("User trip history updated: ", updatedUser.trip_planning);
+    } else {
+      console.log("Trip already exists in the user's trip planning.");
+    }
+  };
+
   useEffect(() => {
-    if (!isFilterModalVisible) {
+    if (!isFilterModalVisible && city) {
       handleSearch();
+      if (startDate && endDate) {
+        addToTrip();
+      }
     }
   }, [isFilterModalVisible, city, startDate, endDate]);
 
