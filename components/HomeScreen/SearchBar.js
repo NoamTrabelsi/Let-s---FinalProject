@@ -44,8 +44,10 @@ const SearchBar = ({
   };
 
   const handleSearchBtn = () => {
-    setCity(inputText);
-    handleSearch();
+    if (inputText !== "") {
+      setCity(inputText);
+      handleSearch();
+    }
   };
 
   return (
