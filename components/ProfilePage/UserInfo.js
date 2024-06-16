@@ -1,7 +1,10 @@
 import React, { useContext } from "react";
-import { View, Text, StyleSheet } from "react-native";
+import { View, Text, StyleSheet, ScrollView } from "react-native";
 import { FontAwesome } from "@expo/vector-icons";
+import { Ionicons } from "@expo/vector-icons";
+import { MaterialCommunityIcons } from "@expo/vector-icons";
 import { UserContext } from "../UserContext/UserContext";
+import { lightFormat } from "date-fns";
 
 const UserInfo = ({ pageOwner, match }) => {
   const { user } = useContext(UserContext);
@@ -33,6 +36,39 @@ const UserInfo = ({ pageOwner, match }) => {
           <Text style={styles.matchPercentage}>{match}%</Text>
         </View>
       )}
+      <View style={styles.searchingContainer}>
+        <View style={styles.searchingHeader}>
+          <Ionicons name="search-sharp" size={20} color="black" />
+          <Text style={styles.searchingLabel}>Last searchings</Text>
+        </View>
+        <ScrollView horizontal={true} showsHorizontalScrollIndicator={false}>
+          {pageOwner.trip_planning.map((searching, index) => (
+            <View key={index} style={styles.searchingItem}>
+              <Text style={styles.searchingCountry}>{searching.country}</Text>
+              <View style={styles.searchingRow}>
+                <MaterialCommunityIcons
+                  name="airplane-takeoff"
+                  size={24}
+                  color="black"
+                />
+                <Text style={styles.searchingDates}>
+                  {lightFormat(searching.startDate, "dd/MM/yy")}
+                </Text>
+              </View>
+              <View style={styles.searchingRow}>
+                <MaterialCommunityIcons
+                  name="airplane-landing"
+                  size={24}
+                  color="black"
+                />
+                <Text style={styles.searchingDates}>
+                  {lightFormat(searching.endDate, "dd/MM/yy")}
+                </Text>
+              </View>
+            </View>
+          ))}
+        </ScrollView>
+      </View>
     </View>
   );
 };
@@ -68,13 +104,13 @@ const styles = StyleSheet.create({
     marginTop: 10,
   },
   matchLabel: {
-    fontSize: 14,
+    fontSize: 16,
     color: "gray",
     marginRight: 10,
   },
   ratingBar: {
-    width: 100,
-    height: 10,
+    width: 150,
+    height: 20,
     backgroundColor: "#EDEDED",
     borderRadius: 5,
     overflow: "hidden",
@@ -83,6 +119,51 @@ const styles = StyleSheet.create({
     marginLeft: 10,
     fontSize: 14,
     color: "black",
+  },
+  searchingContainer: {
+    alignItems: "center",
+    width: "100%",
+    marginTop: 20,
+    paddingHorizontal: 10,
+  },
+  searchingHeader: {
+    flexDirection: "row",
+    alignItems: "center",
+    marginBottom: 10,
+  },
+  searchingLabel: {
+    marginLeft: 5,
+    fontSize: 16,
+    fontWeight: "bold",
+    color: "black",
+  },
+  searchingItem: {
+    backgroundColor: "#f9f9f9",
+    padding: 10,
+    borderRadius: 5,
+    marginRight: 10,
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 5,
+    elevation: 2,
+    width: 150,
+  },
+  searchingCountry: {
+    fontSize: 14,
+    fontWeight: "bold",
+    color: "black",
+  },
+  searchingDates: {
+    fontSize: 14,
+    color: "gray",
+    marginTop: 5,
+    marginLeft: 10,
+  },
+  searchingRow: {
+    flexDirection: "row",
+    alignItems: "center",
+    marginTop: 5,
   },
 });
 
