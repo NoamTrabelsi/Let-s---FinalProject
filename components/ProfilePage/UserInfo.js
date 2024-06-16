@@ -3,7 +3,7 @@ import { View, Text, StyleSheet } from "react-native";
 import { FontAwesome } from "@expo/vector-icons";
 import { UserContext } from "../UserContext/UserContext";
 
-const UserInfo = ({ pageOwner }) => {
+const UserInfo = ({ pageOwner, match }) => {
   const { user } = useContext(UserContext);
 
   return (
@@ -24,13 +24,13 @@ const UserInfo = ({ pageOwner }) => {
           <View style={styles.ratingBar}>
             <View
               style={{
-                width: "80%",
+                width: `${match}%`,
                 height: "100%",
                 backgroundColor: "orange",
               }}
             />
           </View>
-          <Text style={styles.matchPercentage}>80%</Text>
+          <Text style={styles.matchPercentage}>{match}%</Text>
         </View>
       )}
     </View>
@@ -58,9 +58,6 @@ const styles = StyleSheet.create({
     color: "black",
     marginRight: 10,
   },
-  dot: {
-    marginHorizontal: 5,
-  },
   location: {
     fontSize: 16,
     color: "black",
@@ -86,9 +83,6 @@ const styles = StyleSheet.create({
     marginLeft: 10,
     fontSize: 14,
     color: "black",
-  },
-  commentIcon: {
-    marginLeft: 10,
   },
 });
 

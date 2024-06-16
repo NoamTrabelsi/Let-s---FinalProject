@@ -26,9 +26,11 @@ const ProfilePage = () => {
 
   const { user, updateUser } = useContext(UserContext);
   const route = useRoute();
-  const viewedUserId = route.params?.foundUser;
+  const viewedUser = route.params?.foundUser;
+  const viewedUserMatch = route.params?.tripMatch;
 
-  const pageOwner = viewedUserId ? viewedUserId : user;
+  const pageOwner = viewedUser ? viewedUser : user;
+  const match = viewedUserMatch ? viewedUserMatch : 100;
 
   const [isModalVisible, setModalVisible] = useState(false);
   const [newReviewText, setNewReviewText] = useState("");
@@ -76,12 +78,11 @@ const ProfilePage = () => {
       />
       <ScrollView showsVerticalScrollIndicator={false}>
         <UserProfileHeader imageUri={pageOwner.image} />
-        <UserInfo pageOwner={pageOwner} />
+        <UserInfo pageOwner={pageOwner} match={match} />
 
         <UserInterests
           title="Movement"
           icon="bus"
-          airplanecar
           interests={pageOwner.interests.movement}
           options={transportOptions}
         />

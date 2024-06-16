@@ -1,16 +1,20 @@
-import React from "react";
+import React, { useState } from "react";
 import { View, Text, StyleSheet, Image, Dimensions } from "react-native";
 import { TouchableOpacity } from "react-native-gesture-handler";
 import { useNavigation } from "@react-navigation/native";
+import MatchCalculator from "./MatchCalculator";
 
 const UserItem = React.memo(({ item }) => {
-  const tripMatch = Math.floor(Math.random() * 100);
+  const [tripMatch, setTripMatch] = useState(0);
   const navigation = useNavigation();
 
   const handlePress = () => {
     console.log(`User ${item.firstName} ${item.lastName} clicked!`);
     // Переход на страницу профиля пользователя
-    navigation.navigate("ProfilePage", { foundUser: item });
+    navigation.navigate("ProfilePage", {
+      foundUser: item,
+      tripMatch: tripMatch,
+    });
   };
 
   return (
@@ -29,18 +33,7 @@ const UserItem = React.memo(({ item }) => {
           </Text>
           <View style={styles.spacing} />
           <Text style={styles.itemInfo}>{item.location}</Text>
-          <View style={styles.ratingContainer}>
-            <View style={styles.ratingBar}>
-              <View
-                style={{
-                  width: `${tripMatch}%`,
-                  height: "100%",
-                  backgroundColor: "orange",
-                }}
-              />
-            </View>
-            <Text style={styles.matchPercentage}>{`${tripMatch}%`}</Text>
-          </View>
+          <MatchCalculator userFound={item} setTripMatch={setTripMatch} />
         </View>
       </TouchableOpacity>
     </View>
@@ -87,13 +80,6 @@ const styles = StyleSheet.create({
     marginLeft: 10,
     fontSize: 14,
     color: "black",
-  },
-  ratingBar: {
-    flex: 1,
-    height: 10,
-    backgroundColor: "#EDEDED",
-    borderRadius: 5,
-    overflow: "hidden",
   },
 });
 
