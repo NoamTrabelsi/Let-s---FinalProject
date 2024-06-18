@@ -5,35 +5,44 @@ import { FontAwesome } from "@expo/vector-icons";
 const UsersReviews = ({ userReviews }) => (
   <View style={styles.reviewsContainer}>
     <Text style={styles.reviewsTitle}>User's Top Reviews</Text>
-    <FlatList
-      horizontal={true}
-      showsHorizontalScrollIndicator={false}
-      data={userReviews}
-      keyExtractor={(item, index) => `key-${index}`}
-      renderItem={({ item }) => (
-        <View style={styles.reviewItem}>
-          <View style={styles.reviewHeader}>
-            <Text style={styles.reviewName}>
-              {item.name + " | " + item.age + " | " + item.location}
-            </Text>
-            <View style={styles.reviewRating}>
-              {Array.from({ length: item.rating }).map((_, index) => (
-                <FontAwesome key={index} name="star" size={14} color="orange" />
-              ))}
-              {Array.from({ length: 5 - item.rating }).map((_, index) => (
-                <FontAwesome
-                  key={index}
-                  name="star-o"
-                  size={14}
-                  color="orange"
-                />
-              ))}
+    {userReviews.length !== 0 ? (
+      <FlatList
+        horizontal={true}
+        showsHorizontalScrollIndicator={false}
+        data={userReviews}
+        keyExtractor={(item, index) => `key-${index}`}
+        renderItem={({ item }) => (
+          <View style={styles.reviewItem}>
+            <View style={styles.reviewHeader}>
+              <Text style={styles.reviewName}>
+                {item.name + " | " + item.age + " | " + item.location}
+              </Text>
+              <View style={styles.reviewRating}>
+                {Array.from({ length: item.rating }).map((_, index) => (
+                  <FontAwesome
+                    key={index}
+                    name="star"
+                    size={14}
+                    color="orange"
+                  />
+                ))}
+                {Array.from({ length: 5 - item.rating }).map((_, index) => (
+                  <FontAwesome
+                    key={index}
+                    name="star-o"
+                    size={14}
+                    color="orange"
+                  />
+                ))}
+              </View>
             </View>
+            <Text style={styles.reviewText}>{item.text}</Text>
           </View>
-          <Text style={styles.reviewText}>{item.text}</Text>
-        </View>
-      )}
-    />
+        )}
+      />
+    ) : (
+      <Text style={styles.noReviewsText}>No reviews yet</Text>
+    )}
   </View>
 );
 
@@ -72,6 +81,10 @@ const styles = StyleSheet.create({
     marginTop: 10,
     fontSize: 14,
     color: "gray",
+  },
+  noReviewsText: {
+    color: "white",
+    marginTop: 20,
   },
 });
 

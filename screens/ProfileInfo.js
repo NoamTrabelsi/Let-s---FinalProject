@@ -41,16 +41,18 @@ function ProfileInfo() {
   const [aboutUser, setAboutUser] = useState(user.about);
 
   const handleSave = () => {
-    updateUser("age", age);
-    updateUser("location", location);
-    updateUser("interests.food", userFoodInfo);
-    updateUser("interests.sleep", userSleepInfo);
-    updateUser("interests.movement", userMovementInfo);
-    updateUser("interests.adventure", userAdventureInfo);
-    updateUser("about", aboutUser);
+    updateUser("image", picture);
+    //updateUser("age", age);
+    //updateUser("location", location);
+    //updateUser("interests.food", userFoodInfo);
+    //updateUser("interests.sleep", userSleepInfo);
+    //updateUser("interests.movement", userMovementInfo);
+    //updateUser("interests.adventure", userAdventureInfo);
+    //updateUser("about", aboutUser);
 
     const userId = user._id;
     const updatedData = {
+      image: picture,
       age,
       location,
       interests: {

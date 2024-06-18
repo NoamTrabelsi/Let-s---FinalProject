@@ -34,7 +34,7 @@ const ProfilePage = () => {
 
   const [isModalVisible, setModalVisible] = useState(false);
   const [newReviewText, setNewReviewText] = useState("");
-  const [userReviews, setUserReviews] = useState(pageOwner.reviews || []);
+  const [userReviews, setUserReviews] = useState(pageOwner.reviews);
   const [reviewRating, setReviewRating] = useState(1);
   const [errorMessage, setErrorMessage] = useState("");
 

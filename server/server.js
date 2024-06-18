@@ -1,7 +1,7 @@
 const express = require("express");
 const app = express();
 const port = 5001;
-app.use(express.json());
+app.use(express.json({ limit: "50mb" }));
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 const mongoose = require("mongoose");
@@ -60,7 +60,8 @@ app.post("/register", async (req, res) => {
 // Update user
 app.post("/update/:id", async (req, res) => {
   const { id } = req.params;
-  const { age, location, interests, trip_planning, about, reviews } = req.body;
+  const { image, age, location, interests, trip_planning, about, reviews } =
+    req.body;
 
   try {
     const user = await User.findById(id);
@@ -68,6 +69,7 @@ app.post("/update/:id", async (req, res) => {
       return res.status(404).send({ status: "error", data: "User not found" });
     }
 
+    user.image = image || user.image;
     user.age = age || user.age;
     user.location = location || user.location;
     user.interests = interests || user.interests;

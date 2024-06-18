@@ -10,13 +10,15 @@ import {
   TouchableWithoutFeedback,
   Keyboard,
   Modal,
+  Image,
 } from "react-native";
 import countryList from "react-select-country-list";
 import { UserContext } from "../UserContext/UserContext";
-import { launchImageLibrary } from "react-native-image-picker";
+import * as ImagePicker from "expo-image-picker";
 
 function GetKnow({ location, setLocation, age, setAge, picture, setPicture }) {
   const { user, updateUser } = useContext(UserContext);
+  const [asset, setAsset] = useState(null);
   const [filteredCountries, setFilteredCountries] = useState([]);
   const [isModalVisible, setIsModalVisible] = useState(false);
   const countries = countryList().getData();
@@ -46,32 +48,29 @@ function GetKnow({ location, setLocation, age, setAge, picture, setPicture }) {
     findCountry(query);
   };
 
-  const selectPhoto = () => {
-    launchImageLibrary(
-      {
-        mediaType: "photo",
-        includeBase64: true,
-        maxWidth: 400,
-        maxHeight: 400,
-      },
-      (response) => {
-        if (response.didCancel) {
-          console.log("User cancelled image picker");
-        } else if (response.errorMessage) {
-          console.log("ImagePicker Error: ", response.errorMessage);
-        } else if (response.assets && response.assets.length > 0) {
-          const asset = response.assets[0];
-          const source = { uri: asset.uri };
-          const base64Image = asset.base64;
-          setPicture(source.uri); // Update the state with the image URI
-          updateUser("image", source.uri); // Update the user context with the image URI
-          console.log("Base64: ", base64Image);
-        }
+  const selectPhoto = async () => {
+    try {
+      await ImagePicker.requestMediaLibraryPermissionsAsync();
+      let result = await ImagePicker.launchImageLibraryAsync({
+        mediaTypes: ImagePicker.MediaTypeOptions.Images,
+        allowsEditing: true,
+        aspect: [1, 1],
+        quality: 1,
+        width: 100,
+        height: 100,
+        base64: true,
+      });
+
+      if (!result.canceled) {
+        console.log(result.assets[0].uri);
+        const data = "data:image/jpeg;base64," + result.assets[0].base64;
+        console.log(data);
+        setAsset(data);
+        setPicture(data);
       }
-    ).catch((error) => {
-      console.error("Unhandled promise rejection:", error);
-      Alert.alert("Error", "Something went wrong while selecting the photo.");
-    });
+    } catch (error) {
+      console.log(error);
+    }
   };
 
   const selectAge = (textAge) => {
@@ -86,7 +85,11 @@ function GetKnow({ location, setLocation, age, setAge, picture, setPicture }) {
         <Text style={styles.text}>Get to know you</Text>
         <View style={styles.view1}>
           <TouchableOpacity style={styles.roundButton} onPress={selectPhoto}>
-            <Text style={styles.buttonText}>Add picture</Text>
+            {user.image ? (
+              <Image source={{ uri: user.image }} style={styles.image} />
+            ) : (
+              <Text style={styles.buttonText}>Add picture</Text>
+            )}
           </TouchableOpacity>
           <View>
             <TouchableOpacity
@@ -253,6 +256,11 @@ const styles = StyleSheet.create({
     fontSize: 16,
     color: "white",
     fontWeight: "bold",
+  },
+  image: {
+    width: 90,
+    height: 90,
+    borderRadius: 75,
   },
 });
 
