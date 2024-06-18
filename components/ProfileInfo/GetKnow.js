@@ -15,13 +15,24 @@ import {
 import countryList from "react-select-country-list";
 import { UserContext } from "../UserContext/UserContext";
 import * as ImagePicker from "expo-image-picker";
+import AWS from "aws-sdk";
+import { v4 as uuidv4 } from "uuid";
+import { AWS_REGION, AWS_ACCESS_KEY_ID, AWS_SECRET_ACCESS_KEY } from "@env";
+
+// Load required polyfill
+import "react-native-get-random-values";
 
 function GetKnow({ location, setLocation, age, setAge, picture, setPicture }) {
   const { user, updateUser } = useContext(UserContext);
-  const [asset, setAsset] = useState(null);
   const [filteredCountries, setFilteredCountries] = useState([]);
   const [isModalVisible, setIsModalVisible] = useState(false);
   const countries = countryList().getData();
+
+  const s3 = new AWS.S3({
+    region: AWS_REGION,
+    accessKeyId: AWS_ACCESS_KEY_ID,
+    secretAccessKey: AWS_SECRET_ACCESS_KEY,
+  });
 
   const handleCountryChange = (countryName) => {
     setLocation(countryName);
@@ -56,17 +67,33 @@ function GetKnow({ location, setLocation, age, setAge, picture, setPicture }) {
         allowsEditing: true,
         aspect: [1, 1],
         quality: 1,
-        width: 100,
-        height: 100,
-        base64: true,
       });
 
       if (!result.canceled) {
-        console.log(result.assets[0].uri);
-        const data = "data:image/jpeg;base64," + result.assets[0].base64;
-        console.log(data);
-        setAsset(data);
-        setPicture(data);
+        const { uri } = result.assets[0];
+        const fileName = uuidv4() + ".jpg";
+
+        const response = await fetch(uri);
+        const blob = await response.blob();
+
+        const params = {
+          Bucket: "lets-project",
+          Key: fileName,
+          Body: blob,
+          ContentType: "image/jpeg",
+          ACL: "public-read", // public access to the image
+        };
+
+        s3.upload(params, async (err, data) => {
+          if (err) {
+            console.error("Error uploading image:", err);
+          } else {
+            const imageUrl = data.Location;
+            console.log("Image uploaded successfully:", imageUrl);
+            setPicture(imageUrl);
+            updateUser("image", imageUrl);
+          }
+        });
       }
     } catch (error) {
       console.log(error);
@@ -85,8 +112,8 @@ function GetKnow({ location, setLocation, age, setAge, picture, setPicture }) {
         <Text style={styles.text}>Get to know you</Text>
         <View style={styles.view1}>
           <TouchableOpacity style={styles.roundButton} onPress={selectPhoto}>
-            {user.image ? (
-              <Image source={{ uri: user.image }} style={styles.image} />
+            {picture ? (
+              <Image source={{ uri: picture }} style={styles.image} />
             ) : (
               <Text style={styles.buttonText}>Add picture</Text>
             )}
@@ -97,7 +124,7 @@ function GetKnow({ location, setLocation, age, setAge, picture, setPicture }) {
               onPress={() => setIsModalVisible(true)}
             >
               <Text style={styles.buttonText}>
-                {user.location || "Current Location"}
+                {location || "Current Location"}
               </Text>
             </TouchableOpacity>
             <Modal
