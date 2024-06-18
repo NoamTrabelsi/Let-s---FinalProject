@@ -1,11 +1,10 @@
-import React, { useContext, useState } from "react";
+import React, { useContext, useState, useEffect } from "react";
 import {
   View,
   Text,
   StyleSheet,
   TouchableOpacity,
   ScrollView,
-  TextInput,
 } from "react-native";
 import Destination from "../components/ProfileInfo/Destination";
 import About from "../components/ProfileInfo/About";
@@ -17,11 +16,20 @@ import Movement from "../components/ProfileInfo/Movement";
 import { useNavigation } from "@react-navigation/native";
 import { CommonActions } from "@react-navigation/native";
 import { UserContext } from "../components/UserContext/UserContext";
+import axios from "axios";
 
 function ProfileInfo() {
   const navigation = useNavigation();
-  const { user, updateUser } = useContext(UserContext);
+  const { user, updateUser, fetchUserData } = useContext(UserContext);
 
+  useEffect(() => {
+    if (user && user._id) {
+      fetchUserData(user._id);
+    }
+  }, []);
+  const [location, setLocation] = useState("");
+  const [age, setAge] = useState();
+  const [picture, setPicture] = useState(null);
   const [userFoodInfo, setUserFoodInfo] = useState(user.interests.food);
   const [userSleepInfo, setUserSleepInfo] = useState(user.interests.sleep);
   const [userMovementInfo, setUserMovementInfo] = useState(
@@ -32,26 +40,54 @@ function ProfileInfo() {
   );
   const [aboutUser, setAboutUser] = useState(user.about);
 
-  const handleLogIn = () => {
+  const handleSave = () => {
+    updateUser("age", age);
+    updateUser("location", location);
     updateUser("interests.food", userFoodInfo);
     updateUser("interests.sleep", userSleepInfo);
     updateUser("interests.movement", userMovementInfo);
     updateUser("interests.adventure", userAdventureInfo);
     updateUser("about", aboutUser);
 
-    navigation.dispatch(
-      CommonActions.reset({
-        index: 0,
-        routes: [{ name: "UserNav" }],
+    const userId = user._id;
+    const updatedData = {
+      age,
+      location,
+      interests: {
+        food: userFoodInfo,
+        sleep: userSleepInfo,
+        movement: userMovementInfo,
+        adventure: userAdventureInfo,
+      },
+      about: aboutUser,
+    };
+
+    axios
+      .post(`http://192.168.0.148:5001/update/${userId}`, updatedData)
+      .then((res) => {
+        console.log(res.data);
+        navigation.dispatch(
+          CommonActions.reset({
+            index: 0,
+            routes: [{ name: "UserNav" }],
+          })
+        );
       })
-    );
+      .catch((err) => console.log(err));
   };
 
   return (
     <View style={styles.container}>
       <ScrollView>
         <View>
-          <GetKnow />
+          <GetKnow
+            age={age}
+            setAge={setAge}
+            location={location}
+            setLocation={setLocation}
+            picture={picture}
+            setPicture={setPicture}
+          />
           <About aboutUser={aboutUser} setAboutUser={setAboutUser} />
           <Food userFoodInfo={userFoodInfo} setUserFoodInfo={setUserFoodInfo} />
           <Sleep
@@ -68,8 +104,8 @@ function ProfileInfo() {
           />
         </View>
         <View style={styles.viewBtn}>
-          <TouchableOpacity style={styles.createBtm} onPress={handleLogIn}>
-            <Text style={styles.buttonText}>Create</Text>
+          <TouchableOpacity style={styles.createBtm} onPress={handleSave}>
+            <Text style={styles.buttonText}>Save</Text>
           </TouchableOpacity>
         </View>
       </ScrollView>

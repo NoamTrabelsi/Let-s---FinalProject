@@ -1,4 +1,5 @@
 import React, { createContext, useState } from "react";
+import axios from "axios";
 
 const UserContext = createContext();
 
@@ -32,6 +33,19 @@ const userInformationTemplate = {
 const UserProvider = ({ children }) => {
   const [user, setUser] = useState(userInformationTemplate);
 
+  const fetchUserData = async (userId) => {
+    try {
+      const response = await axios.get(
+        `http://192.168.0.148:5001/user/${userId}`
+      );
+      if (response.data) {
+        setUser(response.data);
+      }
+    } catch (error) {
+      console.error("Error fetching user data:", error);
+    }
+  };
+
   const updateUser = (path, value) => {
     setUser((prevUser) => {
       const userCopy = { ...prevUser };
@@ -50,9 +64,20 @@ const UserProvider = ({ children }) => {
     });
   };
 
+  const resetUser = () => {
+    setUser(userInformationTemplate);
+  };
+
   return (
     <UserContext.Provider
-      value={{ user, setUser, userInformationTemplate, updateUser }}
+      value={{
+        user,
+        setUser,
+        userInformationTemplate,
+        updateUser,
+        fetchUserData,
+        resetUser,
+      }}
     >
       {children}
     </UserContext.Provider>

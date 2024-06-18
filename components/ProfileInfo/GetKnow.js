@@ -13,12 +13,10 @@ import {
 } from "react-native";
 import countryList from "react-select-country-list";
 import { UserContext } from "../UserContext/UserContext";
+import { launchImageLibrary } from "react-native-image-picker";
 
-function GetKnow() {
+function GetKnow({ location, setLocation, age, setAge, picture, setPicture }) {
   const { user, updateUser } = useContext(UserContext);
-  const [location, setLocation] = useState("");
-  const [age, setAge] = useState(18);
-  const [picture, setPicture] = useState(null);
   const [filteredCountries, setFilteredCountries] = useState([]);
   const [isModalVisible, setIsModalVisible] = useState(false);
   const countries = countryList().getData();
@@ -48,12 +46,34 @@ function GetKnow() {
     findCountry(query);
   };
 
-  // Placeholder function for adding a picture
-  const addPicture = () => {
-    Alert.alert("Add Picture", "Function to add a picture would be here.");
+  const selectPhoto = () => {
+    launchImageLibrary(
+      {
+        mediaType: "photo",
+        includeBase64: true,
+        maxWidth: 400,
+        maxHeight: 400,
+      },
+      (response) => {
+        if (response.didCancel) {
+          console.log("User cancelled image picker");
+        } else if (response.errorMessage) {
+          console.log("ImagePicker Error: ", response.errorMessage);
+        } else if (response.assets && response.assets.length > 0) {
+          const asset = response.assets[0];
+          const source = { uri: asset.uri };
+          const base64Image = asset.base64;
+          setPicture(source.uri); // Update the state with the image URI
+          updateUser("image", source.uri); // Update the user context with the image URI
+          console.log("Base64: ", base64Image);
+        }
+      }
+    ).catch((error) => {
+      console.error("Unhandled promise rejection:", error);
+      Alert.alert("Error", "Something went wrong while selecting the photo.");
+    });
   };
 
-  // Placeholder function for selecting an age
   const selectAge = (textAge) => {
     const age = parseInt(textAge);
     setAge(age);
@@ -65,7 +85,7 @@ function GetKnow() {
       <View style={styles.container}>
         <Text style={styles.text}>Get to know you</Text>
         <View style={styles.view1}>
-          <TouchableOpacity style={styles.roundButton} onPress={addPicture}>
+          <TouchableOpacity style={styles.roundButton} onPress={selectPhoto}>
             <Text style={styles.buttonText}>Add picture</Text>
           </TouchableOpacity>
           <View>

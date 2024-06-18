@@ -1,4 +1,4 @@
-import React, { useContext } from "react";
+import React, { useState, useContext } from "react";
 import {
   SafeAreaView,
   StyleSheet,
@@ -12,64 +12,46 @@ import {
 import { useNavigation } from "@react-navigation/native";
 import { CommonActions } from "@react-navigation/native";
 import { UserContext } from "../components/UserContext/UserContext";
+import axios from "axios";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 function LogIn() {
   const navigation = useNavigation();
-  const { setUser } = useContext(UserContext);
-
-  const userInformation = {
-    id: 0,
-    firstName: "Cara",
-    lastName: "Delevingne",
-    email: "caradelevingne@gmail.com",
-    password: "123456",
-    age: 24,
-    gender: "female",
-    image:
-      "https://encrypted-tbn1.gstatic.com/images?q=tbn:ANd9GcSlvrOvImP4NFWKUoqMAkbtrN3Hrg6mA88lIcdEhy2avwz0qKfI",
-    location: "Israel",
-    interests: {
-      food: [1, 0, 0],
-      sleep: [1, 0, 0, 1],
-      movement: [0, 0, 0, 1, 1],
-      adventure: [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 1],
-    },
-    trip_planning: [],
-    about:
-      "It's about time you fell in love with something that will love you back. And that, my friends, is house music. It doesn't judge you, and I won't either.",
-    reviews: [
-      {
-        name: "Liron",
-        age: 25,
-        location: "Iceland",
-        rating: 4,
-        text: "This girl is the best. I had such a wonderful and funny time with her.",
-      },
-      {
-        name: "Roi",
-        age: 24,
-        location: "Russia",
-        rating: 5,
-        text: "She is the best. I had such a wonderful and funny time with her.",
-      },
-      {
-        name: "Shir",
-        age: 25,
-        location: "Iceland",
-        rating: 3,
-        text: "She is the best. I had such a wonderful and funny time with her.",
-      },
-    ],
-  };
+  const { setUser, fetchUserData } = useContext(UserContext);
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
 
   const handleLogin = () => {
-    setUser(userInformation);
-    navigation.dispatch(
-      CommonActions.reset({
-        index: 0,
-        routes: [{ name: "UserNav" }],
+    const userData = {
+      email: email,
+      password,
+    };
+    axios
+      .post("http://192.168.0.148:5001/login", userData)
+      .then((res) => {
+        console.log(res.data);
+        if (res.data.status === "ok") {
+          AsyncStorage.setItem("token", res.data.data.token);
+          const token = res.data.data.token;
+          axios
+            .post("http://192.168.0.148:5001/user", { token })
+            .then((userRes) => {
+              if (userRes.data.status === "ok") {
+                fetchUserData(userRes.data.data._id);
+                navigation.dispatch(
+                  CommonActions.reset({
+                    index: 0,
+                    routes: [{ name: "UserNav" }],
+                  })
+                );
+              } else {
+                console.log("Error fetching user:", userRes.data.data);
+              }
+            })
+            .catch((err) => console.log(err));
+        }
       })
-    );
+      .catch((err) => console.log(err));
   };
 
   return (
@@ -85,6 +67,8 @@ function LogIn() {
           style={styles.input}
           autoCapitalize="none"
           textContentType="username"
+          value={email}
+          onChangeText={(text) => setEmail(text)}
         />
         <TextInput
           placeholder="Password"
@@ -92,6 +76,8 @@ function LogIn() {
           style={styles.input}
           secureTextEntry={true}
           textContentType="password"
+          value={password}
+          onChangeText={(text) => setPassword(text)}
         />
         <TouchableOpacity style={styles.button} onPress={handleLogin}>
           <Text style={styles.buttonText}>Log In</Text>

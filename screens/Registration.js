@@ -11,10 +11,12 @@ import {
 import DropDownPicker from "react-native-dropdown-picker";
 import { useNavigation } from "@react-navigation/native";
 import { UserContext } from "../components/UserContext/UserContext";
+import axios from "axios";
 
 function Registration() {
   const navigation = useNavigation();
-  const { setUser, userInformationTemplate } = useContext(UserContext);
+  const { setUser, userInformationTemplate, fetchUserData } =
+    useContext(UserContext);
 
   const [userName, setUserName] = useState("");
   const [userLastName, setUserLastName] = useState("");
@@ -39,7 +41,25 @@ function Registration() {
 
     setUser(userInformation);
 
-    navigation.navigate("ProfileInfo");
+    const userData = {
+      firstName: userName,
+      lastName: userLastName,
+      email: userEmail,
+      password: userPassword,
+      gender: selectedGender,
+    };
+    axios
+      .post("http://192.168.0.148:5001/register", userData)
+      .then((res) => {
+        if (res.data.status === "ok") {
+          const userId = res.data.data.id;
+          fetchUserData(userId);
+          navigation.navigate("ProfileInfo");
+        } else {
+          console.log(res.data.data);
+        }
+      })
+      .catch((err) => console.log(err));
   };
 
   return (

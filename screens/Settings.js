@@ -3,10 +3,28 @@ import { SafeAreaView, StyleSheet, Text, TouchableOpacity } from "react-native";
 import { useNavigation } from "@react-navigation/native";
 import { CommonActions } from "@react-navigation/native";
 import { UserContext } from "../components/UserContext/UserContext";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 function Settings() {
   const navigation = useNavigation();
-  const { user } = useContext(UserContext);
+  const { resetUser } = useContext(UserContext);
+
+  const handleLogout = async () => {
+    try {
+      // Удаление токена из AsyncStorage
+      await AsyncStorage.removeItem("token");
+
+      // Сброс состояния пользователя
+      resetUser();
+
+      // Переход на страницу логина
+      navigation.dispatch(
+        CommonActions.reset({ index: 0, routes: [{ name: "LogIn" }] })
+      );
+    } catch (error) {
+      console.error("Error logging out:", error);
+    }
+  };
 
   return (
     <SafeAreaView style={styles.container}>
@@ -24,14 +42,7 @@ function Settings() {
         <Text style={styles.buttonText}>Update details</Text>
       </TouchableOpacity>
       {/* Log Out Button */}
-      <TouchableOpacity
-        style={styles.button}
-        onPress={() =>
-          navigation.dispatch(
-            CommonActions.reset({ index: 0, routes: [{ name: "LogIn" }] })
-          )
-        }
-      >
+      <TouchableOpacity style={styles.button} onPress={handleLogout}>
         <Text style={styles.buttonText}>Log Out</Text>
       </TouchableOpacity>
     </SafeAreaView>
