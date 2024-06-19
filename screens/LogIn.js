@@ -8,6 +8,7 @@ import {
   TouchableOpacity,
   ImageBackground,
   Image,
+  Modal,
 } from "react-native";
 import { useNavigation } from "@react-navigation/native";
 import { CommonActions } from "@react-navigation/native";
@@ -20,8 +21,10 @@ function LogIn() {
   const { setUser, fetchUserData } = useContext(UserContext);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [loading, setLoading] = useState(false);
 
   const handleLogin = () => {
+    setLoading(true);
     const userData = {
       email: email,
       password,
@@ -38,6 +41,7 @@ function LogIn() {
             .then((userRes) => {
               if (userRes.data.status === "ok") {
                 fetchUserData(userRes.data.data._id);
+                setLoading(false);
                 navigation.dispatch(
                   CommonActions.reset({
                     index: 0,
@@ -60,6 +64,14 @@ function LogIn() {
       style={styles.container}
     >
       <View style={styles.formContainer}>
+        <Modal visible={loading} transparent={true}>
+          <View style={styles.loading}>
+            <Image
+              source={require("../assets/lets-animated.gif")}
+              style={styles.loadingImage}
+            />
+          </View>
+        </Modal>
         <Image source={require("../assets/logo.png")} style={styles.image} />
         <TextInput
           placeholder="Email"
@@ -134,6 +146,17 @@ const styles = StyleSheet.create({
   buttonText: {
     color: "black",
     fontWeight: "bold",
+  },
+  loading: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+    backgroundColor: "rgba(0, 0, 0, 0.5)",
+  },
+  loadingImage: {
+    width: 200,
+    height: 200,
+    borderRadius: 30,
   },
 });
 

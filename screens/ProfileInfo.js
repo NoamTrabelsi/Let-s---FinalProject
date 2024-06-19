@@ -5,6 +5,8 @@ import {
   StyleSheet,
   TouchableOpacity,
   ScrollView,
+  Modal,
+  Image,
 } from "react-native";
 import Destination from "../components/ProfileInfo/Destination";
 import About from "../components/ProfileInfo/About";
@@ -21,15 +23,17 @@ import axios from "axios";
 function ProfileInfo() {
   const navigation = useNavigation();
   const { user, updateUser, fetchUserData } = useContext(UserContext);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     if (user && user._id) {
       fetchUserData(user._id);
     }
   }, []);
-  const [location, setLocation] = useState("");
-  const [age, setAge] = useState();
-  const [picture, setPicture] = useState(null);
+
+  const [location, setLocation] = useState(user.location ? user.location : "");
+  const [age, setAge] = useState(user.age ? user.age : "");
+  const [picture, setPicture] = useState(user.image ? user.image : "");
   const [userFoodInfo, setUserFoodInfo] = useState(user.interests.food);
   const [userSleepInfo, setUserSleepInfo] = useState(user.interests.sleep);
   const [userMovementInfo, setUserMovementInfo] = useState(
@@ -38,18 +42,10 @@ function ProfileInfo() {
   const [userAdventureInfo, setUserAdventureInfo] = useState(
     user.interests.adventure
   );
-  const [aboutUser, setAboutUser] = useState(user.about);
+  const [aboutUser, setAboutUser] = useState(user.about ? user.about : "");
 
   const handleSave = () => {
-    updateUser("image", picture);
-    //updateUser("age", age);
-    //updateUser("location", location);
-    //updateUser("interests.food", userFoodInfo);
-    //updateUser("interests.sleep", userSleepInfo);
-    //updateUser("interests.movement", userMovementInfo);
-    //updateUser("interests.adventure", userAdventureInfo);
-    //updateUser("about", aboutUser);
-
+    setLoading(true);
     const userId = user._id;
     const updatedData = {
       image: picture,
@@ -68,6 +64,7 @@ function ProfileInfo() {
       .post(`http://192.168.0.148:5001/update/${userId}`, updatedData)
       .then((res) => {
         console.log(res.data);
+        setLoading(false);
         navigation.dispatch(
           CommonActions.reset({
             index: 0,
@@ -82,6 +79,14 @@ function ProfileInfo() {
     <View style={styles.container}>
       <ScrollView>
         <View>
+          <Modal visible={loading} transparent={true}>
+            <View style={styles.loading}>
+              <Image
+                source={require("../assets/lets-animated.gif")}
+                style={styles.loadingImage}
+              />
+            </View>
+          </Modal>
           <GetKnow
             age={age}
             setAge={setAge}
@@ -143,5 +148,16 @@ const styles = StyleSheet.create({
   buttonText: {
     color: "white",
     fontWeight: "bold",
+  },
+  loading: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+    backgroundColor: "rgba(0, 0, 0, 0.5)",
+  },
+  loadingImage: {
+    width: 200,
+    height: 200,
+    borderRadius: 30,
   },
 });

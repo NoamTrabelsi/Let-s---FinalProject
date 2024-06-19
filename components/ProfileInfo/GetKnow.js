@@ -36,7 +36,7 @@ function GetKnow({ location, setLocation, age, setAge, picture, setPicture }) {
 
   const handleCountryChange = (countryName) => {
     setLocation(countryName);
-    updateUser("location", countryName);
+    //updateUser("location", countryName);
     setFilteredCountries([]);
     setIsModalVisible(false);
     Keyboard.dismiss();
@@ -91,7 +91,7 @@ function GetKnow({ location, setLocation, age, setAge, picture, setPicture }) {
             const imageUrl = data.Location;
             console.log("Image uploaded successfully:", imageUrl);
             setPicture(imageUrl);
-            updateUser("image", imageUrl);
+            //updateUser("image", imageUrl);
           }
         });
       }
@@ -103,7 +103,7 @@ function GetKnow({ location, setLocation, age, setAge, picture, setPicture }) {
   const selectAge = (textAge) => {
     const age = parseInt(textAge);
     setAge(age);
-    updateUser("age", age);
+    //updateUser("age", age);
   };
 
   return (
@@ -112,8 +112,8 @@ function GetKnow({ location, setLocation, age, setAge, picture, setPicture }) {
         <Text style={styles.text}>Get to know you</Text>
         <View style={styles.view1}>
           <TouchableOpacity style={styles.roundButton} onPress={selectPhoto}>
-            {picture ? (
-              <Image source={{ uri: picture }} style={styles.image} />
+            {user.image ? (
+              <Image source={{ uri: user.image }} style={styles.image} />
             ) : (
               <Text style={styles.buttonText}>Add picture</Text>
             )}
@@ -124,7 +124,7 @@ function GetKnow({ location, setLocation, age, setAge, picture, setPicture }) {
               onPress={() => setIsModalVisible(true)}
             >
               <Text style={styles.buttonText}>
-                {location || "Current Location"}
+                {user.location || "Current Location"}
               </Text>
             </TouchableOpacity>
             <Modal
@@ -200,9 +200,8 @@ const styles = StyleSheet.create({
     justifyContent: "space-around",
   },
   roundButton: {
-    margin: 12,
-    width: 90,
-    height: 90,
+    width: 130,
+    height: 130,
     borderRadius: 75, // Half the height of the button - stable for creating a circle
     backgroundColor: "white", // Button background color
     justifyContent: "center",
@@ -285,8 +284,8 @@ const styles = StyleSheet.create({
     fontWeight: "bold",
   },
   image: {
-    width: 90,
-    height: 90,
+    width: 130,
+    height: 130,
     borderRadius: 75,
   },
 });
