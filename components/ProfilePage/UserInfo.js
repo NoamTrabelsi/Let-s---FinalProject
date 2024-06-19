@@ -36,43 +36,45 @@ const UserInfo = ({ pageOwner, match }) => {
           <Text style={styles.matchPercentage}>{match}%</Text>
         </View>
       )}
-      <View style={styles.searchingContainer}>
-        <View style={styles.searchingHeader}>
-          <Ionicons name="search-sharp" size={20} color="black" />
-          <Text style={styles.searchingLabel}>Last searchings</Text>
+      {pageOwner.trip_planning.length !== 0 ? (
+        <View style={styles.searchingContainer}>
+          <View style={styles.searchingHeader}>
+            <Ionicons name="search-sharp" size={20} color="black" />
+            <Text style={styles.searchingLabel}>Last searchings</Text>
+          </View>
+          <ScrollView horizontal={true} showsHorizontalScrollIndicator={false}>
+            {pageOwner.trip_planning
+              ? pageOwner.trip_planning.map((searching, index) => (
+                  <View key={index} style={styles.searchingItem}>
+                    <Text style={styles.searchingCountry}>
+                      {searching.country}
+                    </Text>
+                    <View style={styles.searchingRow}>
+                      <MaterialCommunityIcons
+                        name="airplane-takeoff"
+                        size={24}
+                        color="black"
+                      />
+                      <Text style={styles.searchingDates}>
+                        {lightFormat(searching.startDate, "dd/MM/yy")}
+                      </Text>
+                    </View>
+                    <View style={styles.searchingRow}>
+                      <MaterialCommunityIcons
+                        name="airplane-landing"
+                        size={24}
+                        color="black"
+                      />
+                      <Text style={styles.searchingDates}>
+                        {lightFormat(searching.endDate, "dd/MM/yy")}
+                      </Text>
+                    </View>
+                  </View>
+                ))
+              : null}
+          </ScrollView>
         </View>
-        <ScrollView horizontal={true} showsHorizontalScrollIndicator={false}>
-          {pageOwner.trip_planning
-            ? pageOwner.trip_planning.map((searching, index) => (
-                <View key={index} style={styles.searchingItem}>
-                  <Text style={styles.searchingCountry}>
-                    {searching.country}
-                  </Text>
-                  <View style={styles.searchingRow}>
-                    <MaterialCommunityIcons
-                      name="airplane-takeoff"
-                      size={24}
-                      color="black"
-                    />
-                    <Text style={styles.searchingDates}>
-                      {lightFormat(searching.startDate, "dd/MM/yy")}
-                    </Text>
-                  </View>
-                  <View style={styles.searchingRow}>
-                    <MaterialCommunityIcons
-                      name="airplane-landing"
-                      size={24}
-                      color="black"
-                    />
-                    <Text style={styles.searchingDates}>
-                      {lightFormat(searching.endDate, "dd/MM/yy")}
-                    </Text>
-                  </View>
-                </View>
-              ))
-            : null}
-        </ScrollView>
-      </View>
+      ) : null}
     </View>
   );
 };

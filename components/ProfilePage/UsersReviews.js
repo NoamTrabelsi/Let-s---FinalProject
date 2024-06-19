@@ -85,6 +85,9 @@ const styles = StyleSheet.create({
   noReviewsText: {
     color: "white",
     marginTop: 20,
+    fontSize: 16,
+    alignItems: "center",
+    fontWeight: "bold",
   },
 });
 

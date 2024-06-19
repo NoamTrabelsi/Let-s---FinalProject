@@ -23,7 +23,7 @@ import axios from "axios";
 function ProfileInfo() {
   const navigation = useNavigation();
   const { user, updateUser, fetchUserData } = useContext(UserContext);
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(false);
 
   useEffect(() => {
     if (user && user._id) {
