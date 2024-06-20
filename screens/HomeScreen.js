@@ -5,7 +5,14 @@ import React, {
   useRef,
   useContext,
 } from "react";
-import { SafeAreaView, StyleSheet, Animated } from "react-native";
+import {
+  SafeAreaView,
+  StyleSheet,
+  Animated,
+  View,
+  Modal,
+  Image,
+} from "react-native";
 import {
   createStackNavigator,
   CardStyleInterpolators,
@@ -23,285 +30,6 @@ import { set } from "mongoose";
 
 const Stack = createStackNavigator();
 
-const initialUsers = [
-  {
-    id: 1,
-    firstName: "John",
-    lastName: "Doe",
-    email: "john.doe@example.com",
-    password: "password123",
-    age: 30,
-    gender: "male",
-    image: "https://images-s.kinorium.com/persona/300/175059.jpg?1633697285",
-    location: "United States",
-    interests: {
-      food: [1, 1, 0],
-      sleep: [0, 1, 1, 0],
-      movement: [1, 1, 0, 0, 0],
-      adventure: [0, 0, 1, 0, 1, 1, 0, 0, 0, 1, 0, 0, 1, 0, 0, 0, 0, 0],
-    },
-    trip_planning: [
-      {
-        country: "Netherlands",
-        startDate: "2024-06-20",
-        endDate: "2024-06-22",
-      },
-      {
-        country: "Germany",
-        startDate: "2024-06-20",
-        endDate: "2024-06-22",
-      },
-    ],
-    about:
-      "I love exploring new places and trying out new cuisines. Life is an adventure!",
-    reviews: [
-      {
-        name: "Alice",
-        age: 28,
-        location: "Canada",
-        rating: 5,
-        text: "John is an amazing person to hang out with. Had a fantastic time!",
-      },
-      {
-        name: "Bob",
-        age: 32,
-        location: "UK",
-        rating: 4,
-        text: "John is very friendly and outgoing. Enjoyed every moment.",
-      },
-      {
-        name: "Charlie",
-        age: 29,
-        location: "Australia",
-        rating: 5,
-        text: "John's energy is infectious. Would love to meet again!",
-      },
-    ],
-  },
-  {
-    id: 2,
-    firstName: "Emma",
-    lastName: "Smith",
-    email: "emma.smith@example.com",
-    password: "pass1234",
-    age: 27,
-    gender: "female",
-    image:
-      "https://yt3.googleusercontent.com/k0RdkmgNRg4D4sJ2DQZWIRqAnKMWB7df4i_TKgpfHYK8FCGF-O8XGMpBYFg-ULSZZIc7BXMb=s900-c-k-c0x00ffffff-no-rj",
-    location: "Canada",
-    interests: {
-      food: [0, 1, 1],
-      sleep: [1, 0, 1, 1],
-      movement: [1, 0, 1, 1, 0],
-      adventure: [1, 1, 0, 0, 1, 0, 1, 1, 0, 0, 1, 1, 0, 0, 0, 1, 1, 1],
-    },
-    trip_planning: [],
-    about:
-      "Passionate about technology and travel. Always ready for a new challenge.",
-    reviews: [
-      {
-        name: "David",
-        age: 26,
-        location: "Germany",
-        rating: 4,
-        text: "Emma is a very interesting person. Had a great time talking with her.",
-      },
-      {
-        name: "Sophia",
-        age: 29,
-        location: "France",
-        rating: 5,
-        text: "Emma's insights are amazing. Really enjoyed our discussions.",
-      },
-      {
-        name: "Oliver",
-        age: 28,
-        location: "Italy",
-        rating: 4,
-        text: "Emma is very knowledgeable and fun to be around.",
-      },
-    ],
-  },
-  {
-    id: 3,
-    firstName: "Michael",
-    lastName: "Johnson",
-    email: "michael.johnson@example.com",
-    password: "mike123",
-    age: 35,
-    gender: "male",
-    image:
-      "https://people.com/thmb/lhO9lu-03uXN7jsWlk9TY0mhW0o=/4000x0/filters:no_upscale():max_bytes(150000):strip_icc():focal(709x499:711x501)/michael-jackson-210aa5866c7d4dd58de8e3af57fe919a.jpg",
-    location: "Australia",
-    interests: {
-      food: [1, 0, 1],
-      sleep: [1, 1, 0, 0],
-      movement: [0, 1, 1, 1, 0],
-      adventure: [0, 0, 1, 1, 0, 1, 0, 0, 1, 1, 0, 0, 0, 1, 1, 0, 0, 1],
-    },
-    trip_planning: [],
-    about:
-      "Fitness enthusiast and avid reader. Love to share knowledge and experiences.",
-    reviews: [
-      {
-        name: "Anna",
-        age: 32,
-        location: "New Zealand",
-        rating: 5,
-        text: "Michael is very inspiring and motivational. Had a wonderful time.",
-      },
-      {
-        name: "James",
-        age: 34,
-        location: "Singapore",
-        rating: 5,
-        text: "Michael's enthusiasm is contagious. Great person to hang out with.",
-      },
-      {
-        name: "Emily",
-        age: 30,
-        location: "South Africa",
-        rating: 4,
-        text: "Michael has great insights and is very fun to talk to.",
-      },
-    ],
-  },
-  {
-    id: 4,
-    firstName: "Isabella",
-    lastName: "Brown",
-    email: "isabella.brown@example.com",
-    password: "bella123",
-    age: 29,
-    gender: "female",
-    image:
-      "https://static.wikia.nocookie.net/peter-jacksons-the-lord-of-the-rings-trilogy/images/e/ef/Isabella_Brown.jpeg/revision/latest?cb=20170224232150",
-    location: "United Kingdom",
-    interests: {
-      food: [0, 0, 1],
-      sleep: [1, 1, 1, 0],
-      movement: [1, 0, 0, 1, 1],
-      adventure: [1, 1, 0, 0, 1, 1, 0, 0, 1, 0, 1, 1, 0, 1, 1, 0, 0, 0],
-    },
-    trip_planning: [
-      {
-        country: "Netherlands",
-        startDate: "2024-06-20",
-        endDate: "2024-06-22",
-      },
-      {
-        country: "Georgia",
-        startDate: "2024-06-20",
-        endDate: "2024-06-22",
-      },
-    ],
-    about:
-      "Art lover and culture enthusiast. Always excited to learn new things.",
-    reviews: [
-      {
-        name: "Liam",
-        age: 31,
-        location: "Ireland",
-        rating: 5,
-        text: "Isabella is very cultured and knowledgeable. Had a fantastic time.",
-      },
-      {
-        name: "Noah",
-        age: 29,
-        location: "Spain",
-        rating: 4,
-        text: "Isabella's passion for art is inspiring. Loved every moment with her.",
-      },
-      {
-        name: "Ava",
-        age: 28,
-        location: "Portugal",
-        rating: 5,
-        text: "Isabella has great taste and is very interesting to talk to.",
-      },
-    ],
-  },
-  {
-    id: 5,
-    firstName: "Liam",
-    lastName: "Neeson",
-    email: "liam.neeson@example.com",
-    password: "liam456",
-    age: 32,
-    gender: "male",
-    image:
-      "https://m.media-amazon.com/images/M/MV5BMjA1MTQ3NzU1MV5BMl5BanBnXkFtZTgwMDE3Mjg0MzE@._V1_FMjpg_UX1000_.jpg",
-    location: "Ireland",
-    interests: {
-      food: [1, 1, 1],
-      sleep: [0, 0, 0, 1],
-      movement: [1, 1, 1, 0, 1],
-      adventure: [0, 1, 1, 1, 0, 1, 0, 1, 1, 0, 0, 1, 0, 0, 1, 1, 0, 0],
-    },
-    trip_planning: [
-      {
-        country: "Israel",
-        startDate: "2024-06-20",
-        endDate: "2024-06-22",
-      },
-    ],
-    about: "Music lover and tech geek. Always curious about the latest trends.",
-    reviews: [
-      {
-        name: "Mia",
-        age: 30,
-        location: "Netherlands",
-        rating: 4,
-        text: "Liam is very fun and knowledgeable. Enjoyed our conversations a lot.",
-      },
-      {
-        name: "Ethan",
-        age: 31,
-        location: "Belgium",
-        rating: 5,
-        text: "Liam's knowledge of music is impressive. Had a great time with him.",
-      },
-      {
-        name: "Charlotte",
-        age: 29,
-        location: "Sweden",
-        rating: 4,
-        text: "Liam is very interesting and fun to talk to. Highly recommend.",
-      },
-    ],
-  },
-];
-
-const filterUsers = (city, startDate, endDate, minAge, maxAge, gender) => {
-  return initialUsers.filter((user) => {
-    const matchesAge = user.age >= minAge && user.age <= maxAge;
-    const matchesGender = gender === "all" || user.gender === gender;
-
-    const matchesTrip = user.trip_planning.some((trip) => {
-      const tripStartDate = formatISO(new Date(trip.startDate), {
-        representation: "date",
-      });
-      const tripEndDate = formatISO(new Date(trip.endDate), {
-        representation: "date",
-      });
-      const matchesTripDate =
-        (!startDate ||
-          tripEndDate >=
-            formatISO(new Date(startDate), { representation: "date" })) &&
-        (!endDate ||
-          tripStartDate <=
-            formatISO(new Date(endDate), { representation: "date" }));
-
-      const matchesTripCity =
-        !city || trip.country.toLowerCase().includes(city.toLowerCase());
-
-      return matchesTripCity && matchesTripDate;
-    });
-
-    return matchesTrip && matchesAge && matchesGender;
-  });
-};
-
 function SearchMainScreen() {
   const { user, updateUser, fetchUserData } = useContext(UserContext);
   const [city, setCity] = useState("");
@@ -318,14 +46,53 @@ function SearchMainScreen() {
   const [users, setUsers] = useState([]);
   const [loading, setLoading] = useState(false);
 
-  const formatDate = (date) => {
-    if (!date) return "";
-    return formatISO(new Date(date), { representation: "date" });
-  };
-
   const toggleFilterModal = useCallback(() => {
     setFilterModalVisible(!isFilterModalVisible);
   }, [isFilterModalVisible]);
+
+  const filterUsers = async (
+    city,
+    startDate,
+    endDate,
+    minAge,
+    maxAge,
+    gender
+  ) => {
+    try {
+      setLoading(true);
+      console.log("Sending request to server with:", {
+        city,
+        startDate,
+        endDate,
+        minAge,
+        maxAge,
+        gender,
+      });
+      const response = await axios.post("http://192.168.0.148:5001/search", {
+        country: city,
+        startDate,
+        endDate,
+        userId: user._id,
+      });
+
+      if (response.data.status === "ok") {
+        setLoading(false);
+        setUsers(
+          response.data.data.filter((user) => {
+            const matchesAge = user.age >= minAge && user.age <= maxAge;
+            const matchesGender = gender === "all" || user.gender === gender;
+            return matchesAge && matchesGender;
+          })
+        );
+      } else {
+        setLoading(false);
+        console.error("Error getting users:", response.data.data);
+      }
+    } catch (err) {
+      setLoading(false);
+      console.error("Error fetching users:", err);
+    }
+  };
 
   const handleSearch = () => {
     setStartDate(startDateHelp);
@@ -347,6 +114,11 @@ function SearchMainScreen() {
       gender
     );
     setUsers(filteredUsers);
+  };
+
+  const formatDate = (date) => {
+    if (!date) return "";
+    return formatISO(new Date(date), { representation: "date" });
   };
 
   const addToTrip = () => {
@@ -381,13 +153,10 @@ function SearchMainScreen() {
     axios
       .post(`http://192.168.0.148:5001/update/${user._id}`, updatedUser)
       .then((res) => {
-        console.log(res.data);
         fetchUserData(user._id);
         console.log("User trip history updated");
       })
       .catch((err) => console.log(err));
-
-    console.log(user);
   };
 
   useEffect(() => {
@@ -408,6 +177,15 @@ function SearchMainScreen() {
 
   return (
     <SafeAreaView style={styles.container}>
+      <Modal visible={loading} transparent={true}>
+        <View style={styles.loading}>
+          <Image
+            source={require("../assets/lets-animated.gif")}
+            style={styles.loadingImage}
+          />
+        </View>
+      </Modal>
+
       <FilterModal
         isVisible={isFilterModalVisible}
         toggleModal={toggleFilterModal}
@@ -433,7 +211,6 @@ function SearchMainScreen() {
 
       <UsersList
         users={users}
-        loading={loading}
         scrollY={scrollY}
         inputContainerHeight={inputContainerHeight}
       />
@@ -475,6 +252,17 @@ const styles = StyleSheet.create({
     backgroundColor: "#f0f0f0",
     justifyContent: "flex-start",
     padding: 20,
+  },
+  loading: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+    backgroundColor: "rgba(0, 0, 0, 0.5)",
+  },
+  loadingImage: {
+    width: 200,
+    height: 200,
+    borderRadius: 30,
   },
 });
 

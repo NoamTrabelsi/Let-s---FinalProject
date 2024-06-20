@@ -5,6 +5,7 @@ app.use(express.json({ limit: "50mb" }));
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 const mongoose = require("mongoose");
+const { parseISO, formatISO } = require("date-fns");
 
 // MongoDB connection
 const mongoUrl =
@@ -134,5 +135,62 @@ app.post("/login", async (req, res) => {
     res.status(201).send({ status: "ok", data: { token } });
   } else {
     return res.send({ status: "error", data: "Incorrect password" });
+  }
+});
+
+//search users by trip planning
+app.post("/search", async (req, res) => {
+  const { country, startDate, endDate, userId } = req.body;
+
+  try {
+    const startDateISO = startDate
+      ? formatISO(parseISO(startDate), { representation: "date" })
+      : null;
+    const endDateISO = endDate
+      ? formatISO(parseISO(endDate), { representation: "date" })
+      : null;
+
+    const query = {
+      _id: { $ne: userId }, // Exclude the current user
+      trip_planning: {
+        $elemMatch: {
+          country: { $regex: new RegExp(country, "i") },
+          ...(startDateISO &&
+            endDateISO && {
+              $or: [
+                {
+                  endDate: { $gte: startDateISO },
+                  startDate: { $lte: endDateISO },
+                },
+                {
+                  startDate: { $gte: startDateISO },
+                  endDate: { $lte: endDateISO },
+                },
+              ],
+            }),
+          ...(startDateISO &&
+            !endDateISO && {
+              endDate: { $gte: startDateISO },
+            }),
+          ...(!startDateISO &&
+            endDateISO && {
+              startDate: { $lte: endDateISO },
+            }),
+        },
+      },
+    };
+
+    const users = await User.find(query);
+
+    if (!users.length) {
+      return res.status(404).send({ status: "error", data: "Users not found" });
+    }
+
+    res.send({ status: "ok", data: users });
+  } catch (err) {
+    console.error("Error fetching users:", err);
+    return res
+      .status(500)
+      .send({ status: "error", data: "Error fetching users" });
   }
 });

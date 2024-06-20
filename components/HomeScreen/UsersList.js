@@ -1,8 +1,8 @@
-import React, { useMemo } from "react";
+import React from "react";
 import { View, Text, Animated, StyleSheet } from "react-native";
 import UserItem from "./UserItem";
 
-const UsersList = ({ users, loading, scrollY, inputContainerHeight }) => {
+const UsersList = ({ users, scrollY, inputContainerHeight }) => {
   return (
     <Animated.FlatList
       showsVerticalScrollIndicator={false}
@@ -14,8 +14,7 @@ const UsersList = ({ users, loading, scrollY, inputContainerHeight }) => {
       numColumns={2}
       ItemSeparatorComponent={() => <View style={styles.separator} />}
       renderItem={({ item }) => <UserItem item={item} />}
-      keyExtractor={(item) => item.id.toString()}
-      ListFooterComponent={loading && <Text>Loading more users...</Text>}
+      keyExtractor={(item) => item._id.toString()}
       onScroll={Animated.event(
         [{ nativeEvent: { contentOffset: { y: scrollY } } }],
         { useNativeDriver: true }

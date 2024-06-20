@@ -106,7 +106,7 @@ const ProfilePage = () => {
         <AboutUser aboutUser={pageOwner} />
         <UsersReviews userReviews={userReviews} />
         {/* Add Review and Chat buttons if user is not the page owner */}
-        {pageOwner.id !== user.id && (
+        {pageOwner._id !== user._id && (
           <View style={styles.buttonsContainer}>
             <TouchableOpacity
               style={styles.button}

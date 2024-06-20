@@ -10,29 +10,29 @@ const UserItem = React.memo(({ item }) => {
 
   const handlePress = () => {
     console.log(`User ${item.firstName} ${item.lastName} clicked!`);
-    // Переход на страницу профиля пользователя
     navigation.navigate("ProfilePage", {
       foundUser: item,
       tripMatch: tripMatch,
     });
   };
 
+  const firstName = item.firstName || "Unknown";
+  const lastName = item.lastName || "";
+  const age = item.age != null ? item.age.toString() : "N/A";
+  const location = item.location || "Unknown";
+  const imageUri = item.image || "https://via.placeholder.com/150"; // Placeholder image if item.image is undefined
+
   return (
     <View style={styles.itemContainer}>
       <TouchableOpacity onPress={handlePress} activeOpacity={1}>
-        <Image
-          source={{
-            uri: item.image,
-          }}
-          style={styles.avatar}
-        />
+        <Image source={{ uri: imageUri }} style={styles.avatar} />
 
         <View style={styles.itemDetails}>
           <Text style={styles.itemName}>
-            {item.firstName} | {item.age}
+            {firstName} | {age}
           </Text>
           <View style={styles.spacing} />
-          <Text style={styles.itemInfo}>{item.location}</Text>
+          <Text style={styles.itemInfo}>{location}</Text>
           <MatchCalculator userFound={item} setTripMatch={setTripMatch} />
         </View>
       </TouchableOpacity>
@@ -55,7 +55,7 @@ const styles = StyleSheet.create({
   },
   avatar: {
     width: "100%",
-    height: Dimensions.get("window").width / 2 - 40, // Adjust the height based on screen width
+    height: Dimensions.get("window").width / 2 - 40,
   },
   itemDetails: {
     padding: 10,
