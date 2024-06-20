@@ -23,7 +23,6 @@ import { useNavigation } from "@react-navigation/native";
 
 const ProfilePage = () => {
   const navigator = useNavigation();
-
   const { user, updateUser } = useContext(UserContext);
   const route = useRoute();
   const viewedUser = route.params?.foundUser;

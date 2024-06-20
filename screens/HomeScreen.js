@@ -18,6 +18,8 @@ import ProfilePage from "./ProfilePage";
 import ChatWithUser from "./ChatWithUser";
 import { formatISO } from "date-fns";
 import { UserContext } from "../components/UserContext/UserContext";
+import axios from "axios";
+import { set } from "mongoose";
 
 const Stack = createStackNavigator();
 
@@ -301,7 +303,7 @@ const filterUsers = (city, startDate, endDate, minAge, maxAge, gender) => {
 };
 
 function SearchMainScreen() {
-  const { user, updateUser } = useContext(UserContext);
+  const { user, updateUser, fetchUserData } = useContext(UserContext);
   const [city, setCity] = useState("");
   const [startDate, setStartDate] = useState();
   const [endDate, setEndDate] = useState();
@@ -376,9 +378,16 @@ function SearchMainScreen() {
       });
     }
 
-    updateUser("trip_planning", updatedUser.trip_planning);
+    axios
+      .post(`http://192.168.0.148:5001/update/${user._id}`, updatedUser)
+      .then((res) => {
+        console.log(res.data);
+        fetchUserData(user._id);
+        console.log("User trip history updated");
+      })
+      .catch((err) => console.log(err));
 
-    console.log("User trip history updated: ", updatedUser.trip_planning);
+    console.log(user);
   };
 
   useEffect(() => {
