@@ -182,6 +182,8 @@ app.post("/search", async (req, res) => {
 
     const users = await User.find(query);
 
+    console.log("Users found:", users.length);
+
     if (!users.length) {
       return res.status(404).send({ status: "error", data: "Users not found" });
     }

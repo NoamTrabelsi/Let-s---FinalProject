@@ -1,13 +1,103 @@
 import React, { useContext } from "react";
-import { View, Text, StyleSheet, ScrollView } from "react-native";
+import {
+  View,
+  Text,
+  StyleSheet,
+  ScrollView,
+  Alert,
+  TouchableOpacity,
+} from "react-native";
 import { FontAwesome } from "@expo/vector-icons";
 import { Ionicons } from "@expo/vector-icons";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import { UserContext } from "../UserContext/UserContext";
 import { lightFormat } from "date-fns";
+import axios from "axios";
 
 const UserInfo = ({ pageOwner, match }) => {
-  const { user } = useContext(UserContext);
+  const { user, setUser } = useContext(UserContext);
+
+  const handlePress = (index) => {
+    Alert.alert(
+      "Delete Search",
+      "Are you sure you want to delete this search?",
+      [
+        {
+          text: "Cancel",
+          style: "cancel",
+        },
+        {
+          text: "Delete",
+          onPress: () => deleteSearch(index),
+          style: "destructive",
+        },
+      ]
+    );
+  };
+
+  const deleteSearch = async (index) => {
+    const updatedTripPlanning = pageOwner.trip_planning.filter(
+      (_, i) => i !== index
+    );
+
+    try {
+      const response = await axios.post(
+        `http://192.168.0.148:5001/update/${pageOwner._id}`,
+        {
+          trip_planning: updatedTripPlanning,
+        }
+      );
+
+      if (response.data.status === "ok") {
+        console.log("One of last searchings deleted");
+        setUser({ ...user, trip_planning: updatedTripPlanning });
+      } else {
+        console.log("Error deleting last searching");
+        Alert.alert("Error", response.data.data);
+      }
+    } catch (error) {
+      console.error("Error deleting last searching:", error);
+      Alert.alert("Error", "Failed to update user");
+    }
+  };
+
+  const renderSearchingItem = (searching, index) => {
+    const searchingItemContent = (
+      <View style={styles.searchingItem}>
+        <Text style={styles.searchingCountry}>{searching.country}</Text>
+        <View style={styles.searchingRow}>
+          <MaterialCommunityIcons
+            name="airplane-takeoff"
+            size={24}
+            color="black"
+          />
+          <Text style={styles.searchingDates}>
+            {lightFormat(searching.startDate, "dd/MM/yy")}
+          </Text>
+        </View>
+        <View style={styles.searchingRow}>
+          <MaterialCommunityIcons
+            name="airplane-landing"
+            size={24}
+            color="black"
+          />
+          <Text style={styles.searchingDates}>
+            {lightFormat(searching.endDate, "dd/MM/yy")}
+          </Text>
+        </View>
+        {pageOwner._id === user._id && (
+          <TouchableOpacity
+            style={styles.deleteIcon}
+            onPress={() => handlePress(index)}
+          >
+            <FontAwesome name="trash-o" size={15} color="red" />
+          </TouchableOpacity>
+        )}
+      </View>
+    );
+
+    return <View key={index}>{searchingItemContent}</View>;
+  };
 
   return (
     <View style={styles.profileInfo}>
@@ -21,7 +111,7 @@ const UserInfo = ({ pageOwner, match }) => {
           {pageOwner.location}
         </Text>
       </View>
-      {pageOwner.id !== user.id && (
+      {pageOwner._id !== user._id && (
         <View style={styles.ratingContainer}>
           <Text style={styles.matchLabel}>Trip Match</Text>
           <View style={styles.ratingBar}>
@@ -48,33 +138,9 @@ const UserInfo = ({ pageOwner, match }) => {
               showsHorizontalScrollIndicator={false}
             >
               {pageOwner.trip_planning
-                ? pageOwner.trip_planning.map((searching, index) => (
-                    <View key={index} style={styles.searchingItem}>
-                      <Text style={styles.searchingCountry}>
-                        {searching.country}
-                      </Text>
-                      <View style={styles.searchingRow}>
-                        <MaterialCommunityIcons
-                          name="airplane-takeoff"
-                          size={24}
-                          color="black"
-                        />
-                        <Text style={styles.searchingDates}>
-                          {lightFormat(searching.startDate, "dd/MM/yy")}
-                        </Text>
-                      </View>
-                      <View style={styles.searchingRow}>
-                        <MaterialCommunityIcons
-                          name="airplane-landing"
-                          size={24}
-                          color="black"
-                        />
-                        <Text style={styles.searchingDates}>
-                          {lightFormat(searching.endDate, "dd/MM/yy")}
-                        </Text>
-                      </View>
-                    </View>
-                  ))
+                ? pageOwner.trip_planning.map((searching, index) =>
+                    renderSearchingItem(searching, index)
+                  )
                 : null}
             </ScrollView>
           </View>
@@ -159,6 +225,7 @@ const styles = StyleSheet.create({
     shadowRadius: 5,
     elevation: 2,
     width: 150,
+    position: "relative", // Добавлено для позиционирования значка
   },
   searchingCountry: {
     fontSize: 14,
@@ -175,6 +242,11 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     marginTop: 5,
+  },
+  deleteIcon: {
+    position: "absolute",
+    top: 12,
+    right: 5,
   },
 });
 

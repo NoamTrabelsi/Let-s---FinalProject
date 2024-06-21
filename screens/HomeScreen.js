@@ -97,13 +97,13 @@ function SearchMainScreen() {
   const handleSearch = () => {
     setStartDate(startDateHelp);
     setEndDate(endDateHelp);
-    console.log(
-      `City: ${city}, Start Date: ${
-        startDate ? formatDate(new Date(startDate)) : ""
-      }, End Date: ${endDate ? formatDate(new Date(endDate)) : ""}`
-    );
-    console.log(`Min Age: ${minAge}, Max Age: ${maxAge}`);
-    console.log(`Gender: ${gender}`);
+    // console.log(
+    //   `City: ${city}, Start Date: ${
+    //     startDate ? formatDate(new Date(startDate)) : ""
+    //   }, End Date: ${endDate ? formatDate(new Date(endDate)) : ""}`
+    // );
+    // console.log(`Min Age: ${minAge}, Max Age: ${maxAge}`);
+    // console.log(`Gender: ${gender}`);
 
     const filteredUsers = filterUsers(
       city,
@@ -161,7 +161,7 @@ function SearchMainScreen() {
 
   useEffect(() => {
     if (!isFilterModalVisible && city) {
-      handleSearch();
+      //handleSearch();
       addToTrip();
     }
   }, [isFilterModalVisible, city, startDate, endDate]);

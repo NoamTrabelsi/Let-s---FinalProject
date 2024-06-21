@@ -2,8 +2,10 @@ import React, { useMemo, useEffect, useContext } from "react";
 import { View, Text, StyleSheet } from "react-native";
 import { UserContext } from "../UserContext/UserContext";
 
+//set the minimum value for the match
+const minimumValue = 50;
+
 function cosineSimilarity(vecA, vecB) {
-  // Приведение векторов к одному размеру
   const maxLength = Math.max(vecA.length, vecB.length);
   const extendedVecA = [...vecA, ...Array(maxLength - vecA.length).fill(0)];
   const extendedVecB = [...vecB, ...Array(maxLength - vecB.length).fill(0)];
@@ -19,7 +21,7 @@ function cosineSimilarity(vecA, vecB) {
   }
 
   if (normA === 0 || normB === 0) {
-    return 0; // для обработки случаев, когда один из векторов состоит из всех нулей
+    return 0;
   }
 
   return dotProduct / (Math.sqrt(normA) * Math.sqrt(normB));
@@ -30,7 +32,7 @@ const MatchCalculator = ({ userFound, setTripMatch }) => {
 
   const calculateMatch = useMemo(() => {
     if (!user || !userFound || !user.interests || !userFound.interests) {
-      return 0;
+      return minimumValue; //minimum value if no user or userFound
     }
 
     const interestCategoriesUser = Object.keys(user.interests);
@@ -40,7 +42,7 @@ const MatchCalculator = ({ userFound, setTripMatch }) => {
     );
 
     if (commonCategories.length === 0) {
-      return 0; // Если нет общих категорий, возвращаем 0
+      return minimumValue; //minimum value if no common categories
     }
 
     let totalSimilarity = 0;
@@ -53,8 +55,10 @@ const MatchCalculator = ({ userFound, setTripMatch }) => {
       totalSimilarity += similarity;
     }
 
-    const averageSimilarity = (totalSimilarity / commonCategories.length) * 100;
-    return parseFloat(averageSimilarity.toFixed(0));
+    const averageSimilarity = totalSimilarity / commonCategories.length;
+    const normalizedSimilarity =
+      minimumValue + (100 - minimumValue) * averageSimilarity;
+    return parseFloat(normalizedSimilarity.toFixed(0));
   }, [user, userFound]);
 
   useEffect(() => {
