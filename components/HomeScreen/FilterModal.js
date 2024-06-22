@@ -9,7 +9,7 @@ import {
 } from "react-native";
 import Slider from "./Slider";
 import GenderFilter from "./GenderFilter";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 
 const FilterModal = ({
   isVisible,
@@ -24,6 +24,12 @@ const FilterModal = ({
   const [filteredMinAge, setFilteredMinAge] = useState(minAge);
   const [filteredMaxAge, setFilteredMaxAge] = useState(maxAge);
   const [filteredGender, setFilteredGender] = useState(gender);
+
+  useEffect(() => {
+    setFilteredMinAge(minAge);
+    setFilteredMaxAge(maxAge);
+    setFilteredGender(gender);
+  }, [minAge, maxAge, gender]);
 
   const handleFilterApply = () => {
     setMinAge(filteredMinAge);

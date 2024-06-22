@@ -17,7 +17,6 @@ import {
   createStackNavigator,
   CardStyleInterpolators,
 } from "@react-navigation/stack";
-import { NavigationContainer } from "@react-navigation/native";
 import FilterModal from "../components/HomeScreen/FilterModal";
 import SearchBar from "../components/HomeScreen/SearchBar";
 import UsersList from "../components/HomeScreen/UsersList";
@@ -26,13 +25,12 @@ import ChatWithUser from "./ChatWithUser";
 import { formatISO } from "date-fns";
 import { UserContext } from "../components/UserContext/UserContext";
 import axios from "axios";
-import { set } from "mongoose";
 
 const Stack = createStackNavigator();
 
 function SearchMainScreen() {
-  const { user, updateUser, fetchUserData } = useContext(UserContext);
-  const [city, setCity] = useState("");
+  const { user, fetchUserData } = useContext(UserContext);
+  const [country, setCountry] = useState("");
   const [startDate, setStartDate] = useState();
   const [endDate, setEndDate] = useState();
   const [startDateHelp, setStartDateHelp] = useState();
@@ -46,28 +44,39 @@ function SearchMainScreen() {
   const [users, setUsers] = useState([]);
   const [loading, setLoading] = useState(false);
 
+  const scrollY = useRef(new Animated.Value(0)).current;
+  const [inputContainerHeight, setInputContainerHeight] = useState(0);
+
   const toggleFilterModal = useCallback(() => {
     setFilterModalVisible(!isFilterModalVisible);
   }, [isFilterModalVisible]);
 
-  const filterUsers = async (
-    city,
-    startDate,
-    endDate,
-    minAge,
-    maxAge,
-    gender
-  ) => {
+  // Format date to ISO string
+  const formatDate = (date) => {
+    if (!date) return "";
+    return formatISO(new Date(date), { representation: "date" });
+  };
+
+  // Handle search functionality
+  const handleSearch = async () => {
+    const updatedStartDate = startDateHelp;
+    const updatedEndDate = endDateHelp;
+
+    setStartDate(updatedStartDate);
+    setEndDate(updatedEndDate);
+
+    await addToTrip(updatedStartDate, updatedEndDate);
+    await fetchUsers(
+      country,
+      updatedStartDate ? formatDate(new Date(updatedStartDate)) : null,
+      updatedEndDate ? formatDate(new Date(updatedEndDate)) : null
+    );
+  };
+
+  // Fetch users from server
+  const fetchUsers = async (city, startDate, endDate) => {
     try {
       setLoading(true);
-      console.log("Sending request to server with:", {
-        city,
-        startDate,
-        endDate,
-        minAge,
-        maxAge,
-        gender,
-      });
       const response = await axios.post("http://192.168.0.148:5001/search", {
         country: city,
         startDate,
@@ -76,52 +85,21 @@ function SearchMainScreen() {
       });
 
       if (response.data.status === "ok") {
-        setLoading(false);
-        setUsers(
-          response.data.data.filter((user) => {
-            const matchesAge = user.age >= minAge && user.age <= maxAge;
-            const matchesGender = gender === "all" || user.gender === gender;
-            return matchesAge && matchesGender;
-          })
-        );
+        setUsers(response.data.data);
       } else {
-        setLoading(false);
         console.error("Error getting users:", response.data.data);
+        setUsers([]);
       }
     } catch (err) {
-      setLoading(false);
       console.error("Error fetching users:", err);
+      setUsers([]);
+    } finally {
+      setLoading(false);
     }
   };
 
-  const handleSearch = () => {
-    setStartDate(startDateHelp);
-    setEndDate(endDateHelp);
-    // console.log(
-    //   `City: ${city}, Start Date: ${
-    //     startDate ? formatDate(new Date(startDate)) : ""
-    //   }, End Date: ${endDate ? formatDate(new Date(endDate)) : ""}`
-    // );
-    // console.log(`Min Age: ${minAge}, Max Age: ${maxAge}`);
-    // console.log(`Gender: ${gender}`);
-
-    const filteredUsers = filterUsers(
-      city,
-      startDate ? formatDate(new Date(startDate)) : null,
-      endDate ? formatDate(new Date(endDate)) : null,
-      minAge,
-      maxAge,
-      gender
-    );
-    setUsers(filteredUsers);
-  };
-
-  const formatDate = (date) => {
-    if (!date) return "";
-    return formatISO(new Date(date), { representation: "date" });
-  };
-
-  const addToTrip = () => {
+  // Add trip to user's trip history
+  const addToTrip = async (startDate, endDate) => {
     const updatedUser = { ...user };
 
     const formattedStartDate = formatISO(new Date(startDate), {
@@ -132,7 +110,7 @@ function SearchMainScreen() {
     });
 
     const existingTripIndex = updatedUser.trip_planning.findIndex(
-      (trip) => trip.country === city
+      (trip) => trip.country === country
     );
 
     if (existingTripIndex !== -1) {
@@ -144,30 +122,32 @@ function SearchMainScreen() {
         updatedUser.trip_planning.pop();
       }
       updatedUser.trip_planning.unshift({
-        country: city,
+        country: country,
         startDate: formattedStartDate,
         endDate: formattedEndDate,
       });
     }
 
-    axios
-      .post(`http://192.168.0.148:5001/update/${user._id}`, updatedUser)
-      .then((res) => {
-        fetchUserData(user._id);
-        console.log("User trip history updated");
-      })
-      .catch((err) => console.log(err));
+    try {
+      await axios.post(
+        `http://192.168.0.148:5001/update/${user._id}`,
+        updatedUser
+      );
+      fetchUserData(user._id);
+      console.log("User trip history updated");
+    } catch (err) {
+      console.error("Error updating user trip history:", err);
+    }
   };
 
-  useEffect(() => {
-    if (!isFilterModalVisible && city) {
-      //handleSearch();
-      addToTrip();
-    }
-  }, [isFilterModalVisible, city, startDate, endDate]);
-
-  const scrollY = useRef(new Animated.Value(0)).current;
-  const [inputContainerHeight, setInputContainerHeight] = useState(0);
+  // Filter users based on age and gender
+  const filterUsers = () => {
+    return users.filter((user) => {
+      const matchesAge = user.age >= minAge && user.age <= maxAge;
+      const matchesGender = gender === "all" || user.gender === gender;
+      return matchesAge && matchesGender;
+    });
+  };
 
   const inputContainerTranslateY = scrollY.interpolate({
     inputRange: [0, inputContainerHeight],
@@ -198,7 +178,7 @@ function SearchMainScreen() {
       />
 
       <SearchBar
-        setCity={setCity}
+        setCountry={setCountry}
         startDate={startDateHelp}
         setStartDate={setStartDateHelp}
         endDate={endDateHelp}
@@ -210,7 +190,7 @@ function SearchMainScreen() {
       />
 
       <UsersList
-        users={users}
+        users={filterUsers()}
         scrollY={scrollY}
         inputContainerHeight={inputContainerHeight}
       />

@@ -14,7 +14,7 @@ import countryList from "react-select-country-list";
 import Autocomplete from "react-native-autocomplete-input";
 
 const SearchBar = ({
-  setCity,
+  setCountry,
   startDate,
   setStartDate,
   endDate,
@@ -33,19 +33,21 @@ const SearchBar = ({
 
   const handleInputChange = (query) => {
     setInputText(query);
-    const regex = new RegExp(`^${query.trim()}`, "i");
-    const filtered = countries.filter((country) => country.search(regex) >= 0);
+    const filtered = countries.filter((country) =>
+      country.toLowerCase().startsWith(query.toLowerCase().trim())
+    );
     setSuggestions(filtered);
   };
 
   const handleSelectSuggestion = (suggestion) => {
     setInputText(suggestion);
     setSuggestions([]);
+    setCountry(suggestion);
   };
 
   const handleSearchBtn = () => {
     if (inputText !== "" && startDate && endDate) {
-      setCity(inputText);
+      setCountry(inputText);
       handleSearch();
     }
   };
@@ -170,8 +172,7 @@ const styles = StyleSheet.create({
   },
   autocompleteList: {
     position: "absolute",
-    top: 40, // This should match the height of the input field
-    // Adjust the width to match the input field
+    top: 40,
     left: 10,
     right: 10,
     zIndex: 1,
