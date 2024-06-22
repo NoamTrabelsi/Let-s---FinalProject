@@ -1,4 +1,4 @@
-import React, { useContext, useState, useEffect } from "react";
+import React, { useContext, useState, useEffect, useCallback } from "react";
 import {
   SafeAreaView,
   ScrollView,
@@ -19,7 +19,7 @@ import { transportOptions } from "../components/ProfileInfo/Movement";
 import { foodOptions } from "../components/ProfileInfo/Food";
 import { sleepOptions } from "../components/ProfileInfo/Sleep";
 import { adventureOptions } from "../components/ProfileInfo/Adventure";
-import { useRoute } from "@react-navigation/native";
+import { useFocusEffect, useRoute } from "@react-navigation/native";
 import { useNavigation } from "@react-navigation/native";
 import axios from "axios";
 
@@ -43,6 +43,27 @@ const ProfilePage = () => {
   useEffect(() => {
     setUserHasReview(userReviews.some((review) => review.leftBy === user._id));
   }, [userReviews]);
+
+  useFocusEffect(
+    useCallback(() => {
+      const fetchReviews = async () => {
+        try {
+          const response = await axios.get(
+            `http://192.168.0.148:5001/get_reviews/${pageOwner._id}`
+          );
+          if (response.data.status === "ok") {
+            setUserReviews(response.data.data);
+          } else {
+            console.log("Error fetching user reviews");
+          }
+        } catch (error) {
+          console.error("Error fetching user reviews:", error);
+        }
+      };
+
+      fetchReviews();
+    }, [pageOwner._id])
+  );
 
   const handleSaveReview = () => {
     if (newReviewText.trim() === "") {

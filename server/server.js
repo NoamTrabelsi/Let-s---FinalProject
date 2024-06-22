@@ -212,3 +212,17 @@ app.post("/review/:id", async (req, res) => {
     res.status(500).send({ status: "error", data: "Error adding review" });
   }
 });
+
+//get reviews by user id
+app.get("/get_reviews/:id", async (req, res) => {
+  try {
+    const user = await User.findById(req.params.id);
+    if (!user) {
+      return res.status(404).json({ status: "error", data: "User not found" });
+    }
+    res.json({ status: "ok", data: user.reviews });
+  } catch (err) {
+    console.error(err.message);
+    res.status(500).json({ status: "error", data: "Server error" });
+  }
+});
