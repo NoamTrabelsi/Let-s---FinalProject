@@ -194,3 +194,21 @@ app.post("/search", async (req, res) => {
       .send({ status: "error", data: "Error fetching users" });
   }
 });
+
+// Add review
+app.post("/review/:id", async (req, res) => {
+  const { review } = req.body;
+
+  try {
+    const user = await User.findById(req.params.id);
+    if (!user) {
+      return res.status(404).send({ status: "error", data: "User not found" });
+    } else {
+      user.reviews.unshift(review);
+      await user.save();
+      res.send({ status: "ok", data: "Review added" });
+    }
+  } catch (err) {
+    res.status(500).send({ status: "error", data: "Error adding review" });
+  }
+});

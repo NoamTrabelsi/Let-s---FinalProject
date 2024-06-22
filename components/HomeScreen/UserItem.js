@@ -1,23 +1,48 @@
-import React, { useState } from "react";
-import { View, Text, StyleSheet, Image, Dimensions } from "react-native";
+import React, { useState, useCallback } from "react";
+import {
+  View,
+  Text,
+  StyleSheet,
+  Image,
+  Dimensions,
+  ActivityIndicator,
+} from "react-native";
 import { TouchableOpacity } from "react-native-gesture-handler";
 import { useNavigation } from "@react-navigation/native";
+import axios from "axios";
 import MatchCalculator from "./MatchCalculator";
 
 const UserItem = React.memo(({ item }) => {
   const [tripMatch, setTripMatch] = useState(0);
+  const [loading, setLoading] = useState(false);
   const navigation = useNavigation();
 
-  const handlePress = () => {
-    console.log(`User ${item.firstName} ${item.lastName} clicked!`);
-    navigation.navigate("ProfilePage", {
-      foundUser: item,
-      tripMatch: tripMatch,
-    });
+  const fetchUserDetails = useCallback(async () => {
+    try {
+      setLoading(true);
+      const response = await axios.get(
+        `http://192.168.0.148:5001/user/${item._id}`
+      );
+      setLoading(false);
+      return response.data;
+    } catch (error) {
+      console.error("Error fetching user details:", error);
+      setLoading(false);
+      return null;
+    }
+  }, [item._id]);
+
+  const handlePress = async () => {
+    const userInformation = await fetchUserDetails();
+    if (userInformation) {
+      navigation.navigate("ProfilePage", {
+        foundUser: userInformation,
+        tripMatch: tripMatch,
+      });
+    }
   };
 
   const firstName = item.firstName || "Unknown";
-  const lastName = item.lastName || "";
   const age = item.age != null ? item.age.toString() : "N/A";
   const location = item.location || "Unknown";
   const imageUri = item.image || "https://via.placeholder.com/150"; // Placeholder image if item.image is undefined
@@ -25,7 +50,15 @@ const UserItem = React.memo(({ item }) => {
   return (
     <View style={styles.itemContainer}>
       <TouchableOpacity onPress={handlePress} activeOpacity={1}>
-        <Image source={{ uri: imageUri }} style={styles.avatar} />
+        {loading ? (
+          <ActivityIndicator
+            size="large"
+            color="#FF8C00"
+            style={styles.avatar}
+          />
+        ) : (
+          <Image source={{ uri: imageUri }} style={styles.avatar} />
+        )}
 
         <View style={styles.itemDetails}>
           <Text style={styles.itemName}>

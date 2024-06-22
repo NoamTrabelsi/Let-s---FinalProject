@@ -1,4 +1,4 @@
-import React, { useContext, useState } from "react";
+import React, { useContext, useState, useEffect } from "react";
 import {
   SafeAreaView,
   ScrollView,
@@ -6,6 +6,7 @@ import {
   TouchableOpacity,
   Text,
   View,
+  Alert,
 } from "react-native";
 import UserProfileHeader from "../components/ProfilePage/UserProfileHeader";
 import UserInfo from "../components/ProfilePage/UserInfo";
@@ -20,10 +21,11 @@ import { sleepOptions } from "../components/ProfileInfo/Sleep";
 import { adventureOptions } from "../components/ProfileInfo/Adventure";
 import { useRoute } from "@react-navigation/native";
 import { useNavigation } from "@react-navigation/native";
+import axios from "axios";
 
 const ProfilePage = () => {
   const navigator = useNavigation();
-  const { user, updateUser } = useContext(UserContext);
+  const { user } = useContext(UserContext);
   const route = useRoute();
   const viewedUser = route.params?.foundUser;
   const viewedUserMatch = route.params?.tripMatch;
@@ -36,6 +38,11 @@ const ProfilePage = () => {
   const [userReviews, setUserReviews] = useState(pageOwner.reviews);
   const [reviewRating, setReviewRating] = useState(1);
   const [errorMessage, setErrorMessage] = useState("");
+  const [userHasReview, setUserHasReview] = useState(false);
+
+  useEffect(() => {
+    setUserHasReview(userReviews.some((review) => review.leftBy === user._id));
+  }, [userReviews]);
 
   const handleSaveReview = () => {
     if (newReviewText.trim() === "") {
@@ -43,20 +50,38 @@ const ProfilePage = () => {
       return;
     }
 
+    if (userHasReview) {
+      Alert.alert("Error", "You can only leave one review.");
+      return;
+    }
+
     const newReview = {
       name: user.firstName || "Anonymous",
       age: user.age,
+      leftBy: user._id,
       location: user.location,
       rating: reviewRating,
       text: newReviewText,
     };
 
     const updatedReviews = [newReview, ...userReviews];
-    setUserReviews(updatedReviews);
-    updateUser("reviews", updatedReviews);
-    setModalVisible(false);
+
+    // Update user reviews in the database
+    axios
+      .post(`http://192.168.0.148:5001/review/${pageOwner._id}`, {
+        review: newReview,
+      })
+      .then((res) => {
+        console.log(res.data);
+        setUserReviews(updatedReviews);
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+
     setNewReviewText("");
     setReviewRating(1);
+    setModalVisible(false);
   };
 
   const handleChatWithUser = () => {
@@ -104,13 +129,19 @@ const ProfilePage = () => {
           options={adventureOptions}
         />
         <AboutUser aboutUser={pageOwner} />
-        <UsersReviews userReviews={userReviews} />
+        <UsersReviews
+          userReviews={userReviews}
+          user={user}
+          owner={pageOwner}
+          setUserReviews={setUserReviews}
+        />
         {/* Add Review and Chat buttons if user is not the page owner */}
         {pageOwner._id !== user._id && (
           <View style={styles.buttonsContainer}>
             <TouchableOpacity
-              style={styles.button}
-              onPress={() => setModalVisible(true)}
+              style={[styles.button, userHasReview && styles.disabledButton]}
+              onPress={() => !userHasReview && setModalVisible(true)}
+              disabled={userHasReview}
             >
               <Text style={styles.buttonText}>Add Review</Text>
             </TouchableOpacity>
@@ -122,7 +153,6 @@ const ProfilePage = () => {
             </TouchableOpacity>
           </View>
         )}
-        {/* Add Review and Chat buttons if user is the page owner */}
       </ScrollView>
     </SafeAreaView>
   );
@@ -158,6 +188,9 @@ const styles = StyleSheet.create({
     fontSize: 16,
     color: "white",
     fontWeight: "bold",
+  },
+  disabledButton: {
+    backgroundColor: "#D3D3D3", // Бледный цвет для неактивной кнопки
   },
 });
 

@@ -31,6 +31,7 @@ const UserSchema = new mongoose.Schema(
         location: String,
         rating: Number,
         text: String,
+        leftBy: String,
       },
     ],
   },
