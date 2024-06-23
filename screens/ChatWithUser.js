@@ -8,6 +8,7 @@ import {
   ScrollView,
   TextInput,
   TouchableOpacity,
+  Image,
 } from "react-native";
 import { useRoute } from "@react-navigation/native";
 import { FontAwesome } from "@expo/vector-icons";
@@ -19,26 +20,32 @@ function Chat() {
   const { image, name, receiverId, senderId } = route.params;
   const [message, setMessage] = useState("");
   const [messages, setMessages] = useState([]);
-  const socket = io("http://192.168.0.148:5000");
   const scrollViewRef = useRef(null);
 
-  socket.on("connect", () => {
-    console.log("Connected to socket server");
-  });
+  const socket = useRef(null);
 
-  socket.on("receiveMessage", (newMessage) => {
-    console.log("newMessage", newMessage);
-    //update the messages state
-    setMessages((prevMessages) => [...prevMessages, newMessage]);
-    scrollViewRef.current.scrollToEnd({ animated: true });
-  });
+  useEffect(() => {
+    socket.current = io("http://192.168.0.148:5000");
+
+    socket.current.on("connect", () => {
+      console.log("Connected to socket server");
+    });
+
+    socket.current.on("receiveMessage", (newMessage) => {
+      console.log("newMessage", newMessage);
+      setMessages((prevMessages) => [...prevMessages, newMessage]);
+      scrollViewRef.current.scrollToEnd({ animated: true });
+    });
+
+    return () => {
+      socket.current.off("receiveMessage");
+      socket.current.disconnect();
+    };
+  }, []);
 
   const sendMessage = async (senderId, receiverId) => {
-    socket.emit("sendMessage", { senderId, receiverId, message });
-
+    socket.current.emit("sendMessage", { senderId, receiverId, message });
     setMessage("");
-
-    // call the fetchMessages() function to see the UI update
   };
 
   const fetchMessages = async () => {
@@ -63,7 +70,11 @@ function Chat() {
   };
 
   return (
-    <SafeAreaView style={{ flex: 1, backgroundColor: "white" }}>
+    <SafeAreaView style={styles.container}>
+      <View style={styles.header}>
+        <Image source={{ uri: image }} style={styles.profileImage} />
+        <Text style={styles.profileName}>{name}</Text>
+      </View>
       <KeyboardAvoidingView
         behavior="padding"
         style={{ flex: 1, backgroundColor: "white" }}
@@ -126,6 +137,38 @@ function Chat() {
 }
 
 const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    backgroundColor: "#f0f0f0",
+    justifyContent: "flex-start",
+  },
+  header: {
+    flexDirection: "row",
+    alignItems: "center",
+    backgroundColor: "#FF8C00",
+    paddingBottom: 10,
+    paddingTop: 40,
+    zIndex: 1,
+    position: "absolute",
+    width: "100%",
+    top: 0,
+    left: 0,
+    right: 0,
+    paddingHorizontal: 20,
+    borderBottomLeftRadius: 50,
+    borderBottomRightRadius: 50,
+  },
+  profileImage: {
+    width: 50,
+    height: 50,
+    borderRadius: 25,
+  },
+  profileName: {
+    marginLeft: 10,
+    fontSize: 18,
+    color: "white",
+    fontWeight: "bold",
+  },
   inputContainer: {
     flexDirection: "row",
     alignItems: "center",

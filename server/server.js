@@ -243,7 +243,7 @@ io.on("connection", (socket) => {
   socket.on("sendMessage", async (data) => {
     try {
       const { senderId, receiverId, message } = data;
-      console.log("data", data);
+      //console.log("data", data);
 
       const newMessage = new Chat({
         senderId,
@@ -272,8 +272,8 @@ app.get("/messages", async (req, res) => {
   try {
     const { senderId, receiverId } = req.query;
 
-    console.log("senderId", senderId);
-    console.log("receiverId", receiverId);
+    //console.log("senderId", senderId);
+    //console.log("receiverId", receiverId);
 
     const messages = await Chat.find({
       $or: [

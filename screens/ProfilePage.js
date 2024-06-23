@@ -106,7 +106,12 @@ const ProfilePage = () => {
   };
 
   const handleChatWithUser = () => {
-    navigator.navigate("ChatWithUser");
+    navigator.navigate("ChatWithUser", {
+      image: viewedUser.image,
+      name: viewedUser.firstName,
+      receiverId: viewedUser._id,
+      senderId: user._id,
+    });
   };
 
   return (

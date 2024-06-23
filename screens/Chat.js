@@ -14,6 +14,7 @@ import {
   Image,
   ActivityIndicator,
   TouchableOpacity,
+  Modal,
 } from "react-native";
 import {
   createStackNavigator,
@@ -37,9 +38,11 @@ const Chats = () => {
   const [chats, setChats] = useState([]);
   const [loading, setLoading] = useState(true);
 
-  useEffect(() => {
-    fetchChatUsers();
-  }, []);
+  useFocusEffect(
+    useCallback(() => {
+      fetchChatUsers();
+    }, [])
+  );
 
   const fetchChatUsers = async () => {
     try {
@@ -56,7 +59,13 @@ const Chats = () => {
               params: { senderId: userId, receiverId: chatUser._id },
             }
           );
-          const lastMessage = messagesResponse.data.data.slice(-1)[0];
+          // Проверяем, что массив сообщений не пустой
+          const lastMessage =
+            messagesResponse.data.data.length > 0
+              ? messagesResponse.data.data[
+                  messagesResponse.data.data.length - 1
+                ]
+              : null;
           return { ...chatUser, lastMessage: lastMessage?.message || "" };
         })
       );
@@ -87,9 +96,14 @@ const Chats = () => {
 
   if (loading) {
     return (
-      <View style={styles.loaderContainer}>
-        <ActivityIndicator size="large" color="#FF8C00" />
-      </View>
+      <Modal visible={loading} transparent={true}>
+        <View style={styles.loading}>
+          <Image
+            source={require("../assets/lets-animated.gif")}
+            style={styles.loadingImage}
+          />
+        </View>
+      </Modal>
     );
   }
 
@@ -128,7 +142,9 @@ const Chats = () => {
           >
             <Image source={{ uri: chat.image }} style={styles.avatar} />
             <View style={styles.chatDetails}>
-              <Text style={styles.chatName}>{chat.firstName}</Text>
+              <Text style={styles.chatName}>
+                {chat.firstName} {chat.lastName}
+              </Text>
               <Text style={styles.chatMessage}>{chat.lastMessage}</Text>
             </View>
             <View style={styles.chatMeta}>
@@ -165,6 +181,17 @@ function ChatScreen() {
 }
 
 const styles = StyleSheet.create({
+  loading: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+    backgroundColor: "rgba(0, 0, 0, 0.5)",
+  },
+  loadingImage: {
+    width: 200,
+    height: 200,
+    borderRadius: 30,
+  },
   container: {
     flex: 1,
     backgroundColor: "#f0f0f0",
