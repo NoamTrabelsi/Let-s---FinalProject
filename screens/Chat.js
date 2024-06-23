@@ -1,4 +1,10 @@
-import React, { useRef, useState } from "react";
+import React, {
+  useContext,
+  useEffect,
+  useState,
+  useRef,
+  useCallback,
+} from "react";
 import {
   View,
   Text,
@@ -6,12 +12,54 @@ import {
   ScrollView,
   Animated,
   Image,
+  ActivityIndicator,
+  TouchableOpacity,
 } from "react-native";
-import { Ionicons } from "@expo/vector-icons";
+import {
+  createStackNavigator,
+  CardStyleInterpolators,
+} from "@react-navigation/stack";
+import { useNavigation } from "@react-navigation/native";
+import ChatWithUser from "./ChatWithUser";
+import { UserContext } from "../components/UserContext/UserContext";
+import axios from "axios";
+import { useFocusEffect } from "@react-navigation/native";
 
-const ChatScreen = () => {
+const Stack = createStackNavigator();
+
+const Chats = () => {
+  const navigator = useNavigation();
+  const { user } = useContext(UserContext);
+  const userId = user._id;
+
   const scrollY = useRef(new Animated.Value(0)).current;
   const [inputContainerHeight, setInputContainerHeight] = useState(0);
+  const [chats, setChats] = useState([]);
+  const [loading, setLoading] = useState(true);
+
+  const fetchChatUsers = async () => {
+    try {
+      const response = await axios.get(
+        `http://192.168.0.148:5001/chat_users/${userId}`
+      );
+      setChats(response.data.data);
+    } catch (error) {
+      console.error("Error fetching chat users:", error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useFocusEffect(
+    useCallback(() => {
+      fetchChatUsers();
+    }, [])
+  );
+
+  const handleChat = () => {
+    // Navigate to chat screen
+    navigator.navigate("ChatWithUser");
+  };
 
   const inputContainerTranslateY = scrollY.interpolate({
     inputRange: [0, inputContainerHeight],
@@ -19,32 +67,13 @@ const ChatScreen = () => {
     extrapolate: "clamp",
   });
 
-  const chats = [
-    {
-      id: 1,
-      name: "Alex",
-      message: "I was thinking the same",
-      time: "14:36",
-      image: "https://via.placeholder.com/150",
-      unreadCount: 3,
-    },
-    {
-      id: 2,
-      name: "Alex",
-      message: "I was thinking the same",
-      time: "14:36",
-      image: "https://via.placeholder.com/150",
-      unreadCount: 0,
-    },
-    {
-      id: 3,
-      name: "Alex",
-      message: "I was thinking the same",
-      time: "14:36",
-      image: "https://via.placeholder.com/150",
-      unreadCount: 0,
-    },
-  ];
+  if (loading) {
+    return (
+      <View style={styles.loaderContainer}>
+        <ActivityIndicator size="large" color="#FF8C00" />
+      </View>
+    );
+  }
 
   return (
     <View style={styles.container}>
@@ -59,7 +88,10 @@ const ChatScreen = () => {
         }}
       >
         <View style={{ alignItems: "center" }}>
-          <Image source={require("../assets/chat.png")} style={styles.image} />
+          <Image
+            source={require("../assets/chat.png")}
+            style={styles.chatlogo}
+          />
         </View>
       </Animated.View>
       <Animated.ScrollView
@@ -71,26 +103,48 @@ const ChatScreen = () => {
         )}
       >
         {chats.map((chat) => (
-          <View key={chat.id} style={styles.chatItem}>
+          <TouchableOpacity
+            key={chat._id}
+            style={styles.chatItem}
+            onPress={handleChat}
+          >
             <Image source={{ uri: chat.image }} style={styles.avatar} />
             <View style={styles.chatDetails}>
-              <Text style={styles.chatName}>{chat.name}</Text>
-              <Text style={styles.chatMessage}>{chat.message}</Text>
+              <Text style={styles.chatName}>{chat.firstName}</Text>
+              <Text style={styles.chatMessage}>Chat message preview</Text>
             </View>
             <View style={styles.chatMeta}>
-              <Text style={styles.chatTime}>{chat.time}</Text>
-              {chat.unreadCount > 0 && (
-                <View style={styles.unreadBadge}>
-                  <Text style={styles.unreadCount}>{chat.unreadCount}</Text>
-                </View>
-              )}
+              <Text style={styles.chatTime}>Last message time</Text>
             </View>
-          </View>
+          </TouchableOpacity>
         ))}
       </Animated.ScrollView>
     </View>
   );
 };
+
+function ChatScreen() {
+  return (
+    <Stack.Navigator
+      screenOptions={{
+        gestureEnabled: true,
+        gestureDirection: "horizontal",
+        cardStyleInterpolator: CardStyleInterpolators.forHorizontalIOS,
+      }}
+    >
+      <Stack.Screen
+        name="Chat"
+        component={Chats}
+        options={{ headerShown: false }}
+      />
+      <Stack.Screen
+        name="ChatWithUser"
+        component={ChatWithUser}
+        options={{ headerShown: false }}
+      />
+    </Stack.Navigator>
+  );
+}
 
 const styles = StyleSheet.create({
   container: {
@@ -100,7 +154,8 @@ const styles = StyleSheet.create({
   },
   headerContainer: {
     backgroundColor: "#FF8C00",
-    paddingBottom: 10,
+    //paddingBottom: 10,
+    paddingTop: 10,
     zIndex: 1,
     position: "absolute",
     width: "100%",
@@ -108,9 +163,13 @@ const styles = StyleSheet.create({
     left: 0,
     right: 0,
     paddingHorizontal: 20,
-    paddingTop: 50,
     borderBottomLeftRadius: 50,
     borderBottomRightRadius: 50,
+  },
+  chatlogo: {
+    height: 100,
+    width: 100,
+    resizeMode: "contain",
   },
   headerText: {
     fontSize: 24,
@@ -147,16 +206,10 @@ const styles = StyleSheet.create({
     fontSize: 12,
     color: "#777",
   },
-  unreadBadge: {
-    backgroundColor: "orange",
-    borderRadius: 10,
-    paddingHorizontal: 5,
-    paddingVertical: 2,
-    marginTop: 5,
-  },
-  unreadCount: {
-    color: "white",
-    fontSize: 12,
+  loaderContainer: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
   },
 });
 

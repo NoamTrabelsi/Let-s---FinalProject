@@ -167,13 +167,12 @@ function GetKnow({ location, setLocation, age, setAge, picture, setPicture }) {
             </Modal>
 
             <TextInput
-              placeholder="Age"
+              placeholder={user.age ? user.age.toString() : "Age"}
               placeholderTextColor="black"
               style={styles.ageBtn}
               keyboardType="numeric"
               maxLength={2}
               caretHidden={true}
-              value={user.age ? user.age.toString() : ""}
               onChangeText={(text) => selectAge(text)}
             />
           </View>

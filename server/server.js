@@ -1,11 +1,18 @@
 const express = require("express");
 const app = express();
 const port = 5001;
+const cors = require("cors");
+app.use(cors());
 app.use(express.json({ limit: "50mb" }));
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 const mongoose = require("mongoose");
 const { parseISO, formatISO } = require("date-fns");
+
+const socketIo = require("socket.io");
+const http = require("http");
+const server = http.createServer(app);
+const io = socketIo(server);
 
 // MongoDB connection
 const mongoUrl =
@@ -21,6 +28,8 @@ const JWT_SECRET = "mySuperSecretKey12345!";
 // Models
 require("./models/User");
 const User = mongoose.model("UserInfo");
+require("./models/Chat");
+const Chat = mongoose.model("Chat");
 
 app.listen(port, () => {
   console.log(`Server is running on port ${port}`);
@@ -224,5 +233,95 @@ app.get("/get_reviews/:id", async (req, res) => {
   } catch (err) {
     console.error(err.message);
     res.status(500).json({ status: "error", data: "Server error" });
+  }
+});
+
+//another io
+io.on("connection", (socket) => {
+  console.log("a user connected");
+
+  socket.on("sendMessage", async (data) => {
+    try {
+      const { senderId, receiverId, message } = data;
+      console.log("data", data);
+
+      const newMassage = new Chat({
+        senderId,
+        receiverId,
+        message,
+      });
+      await newMassage.save();
+
+      io.to(receiverId).emit("receiveMessage", newMassage);
+    } catch (err) {
+      console.log("Error handling the message");
+    }
+
+    socket.on("disconnect", () => {
+      console.log("user disconnected");
+    });
+  });
+});
+
+server.listen(5000, () => {
+  console.log("SocketIO running on port:5000");
+});
+
+app.get("/messages", async (req, res) => {
+  try {
+    const { senderId, receiverId } = req.query;
+
+    console.log("senderId", senderId);
+    console.log("receiverId", receiverId);
+
+    const messages = await Chat.find({
+      $or: [
+        { senderId: senderId, receiverId: receiverId },
+        { senderId: receiverId, receiverId: senderId },
+      ],
+    }).populate("senderId", "_id firstName");
+
+    res.status(200).json({ status: "ok", data: messages });
+  } catch (err) {
+    res.status(500).json({ status: "error", data: "Error fetching messages" });
+  }
+});
+
+// Fetch chat users
+app.get("/chat_users/:userId", async (req, res) => {
+  try {
+    const { userId } = req.params;
+
+    // Find all chats where the user is either the sender or receiver
+    const chats = await Chat.find({
+      $or: [{ senderId: userId }, { receiverId: userId }],
+    }).populate("senderId receiverId", "_id firstName");
+
+    //console.log("chats", chats);
+
+    // Extract unique user IDs from the chats
+    const userIds = new Set();
+    chats.forEach((chat) => {
+      if (chat.senderId && chat.senderId !== userId) {
+        userIds.add(chat.senderId);
+      }
+      if (chat.receiverId && chat.receiverId !== userId) {
+        userIds.add(chat.receiverId);
+      }
+    });
+
+    //console.log("userIds", userIds);
+
+    // Fetch user details for these user IDs
+    const users = await User.find({ _id: { $in: Array.from(userIds) } });
+
+    //console.log("users", users);
+
+    res.send({ status: "ok", data: users });
+  } catch (err) {
+    console.error(err.message);
+    res
+      .status(500)
+      .send({ status: "error", data: "Error fetching chat users" });
   }
 });
