@@ -37,12 +37,31 @@ const Chats = () => {
   const [chats, setChats] = useState([]);
   const [loading, setLoading] = useState(true);
 
+  useEffect(() => {
+    fetchChatUsers();
+  }, []);
+
   const fetchChatUsers = async () => {
     try {
       const response = await axios.get(
         `http://192.168.0.148:5001/chat_users/${userId}`
       );
-      setChats(response.data.data);
+      const chatUsers = response.data.data;
+
+      const chatsWithLastMessages = await Promise.all(
+        chatUsers.map(async (chatUser) => {
+          const messagesResponse = await axios.get(
+            "http://192.168.0.148:5001/messages",
+            {
+              params: { senderId: userId, receiverId: chatUser._id },
+            }
+          );
+          const lastMessage = messagesResponse.data.data.slice(-1)[0];
+          return { ...chatUser, lastMessage: lastMessage?.message || "" };
+        })
+      );
+
+      setChats(chatsWithLastMessages);
     } catch (error) {
       console.error("Error fetching chat users:", error);
     } finally {
@@ -50,15 +69,14 @@ const Chats = () => {
     }
   };
 
-  useFocusEffect(
-    useCallback(() => {
-      fetchChatUsers();
-    }, [])
-  );
-
-  const handleChat = () => {
+  const handleChat = (chat) => {
     // Navigate to chat screen
-    navigator.navigate("ChatWithUser");
+    navigator.navigate("ChatWithUser", {
+      image: chat.image,
+      name: chat.firstName,
+      receiverId: chat._id,
+      senderId: userId,
+    });
   };
 
   const inputContainerTranslateY = scrollY.interpolate({
@@ -106,15 +124,15 @@ const Chats = () => {
           <TouchableOpacity
             key={chat._id}
             style={styles.chatItem}
-            onPress={handleChat}
+            onPress={() => handleChat(chat)}
           >
             <Image source={{ uri: chat.image }} style={styles.avatar} />
             <View style={styles.chatDetails}>
               <Text style={styles.chatName}>{chat.firstName}</Text>
-              <Text style={styles.chatMessage}>Chat message preview</Text>
+              <Text style={styles.chatMessage}>{chat.lastMessage}</Text>
             </View>
             <View style={styles.chatMeta}>
-              <Text style={styles.chatTime}>Last message time</Text>
+              <Text style={styles.chatTime}></Text>
             </View>
           </TouchableOpacity>
         ))}
@@ -133,7 +151,7 @@ function ChatScreen() {
       }}
     >
       <Stack.Screen
-        name="Chat"
+        name="Chats"
         component={Chats}
         options={{ headerShown: false }}
       />

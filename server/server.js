@@ -236,7 +236,7 @@ app.get("/get_reviews/:id", async (req, res) => {
   }
 });
 
-//another io
+//io connection
 io.on("connection", (socket) => {
   console.log("a user connected");
 
@@ -245,14 +245,14 @@ io.on("connection", (socket) => {
       const { senderId, receiverId, message } = data;
       console.log("data", data);
 
-      const newMassage = new Chat({
+      const newMessage = new Chat({
         senderId,
         receiverId,
         message,
       });
-      await newMassage.save();
+      await newMessage.save();
 
-      io.to(receiverId).emit("receiveMessage", newMassage);
+      io.emit("receiveMessage", newMessage);
     } catch (err) {
       console.log("Error handling the message");
     }
@@ -263,6 +263,7 @@ io.on("connection", (socket) => {
   });
 });
 
+//io listen on port
 server.listen(5000, () => {
   console.log("SocketIO running on port:5000");
 });
