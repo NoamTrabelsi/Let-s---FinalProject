@@ -21,6 +21,7 @@ import {
 } from "@react-navigation/stack";
 import { useNavigation } from "@react-navigation/native";
 import ChatWithUser from "./ChatWithUser";
+import ProfilePage from "./ProfilePage";
 import { UserContext } from "../components/UserContext/UserContext";
 import axios from "axios";
 import { useFocusEffect } from "@react-navigation/native";
@@ -201,6 +202,11 @@ function ChatScreen() {
       <Stack.Screen
         name="ChatWithUser"
         component={ChatWithUser}
+        options={{ headerShown: false }}
+      />
+      <Stack.Screen
+        name="ProfilePage"
+        component={ProfilePage}
         options={{ headerShown: false }}
       />
     </Stack.Navigator>

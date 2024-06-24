@@ -242,7 +242,7 @@ io.on("connection", (socket) => {
 
   socket.on("sendMessage", async (data) => {
     try {
-      const { senderId, receiverId, message } = data;
+      const { senderId, receiverId, message, match } = data;
 
       let chat = await Chat.findOne({
         participants: { $all: [senderId, receiverId] },
@@ -252,6 +252,7 @@ io.on("connection", (socket) => {
         chat = new Chat({
           participants: [senderId, receiverId],
           messages: [{ senderId, message, isRead: false }],
+          match: match,
         });
       } else {
         chat.messages.push({ senderId, message, isRead: false });
@@ -287,7 +288,9 @@ app.get("/messages", async (req, res) => {
       return res.status(404).json({ status: "error", data: "Chat not found" });
     }
 
-    res.status(200).json({ status: "ok", data: chat.messages });
+    res
+      .status(200)
+      .json({ status: "ok", data: chat.messages, match: chat.match });
   } catch (err) {
     res.status(500).json({ status: "error", data: "Error fetching messages" });
   }

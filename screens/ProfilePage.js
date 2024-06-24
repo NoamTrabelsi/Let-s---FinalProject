@@ -111,6 +111,7 @@ const ProfilePage = () => {
       name: viewedUser.firstName,
       receiverId: viewedUser._id,
       senderId: user._id,
+      match: match,
     });
   };
 

@@ -27,6 +27,10 @@ const chatSchema = new mongoose.Schema({
     },
   ],
   messages: [messageSchema],
+  match: {
+    type: Number,
+    required: true,
+  },
 });
 
 const Chat = mongoose.model("Chat", chatSchema);

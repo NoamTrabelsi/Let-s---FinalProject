@@ -10,14 +10,16 @@ import {
   TouchableOpacity,
   Image,
 } from "react-native";
-import { useRoute } from "@react-navigation/native";
+import { useRoute, useNavigation } from "@react-navigation/native";
 import { FontAwesome } from "@expo/vector-icons";
 import { io } from "socket.io-client";
 import axios from "axios";
 
 function Chat() {
   const route = useRoute();
+  const navigation = useNavigation();
   const { image, name, receiverId, senderId } = route.params;
+  const [match, setMatch] = useState(null);
   const [message, setMessage] = useState("");
   const [messages, setMessages] = useState([]);
   const scrollViewRef = useRef(null);
@@ -66,6 +68,7 @@ function Chat() {
       senderId,
       receiverId,
       message,
+      match,
       isRead: false,
     };
     socket.current.emit("sendMessage", newMessage);
@@ -79,6 +82,9 @@ function Chat() {
       });
 
       const fetchedMessages = response.data.data;
+
+      //set the match for the chat
+      setMatch(response.data.match);
 
       // Mark messages as read
       const unreadMessages = fetchedMessages.filter(
@@ -119,11 +125,28 @@ function Chat() {
     return new Date(time).toLocaleTimeString("en-US", options);
   };
 
+  const navigateToUserPage = async () => {
+    //get user information from the server
+    const response = await axios.get(
+      `http://192.168.0.148:5001/user/${receiverId}`
+    );
+
+    navigation.navigate("ProfilePage", {
+      foundUser: response.data,
+      tripMatch: match,
+    });
+  };
+
   return (
     <SafeAreaView style={styles.container}>
       <View style={styles.header}>
-        <Image source={{ uri: image }} style={styles.profileImage} />
-        <Text style={styles.profileName}>{name}</Text>
+        <TouchableOpacity
+          style={{ flexDirection: "row", alignItems: "center" }}
+          onPress={() => navigateToUserPage()}
+        >
+          <Image source={{ uri: image }} style={styles.profileImage} />
+          <Text style={styles.profileName}>{name}</Text>
+        </TouchableOpacity>
       </View>
       <KeyboardAvoidingView
         behavior="padding"
