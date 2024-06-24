@@ -25,26 +25,50 @@ function Chat() {
   const socket = useRef(null);
 
   useEffect(() => {
+    // connect to socket server
     socket.current = io("http://192.168.0.148:5000");
 
     socket.current.on("connect", () => {
       console.log("Connected to socket server");
     });
 
-    socket.current.on("receiveMessage", (newMessage) => {
-      console.log("newMessage", newMessage);
+    socket.current.on("receiveMessage", async (newMessage) => {
+      // Add the new message to the state
       setMessages((prevMessages) => [...prevMessages, newMessage]);
       scrollViewRef.current.scrollToEnd({ animated: true });
+
+      // Mark the message as read if it is from the receiver
+      if (newMessage.senderId === receiverId) {
+        try {
+          await axios.post("http://192.168.0.148:5001/mark_as_read", {
+            messages: [newMessage._id],
+          });
+
+          // Update the message state to set isRead to true
+          setMessages((prevMessages) =>
+            prevMessages.map((msg) =>
+              msg._id === newMessage._id ? { ...msg, isRead: true } : msg
+            )
+          );
+        } catch (err) {
+          console.error("Error marking message as read:", err);
+        }
+      }
     });
 
     return () => {
-      socket.current.off("receiveMessage");
       socket.current.disconnect();
     };
-  }, []);
+  }, [receiverId]);
 
   const sendMessage = async (senderId, receiverId) => {
-    socket.current.emit("sendMessage", { senderId, receiverId, message });
+    const newMessage = {
+      senderId,
+      receiverId,
+      message,
+      isRead: false,
+    };
+    socket.current.emit("sendMessage", newMessage);
     setMessage("");
   };
 
@@ -54,7 +78,33 @@ function Chat() {
         params: { senderId, receiverId },
       });
 
-      setMessages(response.data.data);
+      const fetchedMessages = response.data.data;
+
+      // Mark messages as read
+      const unreadMessages = fetchedMessages.filter(
+        (msg) => msg.senderId === receiverId && !msg.isRead
+      );
+
+      if (unreadMessages.length > 0) {
+        unreadMessages.forEach(async (msg) => {
+          try {
+            await axios.post("http://192.168.0.148:5001/mark_as_read", {
+              messages: [msg._id],
+            });
+
+            // Update the message state to set isRead to true
+            setMessages((prevMessages) =>
+              prevMessages.map((m) =>
+                m._id === msg._id ? { ...m, isRead: true } : m
+              )
+            );
+          } catch (err) {
+            console.error("Error marking message as read:", err);
+          }
+        });
+      }
+
+      setMessages(fetchedMessages);
     } catch (err) {
       console.error("Error fetching messages:", err);
     }
@@ -80,17 +130,20 @@ function Chat() {
         style={{ flex: 1, backgroundColor: "white" }}
       >
         <ScrollView
-          contentContainerStyle={{ flexGrow: 1 }}
+          contentContainerStyle={{
+            flexGrow: 1,
+            justifyContent: "flex-end",
+          }}
           ref={scrollViewRef}
           onContentSizeChange={() =>
             scrollViewRef.current.scrollToEnd({ animated: true })
           }
         >
-          {messages?.map((item, index) => (
+          {messages.map((item, index) => (
             <View
               key={index}
               style={[
-                item?.senderId === senderId
+                item.senderId === senderId
                   ? {
                       alignSelf: "flex-end",
                       backgroundColor: "gray",
@@ -109,10 +162,20 @@ function Chat() {
                     },
               ]}
             >
-              <Text>{item?.message}</Text>
-              <Text style={{ fontSize: 9, textAlign: "right", color: "white" }}>
-                {formatTime(item?.time)}
-              </Text>
+              <Text>{item.message}</Text>
+              <View
+                style={{
+                  flexDirection: "row",
+                  justifyContent: "space-between",
+                  alignItems: "center",
+                }}
+              >
+                <Text
+                  style={{ fontSize: 9, textAlign: "right", color: "white" }}
+                >
+                  {formatTime(item.time)}
+                </Text>
+              </View>
             </View>
           ))}
         </ScrollView>
@@ -140,7 +203,6 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: "#f0f0f0",
-    justifyContent: "flex-start",
   },
   header: {
     flexDirection: "row",
@@ -151,9 +213,7 @@ const styles = StyleSheet.create({
     zIndex: 1,
     position: "absolute",
     width: "100%",
-    top: 0,
-    left: 0,
-    right: 0,
+    height: "15%",
     paddingHorizontal: 20,
     borderBottomLeftRadius: 50,
     borderBottomRightRadius: 50,

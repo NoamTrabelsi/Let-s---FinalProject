@@ -243,23 +243,30 @@ io.on("connection", (socket) => {
   socket.on("sendMessage", async (data) => {
     try {
       const { senderId, receiverId, message } = data;
-      //console.log("data", data);
 
-      const newMessage = new Chat({
-        senderId,
-        receiverId,
-        message,
+      let chat = await Chat.findOne({
+        participants: { $all: [senderId, receiverId] },
       });
-      await newMessage.save();
 
-      io.emit("receiveMessage", newMessage);
+      if (!chat) {
+        chat = new Chat({
+          participants: [senderId, receiverId],
+          messages: [{ senderId, message, isRead: false }],
+        });
+      } else {
+        chat.messages.push({ senderId, message, isRead: false });
+      }
+
+      await chat.save();
+
+      io.emit("receiveMessage", chat.messages[chat.messages.length - 1]);
     } catch (err) {
-      console.log("Error handling the message");
+      console.log("Error handling the message:", err);
     }
+  });
 
-    socket.on("disconnect", () => {
-      console.log("user disconnected");
-    });
+  socket.on("disconnect", () => {
+    console.log("user disconnected");
   });
 });
 
@@ -272,17 +279,15 @@ app.get("/messages", async (req, res) => {
   try {
     const { senderId, receiverId } = req.query;
 
-    //console.log("senderId", senderId);
-    //console.log("receiverId", receiverId);
+    const chat = await Chat.findOne({
+      participants: { $all: [senderId, receiverId] },
+    });
 
-    const messages = await Chat.find({
-      $or: [
-        { senderId: senderId, receiverId: receiverId },
-        { senderId: receiverId, receiverId: senderId },
-      ],
-    }).populate("senderId", "_id firstName");
+    if (!chat) {
+      return res.status(404).json({ status: "error", data: "Chat not found" });
+    }
 
-    res.status(200).json({ status: "ok", data: messages });
+    res.status(200).json({ status: "ok", data: chat.messages });
   } catch (err) {
     res.status(500).json({ status: "error", data: "Error fetching messages" });
   }
@@ -293,36 +298,51 @@ app.get("/chat_users/:userId", async (req, res) => {
   try {
     const { userId } = req.params;
 
-    // Find all chats where the user is either the sender or receiver
-    const chats = await Chat.find({
-      $or: [{ senderId: userId }, { receiverId: userId }],
-    }).populate("senderId receiverId", "_id firstName");
+    const chats = await Chat.find({ participants: userId }).populate(
+      "participants",
+      "_id firstName image"
+    );
 
-    //console.log("chats", chats);
+    //console.log("Fetched chats: ", chats);
 
-    // Extract unique user IDs from the chats
-    const userIds = new Set();
-    chats.forEach((chat) => {
-      if (chat.senderId && chat.senderId !== userId) {
-        userIds.add(chat.senderId);
-      }
-      if (chat.receiverId && chat.receiverId !== userId) {
-        userIds.add(chat.receiverId);
-      }
+    const chatUsers = chats.map((chat) => {
+      const otherUser = chat.participants.find(
+        (participant) => participant._id.toString() !== userId
+      );
+      const lastMessage = chat.messages[chat.messages.length - 1];
+
+      return {
+        user: otherUser,
+        lastMessage: lastMessage ? lastMessage.message : null,
+        unreadCount: chat.messages.filter(
+          (message) => message.senderId !== userId && !message.isRead
+        ).length,
+      };
     });
 
-    //console.log("userIds", userIds);
+    //console.log("Chat users: ", chatUsers);
 
-    // Fetch user details for these user IDs
-    const users = await User.find({ _id: { $in: Array.from(userIds) } });
-
-    //console.log("users", users);
-
-    res.send({ status: "ok", data: users });
+    res.send({ status: "ok", data: chatUsers });
   } catch (err) {
     console.error(err.message);
     res
       .status(500)
       .send({ status: "error", data: "Error fetching chat users" });
+  }
+});
+
+app.post("/mark_as_read", async (req, res) => {
+  const { messages } = req.body;
+
+  try {
+    await Chat.updateMany(
+      { "messages._id": { $in: messages } },
+      { $set: { "messages.$.isRead": true } }
+    );
+    res.status(200).send({ status: "ok", data: "Messages marked as read" });
+  } catch (err) {
+    res
+      .status(500)
+      .send({ status: "error", data: "Error marking messages as read" });
   }
 });

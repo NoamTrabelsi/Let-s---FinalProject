@@ -12,7 +12,6 @@ import {
   ScrollView,
   Animated,
   Image,
-  ActivityIndicator,
   TouchableOpacity,
   Modal,
 } from "react-native";
@@ -25,6 +24,7 @@ import ChatWithUser from "./ChatWithUser";
 import { UserContext } from "../components/UserContext/UserContext";
 import axios from "axios";
 import { useFocusEffect } from "@react-navigation/native";
+import { io } from "socket.io-client";
 
 const Stack = createStackNavigator();
 
@@ -37,6 +37,42 @@ const Chats = () => {
   const [inputContainerHeight, setInputContainerHeight] = useState(0);
   const [chats, setChats] = useState([]);
   const [loading, setLoading] = useState(true);
+
+  const socket = useRef(null);
+
+  useEffect(() => {
+    // connect to socket server
+    socket.current = io("http://192.168.0.148:5000");
+
+    socket.current.on("connect", () => {
+      console.log("Connected to socket server");
+    });
+
+    socket.current.on("receiveMessage", (newMessage) => {
+      console.log("newMessage", newMessage);
+
+      // Update the chat list with a new message
+      setChats((prevChats) => {
+        return prevChats.map((chat) => {
+          if (
+            chat._id === newMessage.senderId ||
+            chat._id === newMessage.receiverId
+          ) {
+            return {
+              ...chat,
+              lastMessage: newMessage.message,
+              unreadCount: chat.unreadCount + 1,
+            };
+          }
+          return chat;
+        });
+      });
+    });
+
+    return () => {
+      socket.current.disconnect();
+    };
+  }, []);
 
   useFocusEffect(
     useCallback(() => {
@@ -51,24 +87,11 @@ const Chats = () => {
       );
       const chatUsers = response.data.data;
 
-      const chatsWithLastMessages = await Promise.all(
-        chatUsers.map(async (chatUser) => {
-          const messagesResponse = await axios.get(
-            "http://192.168.0.148:5001/messages",
-            {
-              params: { senderId: userId, receiverId: chatUser._id },
-            }
-          );
-          // Проверяем, что массив сообщений не пустой
-          const lastMessage =
-            messagesResponse.data.data.length > 0
-              ? messagesResponse.data.data[
-                  messagesResponse.data.data.length - 1
-                ]
-              : null;
-          return { ...chatUser, lastMessage: lastMessage?.message || "" };
-        })
-      );
+      const chatsWithLastMessages = chatUsers.map((chatUser) => ({
+        ...chatUser.user,
+        lastMessage: chatUser.lastMessage,
+        unreadCount: chatUser.unreadCount,
+      }));
 
       setChats(chatsWithLastMessages);
     } catch (error) {
@@ -78,7 +101,7 @@ const Chats = () => {
     }
   };
 
-  const handleChat = (chat) => {
+  const handleChat = async (chat) => {
     // Navigate to chat screen
     navigator.navigate("ChatWithUser", {
       image: chat.image,
@@ -146,9 +169,11 @@ const Chats = () => {
                 {chat.firstName} {chat.lastName}
               </Text>
               <Text style={styles.chatMessage}>{chat.lastMessage}</Text>
-            </View>
-            <View style={styles.chatMeta}>
-              <Text style={styles.chatTime}></Text>
+              {chat.unreadCount > 0 && (
+                <Text style={styles.unreadCount}>
+                  {chat.unreadCount} непрочитанных
+                </Text>
+              )}
             </View>
           </TouchableOpacity>
         ))}
@@ -243,6 +268,17 @@ const styles = StyleSheet.create({
   },
   chatMessage: {
     color: "#777",
+  },
+  unreadCount: {
+    backgroundColor: "red",
+    color: "white",
+    borderRadius: 10,
+    paddingHorizontal: 5,
+    paddingVertical: 2,
+    fontSize: 12,
+    fontWeight: "bold",
+    alignSelf: "flex-start",
+    marginTop: 5,
   },
   chatMeta: {
     alignItems: "flex-end",
