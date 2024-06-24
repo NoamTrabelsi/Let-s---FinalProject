@@ -18,8 +18,8 @@ import axios from "axios";
 function Chat() {
   const route = useRoute();
   const navigation = useNavigation();
-  const { image, name, receiverId, senderId } = route.params;
-  const [match, setMatch] = useState(null);
+  const { image, name, receiverId, senderId, match } = route.params;
+  const [match2, setMatch] = useState(match);
   const [message, setMessage] = useState("");
   const [messages, setMessages] = useState([]);
   const scrollViewRef = useRef(null);
@@ -71,6 +71,8 @@ function Chat() {
       match,
       isRead: false,
     };
+
+    console.log("newMessage: ", newMessage);
     socket.current.emit("sendMessage", newMessage);
     setMessage("");
   };
@@ -112,7 +114,7 @@ function Chat() {
 
       setMessages(fetchedMessages);
     } catch (err) {
-      console.error("Error fetching messages:", err);
+      console.log("Error fetching messages:", err);
     }
   };
 
@@ -133,7 +135,7 @@ function Chat() {
 
     navigation.navigate("ProfilePage", {
       foundUser: response.data,
-      tripMatch: match,
+      tripMatch: match2,
     });
   };
 
@@ -270,8 +272,8 @@ const styles = StyleSheet.create({
     maxWidth: "80%",
   },
   messageText: {
-    fontSize: 16,
-    fontWeight: "600",
+    fontSize: 15,
+    fontWeight: "500",
   },
   messageMeta: {
     flexDirection: "row",

@@ -248,6 +248,8 @@ io.on("connection", (socket) => {
         participants: { $all: [senderId, receiverId] },
       });
 
+      console.log("match: ", match);
+
       if (!chat) {
         chat = new Chat({
           participants: [senderId, receiverId],
