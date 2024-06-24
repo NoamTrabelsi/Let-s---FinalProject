@@ -127,12 +127,17 @@ function Chat() {
       </View>
       <KeyboardAvoidingView
         behavior="padding"
-        style={{ flex: 1, backgroundColor: "white" }}
+        style={{ flex: 1, backgroundColor: "transparent" }}
       >
+        <Image
+          source={require("../assets/splash-simple.png")}
+          style={styles.backgroundImage}
+        />
         <ScrollView
           contentContainerStyle={{
             flexGrow: 1,
             justifyContent: "flex-end",
+            padding: 10,
           }}
           ref={scrollViewRef}
           onContentSizeChange={() =>
@@ -144,37 +149,13 @@ function Chat() {
               key={index}
               style={[
                 item.senderId === senderId
-                  ? {
-                      alignSelf: "flex-end",
-                      backgroundColor: "gray",
-                      padding: 10,
-                      margin: 10,
-                      borderRadius: 10,
-                      maxWidth: "80%",
-                    }
-                  : {
-                      alignSelf: "flex-start",
-                      backgroundColor: "#FF8C00",
-                      padding: 10,
-                      margin: 10,
-                      borderRadius: 10,
-                      maxWidth: "80%",
-                    },
+                  ? styles.sentMessage
+                  : styles.receivedMessage,
               ]}
             >
-              <Text>{item.message}</Text>
-              <View
-                style={{
-                  flexDirection: "row",
-                  justifyContent: "space-between",
-                  alignItems: "center",
-                }}
-              >
-                <Text
-                  style={{ fontSize: 9, textAlign: "right", color: "white" }}
-                >
-                  {formatTime(item.time)}
-                </Text>
+              <Text style={styles.messageText}>{item.message}</Text>
+              <View style={styles.messageMeta}>
+                <Text style={styles.messageTime}>{formatTime(item.time)}</Text>
               </View>
             </View>
           ))}
@@ -202,7 +183,13 @@ function Chat() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#f0f0f0",
+    backgroundColor: "transparent",
+  },
+  backgroundImage: {
+    position: "absolute",
+    width: "100%",
+    height: "100%",
+    resizeMode: "cover",
   },
   header: {
     flexDirection: "row",
@@ -237,12 +224,42 @@ const styles = StyleSheet.create({
   input: {
     flex: 1,
     borderWidth: 1,
-    borderColor: "gray",
+    borderColor: "black",
     borderRadius: 20,
     padding: 10,
     marginRight: 10,
   },
   sendButton: {},
+  sentMessage: {
+    alignSelf: "flex-end",
+    backgroundColor: "#FFDAB9",
+    padding: 10,
+    margin: 10,
+    borderRadius: 20,
+    maxWidth: "80%",
+  },
+  receivedMessage: {
+    alignSelf: "flex-start",
+    backgroundColor: "#ECECEC",
+    padding: 10,
+    margin: 10,
+    borderRadius: 20,
+    maxWidth: "80%",
+  },
+  messageText: {
+    fontSize: 16,
+    fontWeight: "600",
+  },
+  messageMeta: {
+    flexDirection: "row",
+    justifyContent: "flex-end",
+    alignItems: "center",
+    marginTop: 5,
+  },
+  messageTime: {
+    fontSize: 10,
+    color: "gray",
+  },
 });
 
 export default Chat;

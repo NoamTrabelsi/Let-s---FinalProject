@@ -165,14 +165,16 @@ const Chats = () => {
           >
             <Image source={{ uri: chat.image }} style={styles.avatar} />
             <View style={styles.chatDetails}>
-              <Text style={styles.chatName}>
-                {chat.firstName} {chat.lastName}
-              </Text>
-              <Text style={styles.chatMessage}>{chat.lastMessage}</Text>
-              {chat.unreadCount > 0 && (
-                <Text style={styles.unreadCount}>
-                  {chat.unreadCount} непрочитанных
+              <View>
+                <Text style={styles.chatName}>
+                  {chat.firstName} {chat.lastName}
                 </Text>
+                <Text style={styles.chatMessage}>{chat.lastMessage}</Text>
+              </View>
+              {chat.unreadCount > 0 && (
+                <View style={styles.unreadCount}>
+                  <Text style={styles.unreadCountText}>{chat.unreadCount}</Text>
+                </View>
               )}
             </View>
           </TouchableOpacity>
@@ -260,6 +262,8 @@ const styles = StyleSheet.create({
   },
   chatDetails: {
     flex: 1,
+    flexDirection: "row",
+    justifyContent: "space-between",
     marginLeft: 10,
   },
   chatName: {
@@ -270,15 +274,21 @@ const styles = StyleSheet.create({
     color: "#777",
   },
   unreadCount: {
-    backgroundColor: "red",
-    color: "white",
-    borderRadius: 10,
-    paddingHorizontal: 5,
-    paddingVertical: 2,
+    backgroundColor: "#FF8C00",
+    borderRadius: 15,
+    width: 30,
+    height: 30,
     fontSize: 12,
     fontWeight: "bold",
-    alignSelf: "flex-start",
+    alignSelf: "flex-end",
     marginTop: 5,
+  },
+  unreadCountText: {
+    color: "white",
+    fontSize: 12,
+    fontWeight: "bold",
+    textAlign: "center",
+    lineHeight: 30,
   },
   chatMeta: {
     alignItems: "flex-end",
