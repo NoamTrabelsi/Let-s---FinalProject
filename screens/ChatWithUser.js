@@ -155,7 +155,7 @@ function Chat() {
         style={{ flex: 1, backgroundColor: "transparent" }}
       >
         <Image
-          source={require("../assets/splash-simple.png")}
+          source={require("../assets/chat-background.jpg")}
           style={styles.backgroundImage}
         />
         <ScrollView
@@ -253,6 +253,7 @@ const styles = StyleSheet.create({
     borderRadius: 20,
     padding: 10,
     marginRight: 10,
+    backgroundColor: "white",
   },
   sendButton: {},
   sentMessage: {
@@ -262,6 +263,8 @@ const styles = StyleSheet.create({
     margin: 10,
     borderRadius: 20,
     maxWidth: "80%",
+    borderColor: "gray",
+    borderWidth: 1,
   },
   receivedMessage: {
     alignSelf: "flex-start",
@@ -270,6 +273,8 @@ const styles = StyleSheet.create({
     margin: 10,
     borderRadius: 20,
     maxWidth: "80%",
+    borderColor: "gray",
+    borderWidth: 1,
   },
   messageText: {
     fontSize: 15,
