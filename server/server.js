@@ -149,6 +149,32 @@ app.post("/login", async (req, res) => {
   }
 });
 
+//delete user
+app.post("/delete", async (req, res) => {
+  const { id } = req.body; // Changed to req.body to match the client-side code
+
+  try {
+    const user = await User.findById(id);
+    if (!user) {
+      return res.status(404).send({ status: "error", data: "User not found" });
+    } else {
+      // Delete user
+      await User.deleteOne(user._id);
+      res.send({ status: "ok", data: "User deleted" });
+
+      // Delete chat
+      await Chat.deleteMany({ participants: user._id });
+
+      // Delete matches
+      await Match.deleteMany({
+        $or: [{ user1Id: user._id }, { user2Id: user._id }],
+      });
+    }
+  } catch (err) {
+    res.status(500).send({ status: "error", data: "Error deleting user" });
+  }
+});
+
 //search users by trip planning
 app.post("/search", async (req, res) => {
   const { country, startDate, endDate, userId } = req.body;

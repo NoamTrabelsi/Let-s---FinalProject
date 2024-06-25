@@ -11,20 +11,16 @@ import { useNavigation } from "@react-navigation/native";
 import { CommonActions } from "@react-navigation/native";
 import { UserContext } from "../components/UserContext/UserContext";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import axios from "axios";
 
 function Settings() {
   const navigation = useNavigation();
-  const { resetUser } = useContext(UserContext);
+  const { user, resetUser } = useContext(UserContext);
 
   const handleLogout = async () => {
     try {
-      // Удаление токена из AsyncStorage
       await AsyncStorage.removeItem("token");
-
-      // Сброс состояния пользователя
       resetUser();
-
-      // Переход на страницу логина
       navigation.dispatch(
         CommonActions.reset({ index: 0, routes: [{ name: "LogIn" }] })
       );
@@ -47,11 +43,29 @@ function Settings() {
           text: "Delete",
           onPress: () => {
             console.log("Delete Pressed");
+            deleteUser();
           },
           style: "destructive",
         },
       ]
     );
+  };
+
+  const deleteUser = async () => {
+    try {
+      console.log("Deleting user:", user._id);
+      const response = await axios.post(`http://192.168.0.148:5001/delete`, {
+        id: user._id, // Make sure this matches your user schema
+      });
+      console.log(response.data);
+      await AsyncStorage.removeItem("token");
+      resetUser();
+      navigation.dispatch(
+        CommonActions.reset({ index: 0, routes: [{ name: "LogIn" }] })
+      );
+    } catch (error) {
+      console.error("Error deleting user:", error);
+    }
   };
 
   return (
