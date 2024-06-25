@@ -9,7 +9,6 @@ import {
   ImageBackground,
   Image,
   Modal,
-  KeyboardAvoidingView,
 } from "react-native";
 import { useNavigation } from "@react-navigation/native";
 import { CommonActions } from "@react-navigation/native";
@@ -42,7 +41,7 @@ function LogIn() {
             .then((userRes) => {
               if (userRes.data.status === "ok") {
                 fetchUserData(userRes.data.data._id);
-                //setLoading(false);
+                setLoading(false);
                 navigation.dispatch(
                   CommonActions.reset({
                     index: 0,
@@ -64,7 +63,7 @@ function LogIn() {
       source={require("../assets/splash-simple.png")}
       style={styles.container}
     >
-      <KeyboardAvoidingView style={styles.formContainer}>
+      <View style={styles.formContainer}>
         <Modal visible={loading} transparent={true}>
           <View style={styles.loading}>
             <Image
@@ -101,7 +100,7 @@ function LogIn() {
         >
           <Text style={styles.buttonText}>Create Account</Text>
         </TouchableOpacity>
-      </KeyboardAvoidingView>
+      </View>
     </ImageBackground>
   );
 }
@@ -137,8 +136,8 @@ const styles = StyleSheet.create({
     backgroundColor: "#FF8C00",
     padding: 10,
     borderRadius: 10,
-    width: "80%",
-    height: "6%",
+    width: "85%",
+    height: 45,
     alignItems: "center",
     justifyContent: "center",
     marginTop: 20,
