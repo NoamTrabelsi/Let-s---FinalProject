@@ -13,6 +13,7 @@ import { MaterialCommunityIcons } from "@expo/vector-icons";
 import { UserContext } from "../UserContext/UserContext";
 import { lightFormat } from "date-fns";
 import axios from "axios";
+import { lOCAL_HOST, SERVER_PORT, SOCKET_PORT } from "@env";
 
 const UserInfo = ({ pageOwner, match }) => {
   const { user, setUser } = useContext(UserContext);
@@ -42,7 +43,7 @@ const UserInfo = ({ pageOwner, match }) => {
 
     try {
       const response = await axios.post(
-        `http://192.168.0.148:5001/update/${pageOwner._id}`,
+        `http://${lOCAL_HOST}:${SERVER_PORT}/update/${pageOwner._id}`,
         {
           trip_planning: updatedTripPlanning,
         }

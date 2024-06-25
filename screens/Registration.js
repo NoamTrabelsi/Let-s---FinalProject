@@ -18,6 +18,7 @@ import { useNavigation } from "@react-navigation/native";
 import { UserContext } from "../components/UserContext/UserContext";
 import axios from "axios";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import { lOCAL_HOST, SERVER_PORT, SOCKET_PORT } from "@env";
 
 function Registration() {
   const navigation = useNavigation();
@@ -65,7 +66,7 @@ function Registration() {
   const registerUser = async (userData) => {
     try {
       const response = await axios.post(
-        "http://192.168.0.148:5001/register",
+        `http://${lOCAL_HOST}:${SERVER_PORT}/register`,
         userData
       );
       if (response.data.status === "ok") {
@@ -82,7 +83,7 @@ function Registration() {
   const loginUser = async (userData) => {
     try {
       const response = await axios.post(
-        "http://192.168.0.148:5001/login",
+        `http://${lOCAL_HOST}:${SERVER_PORT}/login`,
         userData
       );
       if (response.data.status === "ok") {
@@ -99,9 +100,12 @@ function Registration() {
 
   const fetchUserWithToken = async (token) => {
     try {
-      const response = await axios.post("http://192.168.0.148:5001/user", {
-        token,
-      });
+      const response = await axios.post(
+        `http://${lOCAL_HOST}:${SERVER_PORT}/user`,
+        {
+          token,
+        }
+      );
       if (response.data.status === "ok") {
         setUser(response.data.data);
         fetchUserData(response.data.data._id);
@@ -116,10 +120,6 @@ function Registration() {
 
   return (
     <SafeAreaView style={styles.container}>
-      <Image
-        source={require("../assets/logo-start.png")}
-        style={styles.image}
-      />
       <KeyboardAvoidingView
         style={styles.keyboardAvoidingView}
         behavior="padding"
@@ -133,7 +133,14 @@ function Registration() {
           </View>
         </Modal>
         <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
-          <ScrollView contentContainerStyle={styles.scrollViewContent}>
+          <ScrollView
+            contentContainerStyle={styles.scrollViewContent}
+            disableScrollViewPanResponder={true}
+          >
+            <Image
+              source={require("../assets/logo-start.png")}
+              style={styles.image}
+            />
             <View style={styles.formContainer}>
               <TextInput
                 placeholder="First name"
@@ -165,6 +172,7 @@ function Registration() {
                 textStyle={styles.dropDownText}
                 placeholderStyle={styles.placeholderStyle}
                 placeholder="Select gender"
+                listMode="SCROLLVIEW"
               />
               <TextInput
                 placeholder="Email"
@@ -255,8 +263,6 @@ const styles = StyleSheet.create({
     backgroundColor: "#808080",
     padding: 10,
     borderRadius: 10,
-    borderColor: "black",
-    borderWidth: 2,
     width: "80%",
     alignItems: "center",
     justifyContent: "center",

@@ -11,6 +11,7 @@ import { TouchableOpacity } from "react-native-gesture-handler";
 import { useNavigation } from "@react-navigation/native";
 import axios from "axios";
 import MatchCalculator from "./MatchCalculator";
+import { SERVER_PORT, lOCAL_HOST } from "@env";
 
 const UserItem = React.memo(({ item }) => {
   const [tripMatch, setTripMatch] = useState(0);
@@ -21,7 +22,7 @@ const UserItem = React.memo(({ item }) => {
     try {
       setLoading(true);
       const response = await axios.get(
-        `http://192.168.0.148:5001/user/${item._id}`
+        `http://${lOCAL_HOST}:${SERVER_PORT}/user/${item._id}`
       );
       setLoading(false);
       return response.data;

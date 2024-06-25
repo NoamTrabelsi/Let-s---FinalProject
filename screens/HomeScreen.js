@@ -25,6 +25,7 @@ import ChatWithUser from "./ChatWithUser";
 import { formatISO } from "date-fns";
 import { UserContext } from "../components/UserContext/UserContext";
 import axios from "axios";
+import { lOCAL_HOST, SERVER_PORT, SOCKET_PORT } from "@env";
 
 const Stack = createStackNavigator();
 
@@ -77,12 +78,15 @@ function SearchMainScreen() {
   const fetchUsers = async (city, startDate, endDate) => {
     try {
       setLoading(true);
-      const response = await axios.post("http://192.168.0.148:5001/search", {
-        country: city,
-        startDate,
-        endDate,
-        userId: user._id,
-      });
+      const response = await axios.post(
+        `http://${lOCAL_HOST}:${SERVER_PORT}/search`,
+        {
+          country: city,
+          startDate,
+          endDate,
+          userId: user._id,
+        }
+      );
 
       if (response.data.status === "ok") {
         setUsers(response.data.data);
@@ -130,7 +134,7 @@ function SearchMainScreen() {
 
     try {
       await axios.post(
-        `http://192.168.0.148:5001/update/${user._id}`,
+        `http://${lOCAL_HOST}:${SERVER_PORT}/update/${user._id}`,
         updatedUser
       );
       fetchUserData(user._id);

@@ -11,6 +11,7 @@ import Settings from "../../screens/Settings";
 import { UserContext } from "../UserContext/UserContext";
 import axios from "axios";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import { lOCAL_HOST, SERVER_PORT, SOCKET_PORT } from "@env";
 
 const Tab = createBottomTabNavigator();
 
@@ -21,7 +22,7 @@ function UserNav() {
     const token = await AsyncStorage.getItem("token");
     if (token) {
       axios
-        .post("http://192.168.0.148:5001/user", { token })
+        .post(`http://${lOCAL_HOST}:${SERVER_PORT}/user`, { token })
         .then((res) => {
           if (res.data.status === "ok") {
             fetchUserData(res.data.data._id);

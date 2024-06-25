@@ -26,6 +26,7 @@ import { UserContext } from "../components/UserContext/UserContext";
 import axios from "axios";
 import { useFocusEffect } from "@react-navigation/native";
 import { io } from "socket.io-client";
+import { lOCAL_HOST, SERVER_PORT, SOCKET_PORT } from "@env";
 
 const Stack = createStackNavigator();
 
@@ -43,7 +44,7 @@ const Chats = () => {
 
   useEffect(() => {
     // connect to socket server
-    socket.current = io("http://192.168.0.148:5000");
+    socket.current = io(`http://${lOCAL_HOST}:${SOCKET_PORT}`);
 
     socket.current.on("connect", () => {
       console.log("Connected to socket server");
@@ -84,7 +85,7 @@ const Chats = () => {
   const fetchChatUsers = async () => {
     try {
       const response = await axios.get(
-        `http://192.168.0.148:5001/chat_users/${userId}`
+        `http://${lOCAL_HOST}:${SERVER_PORT}/chat_users/${userId}`
       );
       const chatUsers = response.data.data;
 

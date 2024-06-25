@@ -22,6 +22,7 @@ import { adventureOptions } from "../components/ProfileInfo/Adventure";
 import { useFocusEffect, useRoute } from "@react-navigation/native";
 import { useNavigation } from "@react-navigation/native";
 import axios from "axios";
+import { lOCAL_HOST, SERVER_PORT, SOCKET_PORT } from "@env";
 
 const ProfilePage = () => {
   const navigator = useNavigation();
@@ -50,7 +51,7 @@ const ProfilePage = () => {
       const fetchReviews = async () => {
         try {
           const response = await axios.get(
-            `http://192.168.0.148:5001/get_reviews/${pageOwner._id}`
+            `http://${lOCAL_HOST}:${SERVER_PORT}/get_reviews/${pageOwner._id}`
           );
           if (response.data.status === "ok") {
             setUserReviews(response.data.data);
@@ -65,7 +66,7 @@ const ProfilePage = () => {
       const canLeaveReview = async () => {
         try {
           const response = await axios.post(
-            "http://192.168.0.148:5001/check_both_clicked",
+            `http://${lOCAL_HOST}:${SERVER_PORT}/check_both_clicked`,
             {
               user1Id: user._id,
               user2Id: pageOwner._id,
@@ -108,7 +109,7 @@ const ProfilePage = () => {
 
     // Update user reviews in the database
     axios
-      .post(`http://192.168.0.148:5001/review/${pageOwner._id}`, {
+      .post(`http://${lOCAL_HOST}:${SERVER_PORT}/add_review/${pageOwner._id}`, {
         review: newReview,
       })
       .then((res) => {

@@ -1,6 +1,6 @@
+require("dotenv").config();
 const express = require("express");
 const app = express();
-const port = 5001;
 const cors = require("cors");
 app.use(cors());
 app.use(express.json({ limit: "50mb" }));
@@ -15,15 +15,17 @@ const server = http.createServer(app);
 const io = socketIo(server);
 
 // MongoDB connection
-const mongoUrl =
-  "mongodb+srv://maratzi:ZngrMrt2109!@cluster0.xnzxrre.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0";
+const mongoUrl = process.env.MONGO_URL;
 mongoose
   .connect(mongoUrl)
   .then(() => console.log("Connected to MongoDB"))
   .catch((err) => console.log("Error: ", err));
 
 // JWT secret key
-const JWT_SECRET = "mySuperSecretKey12345!";
+const JWT_SECRET = process.env.JWT_SECRET;
+
+const port = process.env.PORT || 5001;
+const socketPort = process.env.SOCKET_PORT || 5000;
 
 // Models
 require("./models/User");
@@ -149,23 +151,19 @@ app.post("/login", async (req, res) => {
   }
 });
 
-//delete user
+// Delete user
 app.post("/delete", async (req, res) => {
-  const { id } = req.body; // Changed to req.body to match the client-side code
+  const { id } = req.body;
 
   try {
     const user = await User.findById(id);
     if (!user) {
       return res.status(404).send({ status: "error", data: "User not found" });
     } else {
-      // Delete user
       await User.deleteOne(user._id);
       res.send({ status: "ok", data: "User deleted" });
 
-      // Delete chat
       await Chat.deleteMany({ participants: user._id });
-
-      // Delete matches
       await Match.deleteMany({
         $or: [{ user1Id: user._id }, { user2Id: user._id }],
       });
@@ -175,7 +173,7 @@ app.post("/delete", async (req, res) => {
   }
 });
 
-//search users by trip planning
+// Search users by trip planning
 app.post("/search", async (req, res) => {
   const { country, startDate, endDate, userId } = req.body;
 
@@ -188,7 +186,7 @@ app.post("/search", async (req, res) => {
       : null;
 
     const query = {
-      _id: { $ne: userId }, // Exclude the current user
+      _id: { $ne: userId },
       trip_planning: {
         $elemMatch: {
           country: { $regex: new RegExp(country, "i") },
@@ -233,7 +231,7 @@ app.post("/search", async (req, res) => {
 });
 
 // Add review
-app.post("/review/:id", async (req, res) => {
+app.post("/add_review/:id", async (req, res) => {
   const { review } = req.body;
 
   try {
@@ -250,7 +248,7 @@ app.post("/review/:id", async (req, res) => {
   }
 });
 
-//get reviews by user id
+// Get reviews by user id
 app.get("/get_reviews/:id", async (req, res) => {
   try {
     const user = await User.findById(req.params.id);
@@ -264,7 +262,7 @@ app.get("/get_reviews/:id", async (req, res) => {
   }
 });
 
-//io connection
+// io connection
 io.on("connection", (socket) => {
   console.log("a user connected");
 
@@ -301,9 +299,9 @@ io.on("connection", (socket) => {
   });
 });
 
-//io listen on port
-server.listen(5000, () => {
-  console.log("SocketIO running on port:5000");
+// io listen on port
+server.listen(socketPort, () => {
+  console.log(`SocketIO running on port: ${socketPort}`);
 });
 
 app.get("/messages", async (req, res) => {
@@ -336,8 +334,6 @@ app.get("/chat_users/:userId", async (req, res) => {
       "_id firstName image"
     );
 
-    //console.log("Fetched chats: ", chats);
-
     const chatUsers = chats.map((chat) => {
       const otherUser = chat.participants.find(
         (participant) => participant._id.toString() !== userId
@@ -352,8 +348,6 @@ app.get("/chat_users/:userId", async (req, res) => {
         ).length,
       };
     });
-
-    //console.log("Chat users: ", chatUsers);
 
     res.send({ status: "ok", data: chatUsers });
   } catch (err) {
@@ -380,7 +374,7 @@ app.post("/mark_as_read", async (req, res) => {
   }
 });
 
-//create a new match schema for the chat
+// Create a new match schema for the chat
 app.post("/create_match", async (req, res) => {
   const { user1Id, user2Id } = req.body;
 
@@ -411,7 +405,7 @@ app.post("/create_match", async (req, res) => {
   }
 });
 
-//update match schema
+// Update match schema
 app.post("/update_match", async (req, res) => {
   const { user1Id, user2Id, clickedBy } = req.body;
 
@@ -446,7 +440,7 @@ app.post("/update_match", async (req, res) => {
   }
 });
 
-//check if btn lets go is clicked
+// Check if btn lets go is clicked
 app.post("/check_letsgo_btn", async (req, res) => {
   const { user1Id, user2Id } = req.body;
 
@@ -474,7 +468,7 @@ app.post("/check_letsgo_btn", async (req, res) => {
   }
 });
 
-//check if both users clicked the let's go button
+// Check if both users clicked the let's go button
 app.post("/check_both_clicked", async (req, res) => {
   const { user1Id, user2Id } = req.body;
 

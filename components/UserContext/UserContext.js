@@ -1,5 +1,6 @@
 import React, { createContext, useState } from "react";
 import axios from "axios";
+import { lOCAL_HOST, SERVER_PORT, SOCKET_PORT } from "@env";
 
 const UserContext = createContext();
 
@@ -37,7 +38,7 @@ const UserProvider = ({ children }) => {
   const fetchUserData = async (userId) => {
     try {
       const response = await axios.get(
-        `http://192.168.0.148:5001/user/${userId}`
+        `http://${lOCAL_HOST}:${SERVER_PORT}/user/${userId}`
       );
       if (response.data) {
         setUser(response.data);

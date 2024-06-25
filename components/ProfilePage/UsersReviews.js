@@ -9,6 +9,7 @@ import {
 } from "react-native";
 import { FontAwesome } from "@expo/vector-icons";
 import axios from "axios";
+import { lOCAL_HOST, SERVER_PORT, SOCKET_PORT } from "@env";
 
 const UsersReviews = ({ userReviews, user, owner, setUserReviews }) => {
   const handlePress = (index) => {
@@ -33,7 +34,7 @@ const UsersReviews = ({ userReviews, user, owner, setUserReviews }) => {
     const updatedReviews = userReviews.filter((_, i) => i !== index);
     try {
       const response = await axios.post(
-        `http://192.168.0.148:5001/update/${owner._id}`,
+        `http://${lOCAL_HOST}:${SERVER_PORT}/update/${owner._id}`,
         {
           reviews: updatedReviews,
         }

@@ -14,6 +14,7 @@ import { useRoute, useNavigation } from "@react-navigation/native";
 import { FontAwesome } from "@expo/vector-icons";
 import { io } from "socket.io-client";
 import axios from "axios";
+import { lOCAL_HOST, SERVER_PORT, SOCKET_PORT } from "@env";
 
 function Chat() {
   const route = useRoute();
@@ -29,7 +30,7 @@ function Chat() {
 
   useEffect(() => {
     // connect to socket server
-    socket.current = io("http://192.168.0.148:5000");
+    socket.current = io(`http://${lOCAL_HOST}:${SOCKET_PORT}`);
 
     socket.current.on("connect", () => {
       console.log("Connected to socket server");
@@ -43,7 +44,7 @@ function Chat() {
       // Mark the message as read if it is from the receiver
       if (newMessage.senderId === receiverId) {
         try {
-          await axios.post("http://192.168.0.148:5001/mark_as_read", {
+          await axios.post(`http://${lOCAL_HOST}:${SERVER_PORT}/mark_as_read`, {
             messages: [newMessage._id],
           });
 
@@ -67,7 +68,7 @@ function Chat() {
   const createMatchInDB = async (user1Id, user2Id) => {
     try {
       const response = await axios.post(
-        "http://192.168.0.148:5001/create_match",
+        `http://${lOCAL_HOST}:${SERVER_PORT}/create_match`,
         { user1Id, user2Id }
       );
     } catch (err) {
@@ -78,7 +79,7 @@ function Chat() {
   const checkLetsGoBtn = async () => {
     try {
       const response = await axios.post(
-        "http://192.168.0.148:5001/check_letsgo_btn",
+        `http://${lOCAL_HOST}:${SERVER_PORT}/check_letsgo_btn`,
         { user1Id: senderId, user2Id: receiverId }
       );
 
@@ -89,10 +90,15 @@ function Chat() {
   };
 
   useEffect(() => {
-    const init = async () => {
-      await createMatchInDB(senderId, receiverId);
-      const clicked = await checkLetsGoBtn();
-      setLetsGoClicked(clicked);
+    const init = () => {
+      createMatchInDB(senderId, receiverId)
+        .then(() => checkLetsGoBtn())
+        .then((clicked) => {
+          setLetsGoClicked(clicked);
+        })
+        .catch((error) => {
+          console.error("Error in init function:", error);
+        });
     };
     init();
   }, [senderId, receiverId]);
@@ -100,7 +106,7 @@ function Chat() {
   const handleLetsGo = async () => {
     try {
       const response = await axios.post(
-        "http://192.168.0.148:5001/update_match",
+        `http://${lOCAL_HOST}:${SERVER_PORT}/update_match`,
         { user1Id: senderId, user2Id: receiverId, clickedBy: senderId }
       );
 
@@ -131,9 +137,12 @@ function Chat() {
 
   const fetchMessages = async () => {
     try {
-      const response = await axios.get("http://192.168.0.148:5001/messages", {
-        params: { senderId, receiverId },
-      });
+      const response = await axios.get(
+        `http://${lOCAL_HOST}:${SERVER_PORT}/messages`,
+        {
+          params: { senderId, receiverId },
+        }
+      );
 
       const fetchedMessages = response.data.data;
 
@@ -148,9 +157,12 @@ function Chat() {
       if (unreadMessages.length > 0) {
         unreadMessages.forEach(async (msg) => {
           try {
-            await axios.post("http://192.168.0.148:5001/mark_as_read", {
-              messages: [msg._id],
-            });
+            await axios.post(
+              `http://${lOCAL_HOST}:${SERVER_PORT}/mark_as_read`,
+              {
+                messages: [msg._id],
+              }
+            );
 
             // Update the message state to set isRead to true
             setMessages((prevMessages) =>
@@ -182,7 +194,7 @@ function Chat() {
   const navigateToUserPage = async () => {
     //get user information from the server
     const response = await axios.get(
-      `http://192.168.0.148:5001/user/${receiverId}`
+      `http://${lOCAL_HOST}:${SERVER_PORT}/user/${receiverId}`
     );
 
     navigation.navigate("ProfilePage", {

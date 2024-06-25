@@ -12,6 +12,7 @@ import { CommonActions } from "@react-navigation/native";
 import { UserContext } from "../components/UserContext/UserContext";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import axios from "axios";
+import { lOCAL_HOST, SERVER_PORT, SOCKET_PORT } from "@env";
 
 function Settings() {
   const navigation = useNavigation();
@@ -54,9 +55,12 @@ function Settings() {
   const deleteUser = async () => {
     try {
       console.log("Deleting user:", user._id);
-      const response = await axios.post(`http://192.168.0.148:5001/delete`, {
-        id: user._id, // Make sure this matches your user schema
-      });
+      const response = await axios.post(
+        `http://${lOCAL_HOST}:${SERVER_PORT}/delete`,
+        {
+          id: user._id, // Make sure this matches your user schema
+        }
+      );
       console.log(response.data);
       await AsyncStorage.removeItem("token");
       resetUser();

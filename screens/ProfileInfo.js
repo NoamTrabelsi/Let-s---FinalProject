@@ -19,6 +19,7 @@ import { useNavigation } from "@react-navigation/native";
 import { CommonActions } from "@react-navigation/native";
 import { UserContext } from "../components/UserContext/UserContext";
 import axios from "axios";
+import { lOCAL_HOST, SERVER_PORT, SOCKET_PORT } from "@env";
 
 function ProfileInfo() {
   const navigation = useNavigation();
@@ -61,7 +62,7 @@ function ProfileInfo() {
     };
 
     axios
-      .post(`http://192.168.0.148:5001/update/${userId}`, updatedData)
+      .post(`http://${lOCAL_HOST}:${SERVER_PORT}/update/${userId}`, updatedData)
       .then((res) => {
         console.log(res.data);
         setLoading(false);
