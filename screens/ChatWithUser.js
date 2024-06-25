@@ -22,8 +22,9 @@ function Chat() {
   const [match2, setMatch] = useState(match);
   const [message, setMessage] = useState("");
   const [messages, setMessages] = useState([]);
-  const scrollViewRef = useRef(null);
+  const [letsGoClicked, setLetsGoClicked] = useState(false);
 
+  const scrollViewRef = useRef(null);
   const socket = useRef(null);
 
   useEffect(() => {
@@ -62,6 +63,57 @@ function Chat() {
       socket.current.disconnect();
     };
   }, [receiverId]);
+
+  const createMatchInDB = async (user1Id, user2Id) => {
+    try {
+      const response = await axios.post(
+        "http://192.168.0.148:5001/create_match",
+        { user1Id, user2Id }
+      );
+    } catch (err) {
+      console.error("Error creating match:", err);
+    }
+  };
+
+  const checkLetsGoBtn = async () => {
+    try {
+      const response = await axios.post(
+        "http://192.168.0.148:5001/check_letsgo_btn",
+        { user1Id: senderId, user2Id: receiverId }
+      );
+
+      return response.data.clicked;
+    } catch (err) {
+      console.error("Error checking let's go button:", err);
+    }
+  };
+
+  useEffect(() => {
+    const init = async () => {
+      await createMatchInDB(senderId, receiverId);
+      const clicked = await checkLetsGoBtn();
+      setLetsGoClicked(clicked);
+    };
+    init();
+  }, [senderId, receiverId]);
+
+  const handleLetsGo = async () => {
+    try {
+      const response = await axios.post(
+        "http://192.168.0.148:5001/update_match",
+        { user1Id: senderId, user2Id: receiverId, clickedBy: senderId }
+      );
+
+      if (response.data.status === "ok") {
+        console.log("Match updated successfully");
+        setLetsGoClicked(true);
+      } else {
+        console.log("Error updating match");
+      }
+    } catch (err) {
+      console.error("Error updating match:", err);
+    }
+  };
 
   const sendMessage = async (senderId, receiverId) => {
     const newMessage = {
@@ -143,11 +195,21 @@ function Chat() {
     <SafeAreaView style={styles.container}>
       <View style={styles.header}>
         <TouchableOpacity
-          style={{ flexDirection: "row", alignItems: "center" }}
+          style={styles.profileContainer}
           onPress={() => navigateToUserPage()}
         >
           <Image source={{ uri: image }} style={styles.profileImage} />
           <Text style={styles.profileName}>{name}</Text>
+        </TouchableOpacity>
+        <TouchableOpacity
+          style={[
+            styles.button,
+            letsGoClicked ? styles.disabledButton : styles.activeButton,
+          ]}
+          onPress={() => handleLetsGo()}
+          disabled={letsGoClicked}
+        >
+          <Text style={styles.buttonText}>Let's GO</Text>
         </TouchableOpacity>
       </View>
       <KeyboardAvoidingView
@@ -229,11 +291,17 @@ const styles = StyleSheet.create({
     paddingHorizontal: 20,
     borderBottomLeftRadius: 50,
     borderBottomRightRadius: 50,
+    justifyContent: "space-between",
+  },
+  profileContainer: {
+    flexDirection: "row",
+    alignItems: "center",
   },
   profileImage: {
     width: 50,
     height: 50,
     borderRadius: 25,
+    marginLeft: 20,
   },
   profileName: {
     marginLeft: 10,
@@ -289,6 +357,25 @@ const styles = StyleSheet.create({
   messageTime: {
     fontSize: 10,
     color: "gray",
+  },
+  button: {
+    padding: 10,
+    borderRadius: 10,
+    marginRight: 20,
+    alignItems: "center",
+    justifyContent: "center",
+    width: "30%",
+  },
+  activeButton: {
+    backgroundColor: "#808080",
+  },
+  disabledButton: {
+    backgroundColor: "#D3D3D3",
+  },
+  buttonText: {
+    fontSize: 16,
+    color: "white",
+    fontWeight: "bold",
   },
 });
 

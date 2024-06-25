@@ -30,6 +30,8 @@ require("./models/User");
 const User = mongoose.model("UserInfo");
 require("./models/Chat");
 const Chat = mongoose.model("Chat");
+require("./models/Matches");
+const Match = mongoose.model("Matches");
 
 app.listen(port, () => {
   console.log(`Server is running on port ${port}`);
@@ -349,5 +351,123 @@ app.post("/mark_as_read", async (req, res) => {
     res
       .status(500)
       .send({ status: "error", data: "Error marking messages as read" });
+  }
+});
+
+//create a new match schema for the chat
+app.post("/create_match", async (req, res) => {
+  const { user1Id, user2Id } = req.body;
+
+  try {
+    const existingMatch = await Match.findOne({
+      $or: [
+        { user1Id: user1Id, user2Id: user2Id },
+        { user1Id: user2Id, user2Id: user1Id },
+      ],
+    });
+    if (existingMatch) {
+      return res
+        .status(200)
+        .send({ status: "ok", data: "Match record already exists" });
+    }
+
+    const newMatch = new Match({
+      user1Id,
+      user2Id,
+    });
+
+    await newMatch.save();
+
+    res.status(201).send({ status: "ok", data: "Match record created" });
+  } catch (err) {
+    console.error(err.message);
+    res.status(500).send({ status: "error", data: "Error creating match" });
+  }
+});
+
+//update match schema
+app.post("/update_match", async (req, res) => {
+  const { user1Id, user2Id, clickedBy } = req.body;
+
+  try {
+    const match = await Match.findOne({
+      $or: [
+        { user1Id: user1Id, user2Id: user2Id },
+        { user1Id: user2Id, user2Id: user1Id },
+      ],
+    });
+
+    if (!match) {
+      return res.status(404).send({ status: "error", data: "Match not found" });
+    }
+
+    if (clickedBy === match.user1Id) {
+      match.user1Clicked = true;
+    } else {
+      match.user2Clicked = true;
+    }
+
+    if (match.user1Clicked && match.user2Clicked) {
+      match.bothClicked = true;
+    }
+
+    await match.save();
+
+    res.status(200).send({ status: "ok", data: "Match updated" });
+  } catch (err) {
+    console.error(err.message);
+    res.status(500).send({ status: "error", data: "Error updating match" });
+  }
+});
+
+//check if btn lets go is clicked
+app.post("/check_letsgo_btn", async (req, res) => {
+  const { user1Id, user2Id } = req.body;
+
+  try {
+    const match = await Match.findOne({
+      $or: [
+        { user1Id: user1Id, user2Id: user2Id },
+        { user1Id: user2Id, user2Id: user1Id },
+      ],
+    });
+
+    if (!match) {
+      return res.status(404).send({ status: "error", data: "Match not found" });
+    }
+
+    let clicked = false;
+    if (user1Id === match.user1Id) clicked = match.user1Clicked;
+    else clicked = match.user2Clicked;
+
+    res.status(200).send({ status: "ok", clicked: clicked });
+  } catch (err) {
+    res
+      .status(500)
+      .send({ status: "error", data: "Error checking let's go button" });
+  }
+});
+
+//check if both users clicked the let's go button
+app.post("/check_both_clicked", async (req, res) => {
+  const { user1Id, user2Id } = req.body;
+
+  try {
+    const match = await Match.findOne({
+      $or: [
+        { user1Id: user1Id, user2Id: user2Id },
+        { user1Id: user2Id, user2Id: user1Id },
+      ],
+    });
+
+    if (!match) {
+      return res.status(404).send({ status: "error", data: "Match not found" });
+    }
+
+    res.status(200).send({ status: "ok", bothClicked: match.bothClicked });
+  } catch (err) {
+    res
+      .status(500)
+      .send({ status: "error", data: "Error checking both clicked status" });
   }
 });

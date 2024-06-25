@@ -39,6 +39,7 @@ const ProfilePage = () => {
   const [reviewRating, setReviewRating] = useState(1);
   const [errorMessage, setErrorMessage] = useState("");
   const [userHasReview, setUserHasReview] = useState(false);
+  const [reviewBtnActive, setReviewBtnActive] = useState(false);
 
   useEffect(() => {
     setUserHasReview(userReviews.some((review) => review.leftBy === user._id));
@@ -61,8 +62,26 @@ const ProfilePage = () => {
         }
       };
 
+      const canLeaveReview = async () => {
+        try {
+          const response = await axios.post(
+            "http://192.168.0.148:5001/check_both_clicked",
+            {
+              user1Id: user._id,
+              user2Id: pageOwner._id,
+            }
+          );
+          if (response.data.bothClicked) {
+            setReviewBtnActive(true);
+          }
+        } catch (error) {
+          console.error("Error checking if both users clicked:", error);
+        }
+      };
+
       fetchReviews();
-    }, [pageOwner._id])
+      canLeaveReview();
+    }, [pageOwner._id, user._id])
   );
 
   const handleSaveReview = () => {
@@ -166,9 +185,14 @@ const ProfilePage = () => {
         {pageOwner._id !== user._id && (
           <View style={styles.buttonsContainer}>
             <TouchableOpacity
-              style={[styles.button, userHasReview && styles.disabledButton]}
-              onPress={() => !userHasReview && setModalVisible(true)}
-              disabled={userHasReview}
+              style={[
+                styles.button,
+                (!reviewBtnActive || userHasReview) && styles.disabledButton,
+              ]}
+              onPress={() =>
+                reviewBtnActive && !userHasReview && setModalVisible(true)
+              }
+              disabled={!reviewBtnActive || userHasReview}
             >
               <Text style={styles.buttonText}>Add Review</Text>
             </TouchableOpacity>
