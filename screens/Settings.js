@@ -1,5 +1,12 @@
 import React, { useContext } from "react";
-import { SafeAreaView, StyleSheet, Text, TouchableOpacity } from "react-native";
+import {
+  SafeAreaView,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  Image,
+  Alert,
+} from "react-native";
 import { useNavigation } from "@react-navigation/native";
 import { CommonActions } from "@react-navigation/native";
 import { UserContext } from "../components/UserContext/UserContext";
@@ -26,8 +33,30 @@ function Settings() {
     }
   };
 
+  const handleDelete = () => {
+    Alert.alert(
+      "Delete account",
+      "Are you sure you want to delete your account?",
+      [
+        {
+          text: "Cancel",
+          onPress: () => console.log("Cancel Pressed"),
+          style: "cancel",
+        },
+        {
+          text: "Delete",
+          onPress: () => {
+            console.log("Delete Pressed");
+          },
+          style: "destructive",
+        },
+      ]
+    );
+  };
+
   return (
     <SafeAreaView style={styles.container}>
+      <Image source={require("../assets/logo.png")} style={styles.image} />
       <TouchableOpacity
         style={styles.button}
         onPress={() =>
@@ -41,9 +70,11 @@ function Settings() {
       >
         <Text style={styles.buttonText}>Update details</Text>
       </TouchableOpacity>
-      {/* Log Out Button */}
       <TouchableOpacity style={styles.button} onPress={handleLogout}>
         <Text style={styles.buttonText}>Log Out</Text>
+      </TouchableOpacity>
+      <TouchableOpacity style={styles.buttonDelete} onPress={handleDelete}>
+        <Text style={styles.buttonText}>Delete account</Text>
       </TouchableOpacity>
     </SafeAreaView>
   );
@@ -63,13 +94,29 @@ const styles = StyleSheet.create({
     marginTop: 20,
     marginBottom: 20,
     alignItems: "center",
-    width: "60%",
+    width: "50%",
+    justifyContent: "center",
+    alignSelf: "center",
+  },
+  buttonDelete: {
+    backgroundColor: "red",
+    padding: 10,
+    borderRadius: 10,
+    marginTop: 20,
+    marginBottom: 20,
+    alignItems: "center",
+    width: "50%",
     justifyContent: "center",
     alignSelf: "center",
   },
   buttonText: {
     color: "white",
     fontWeight: "bold",
+  },
+  image: {
+    width: "30%",
+    height: "30%",
+    resizeMode: "contain",
   },
 });
 

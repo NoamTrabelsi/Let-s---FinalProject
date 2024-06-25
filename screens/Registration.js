@@ -7,6 +7,11 @@ import {
   Text,
   TouchableOpacity,
   Image,
+  KeyboardAvoidingView,
+  ScrollView,
+  TouchableWithoutFeedback,
+  Keyboard,
+  Modal,
 } from "react-native";
 import DropDownPicker from "react-native-dropdown-picker";
 import { useNavigation } from "@react-navigation/native";
@@ -25,6 +30,7 @@ function Registration() {
   const [userPassword, setUserPassword] = useState("");
   const [userConfirmPassword, setUserConfirmPassword] = useState("");
   const [selectedGender, setSelectedGender] = useState(null);
+  const [loading, setLoading] = useState(false);
 
   const [open, setOpen] = useState(false);
   const [items, setItems] = useState([
@@ -42,6 +48,7 @@ function Registration() {
     };
 
     try {
+      setLoading(true);
       const registerResponse = await registerUser(userData);
       if (registerResponse.status === "ok") {
         await loginUser(userData);
@@ -50,6 +57,8 @@ function Registration() {
       }
     } catch (err) {
       console.log(err);
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -111,69 +120,89 @@ function Registration() {
         source={require("../assets/logo-start.png")}
         style={styles.image}
       />
-      <View style={styles.formContainer}>
-        <TextInput
-          placeholder="First name"
-          placeholderTextColor={"gray"}
-          style={styles.input_container}
-          autoCapitalize="none"
-          textContentType="username"
-          value={userName}
-          onChangeText={(text) => setUserName(text)}
-        />
-        <TextInput
-          placeholder="Last name"
-          placeholderTextColor={"gray"}
-          style={styles.input_container}
-          autoCapitalize="none"
-          textContentType="username"
-          value={userLastName}
-          onChangeText={(text) => setUserLastName(text)}
-        />
-        <DropDownPicker
-          open={open}
-          value={selectedGender}
-          items={items}
-          setOpen={setOpen}
-          setValue={setSelectedGender}
-          setItems={setItems}
-          style={styles.input_container}
-          dropDownContainerStyle={styles.dropDownContainer}
-          textStyle={styles.dropDownText}
-          placeholderStyle={styles.placeholderStyle}
-          placeholder="Select gender"
-        />
-        <TextInput
-          placeholder="Email"
-          placeholderTextColor={"gray"}
-          style={styles.input_container}
-          autoCapitalize="none"
-          textContentType="username"
-          value={userEmail}
-          onChangeText={(text) => setUserEmail(text)}
-        />
-        <TextInput
-          placeholder="Password"
-          placeholderTextColor={"gray"}
-          style={styles.input_container}
-          secureTextEntry={true}
-          textContentType="password"
-          value={userPassword}
-          onChangeText={(text) => setUserPassword(text)}
-        />
-        <TextInput
-          placeholder="Password Validation"
-          placeholderTextColor={"gray"}
-          style={styles.input_container}
-          secureTextEntry={true}
-          textContentType="password"
-          value={userConfirmPassword}
-          onChangeText={(text) => setUserConfirmPassword(text)}
-        />
-        <TouchableOpacity style={styles.button} onPress={handleRegistration}>
-          <Text style={styles.buttonText}>Register</Text>
-        </TouchableOpacity>
-      </View>
+      <KeyboardAvoidingView
+        style={styles.keyboardAvoidingView}
+        behavior="padding"
+      >
+        <Modal visible={loading} transparent={true}>
+          <View style={styles.loading}>
+            <Image
+              source={require("../assets/lets-animated.gif")}
+              style={styles.loadingImage}
+            />
+          </View>
+        </Modal>
+        <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
+          <ScrollView contentContainerStyle={styles.scrollViewContent}>
+            <View style={styles.formContainer}>
+              <TextInput
+                placeholder="First name"
+                placeholderTextColor={"gray"}
+                style={styles.input_container}
+                autoCapitalize="none"
+                textContentType="username"
+                value={userName}
+                onChangeText={(text) => setUserName(text)}
+              />
+              <TextInput
+                placeholder="Last name"
+                placeholderTextColor={"gray"}
+                style={styles.input_container}
+                autoCapitalize="none"
+                textContentType="username"
+                value={userLastName}
+                onChangeText={(text) => setUserLastName(text)}
+              />
+              <DropDownPicker
+                open={open}
+                value={selectedGender}
+                items={items}
+                setOpen={setOpen}
+                setValue={setSelectedGender}
+                setItems={setItems}
+                style={styles.input_container}
+                dropDownContainerStyle={styles.dropDownContainer}
+                textStyle={styles.dropDownText}
+                placeholderStyle={styles.placeholderStyle}
+                placeholder="Select gender"
+              />
+              <TextInput
+                placeholder="Email"
+                placeholderTextColor={"gray"}
+                style={styles.input_container}
+                autoCapitalize="none"
+                textContentType="username"
+                value={userEmail}
+                onChangeText={(text) => setUserEmail(text)}
+              />
+              <TextInput
+                placeholder="Password"
+                placeholderTextColor={"gray"}
+                style={styles.input_container}
+                secureTextEntry={true}
+                textContentType="password"
+                value={userPassword}
+                onChangeText={(text) => setUserPassword(text)}
+              />
+              <TextInput
+                placeholder="Password Validation"
+                placeholderTextColor={"gray"}
+                style={styles.input_container}
+                secureTextEntry={true}
+                textContentType="password"
+                value={userConfirmPassword}
+                onChangeText={(text) => setUserConfirmPassword(text)}
+              />
+              <TouchableOpacity
+                style={styles.button}
+                onPress={handleRegistration}
+              >
+                <Text style={styles.buttonText}>Register</Text>
+              </TouchableOpacity>
+            </View>
+          </ScrollView>
+        </TouchableWithoutFeedback>
+      </KeyboardAvoidingView>
     </SafeAreaView>
   );
 }
@@ -184,6 +213,15 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     alignItems: "center",
     backgroundColor: "#FF8C00",
+  },
+  keyboardAvoidingView: {
+    flex: 1,
+    width: "100%",
+  },
+  scrollViewContent: {
+    flexGrow: 1,
+    justifyContent: "center",
+    alignItems: "center",
   },
   formContainer: {
     width: "50%",
@@ -233,6 +271,17 @@ const styles = StyleSheet.create({
     height: "30%",
     resizeMode: "contain",
     marginBottom: -30,
+  },
+  loading: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+    backgroundColor: "rgba(0, 0, 0, 0.5)",
+  },
+  loadingImage: {
+    width: 200,
+    height: 200,
+    borderRadius: 30,
   },
 });
 

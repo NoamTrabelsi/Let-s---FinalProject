@@ -11,6 +11,7 @@ import {
   Keyboard,
   Modal,
   Image,
+  ActivityIndicator,
 } from "react-native";
 import countryList from "react-select-country-list";
 import { UserContext } from "../UserContext/UserContext";
@@ -18,6 +19,8 @@ import * as ImagePicker from "expo-image-picker";
 import AWS from "aws-sdk";
 import { v4 as uuidv4 } from "uuid";
 import { AWS_REGION, AWS_ACCESS_KEY_ID, AWS_SECRET_ACCESS_KEY } from "@env";
+import { Entypo } from "@expo/vector-icons";
+import { SimpleLineIcons } from "@expo/vector-icons";
 
 // Load required polyfill
 import "react-native-get-random-values";
@@ -26,6 +29,7 @@ function GetKnow({ location, setLocation, age, setAge, picture, setPicture }) {
   const { user, updateUser } = useContext(UserContext);
   const [filteredCountries, setFilteredCountries] = useState([]);
   const [isModalVisible, setIsModalVisible] = useState(false);
+  const [loading, setLoading] = useState(false); // Loading state for image upload
   const countries = countryList().getData();
 
   const s3 = new AWS.S3({
@@ -83,7 +87,9 @@ function GetKnow({ location, setLocation, age, setAge, picture, setPicture }) {
           ACL: "public-read", // public access to the image
         };
 
+        setLoading(true); // Set loading state to true
         s3.upload(params, async (err, data) => {
+          setLoading(false); // Set loading state to false
           if (err) {
             console.error("Error uploading image:", err);
           } else {
@@ -95,6 +101,7 @@ function GetKnow({ location, setLocation, age, setAge, picture, setPicture }) {
         });
       }
     } catch (error) {
+      setLoading(false); // Set loading state to false in case of an error
       console.log(error);
     }
   };
@@ -111,21 +118,32 @@ function GetKnow({ location, setLocation, age, setAge, picture, setPicture }) {
         <Text style={styles.text}>Get to know you</Text>
         <View style={styles.view1}>
           <TouchableOpacity style={styles.roundButton} onPress={selectPhoto}>
-            {picture ? (
+            {loading ? ( // Show ActivityIndicator when loading
+              <ActivityIndicator size="large" color="#FF8C00" />
+            ) : picture ? (
               <Image source={{ uri: picture }} style={styles.image} />
             ) : (
               <Text style={styles.buttonText}>Add picture</Text>
             )}
           </TouchableOpacity>
           <View>
-            <TouchableOpacity
-              style={styles.locationBtn}
-              onPress={() => setIsModalVisible(true)}
+            <View
+              style={{
+                flexDirection: "row",
+                alignItems: "center",
+                marginLeft: 20,
+              }}
             >
-              <Text style={styles.buttonText}>
-                {location || "Current Location"}
-              </Text>
-            </TouchableOpacity>
+              <Entypo name="location" size={20} color="black" />
+              <TouchableOpacity
+                style={styles.locationBtn}
+                onPress={() => setIsModalVisible(true)}
+              >
+                <Text style={styles.buttonText}>
+                  {location || "Current Location"}
+                </Text>
+              </TouchableOpacity>
+            </View>
             <Modal
               visible={isModalVisible}
               transparent={true}
@@ -164,16 +182,24 @@ function GetKnow({ location, setLocation, age, setAge, picture, setPicture }) {
                 </View>
               </View>
             </Modal>
-
-            <TextInput
-              placeholder={age ? age.toString() : "Age"}
-              placeholderTextColor="black"
-              style={styles.ageBtn}
-              keyboardType="numeric"
-              maxLength={2}
-              caretHidden={true}
-              onChangeText={(text) => selectAge(text)}
-            />
+            <View
+              style={{
+                flexDirection: "row",
+                alignItems: "center",
+                marginLeft: 20,
+              }}
+            >
+              <SimpleLineIcons name="present" size={20} color="black" />
+              <TextInput
+                placeholder={age ? age.toString() : "Age"}
+                placeholderTextColor="black"
+                style={styles.ageBtn}
+                keyboardType="numeric"
+                maxLength={2}
+                caretHidden={true}
+                onChangeText={(text) => selectAge(text)}
+              />
+            </View>
           </View>
         </View>
       </View>

@@ -6,6 +6,7 @@ import {
   View,
   TouchableOpacity,
   Modal,
+  TouchableWithoutFeedback,
 } from "react-native";
 import Slider from "./Slider";
 import GenderFilter from "./GenderFilter";
@@ -45,30 +46,32 @@ const FilterModal = ({
       visible={isVisible}
       onRequestClose={toggleModal}
     >
-      <View style={styles.modalContainer}>
-        <View style={styles.modalView}>
-          <Text style={styles.title}>Filter Options</Text>
-          <View style={styles.filterContainer}>
-            <Slider
-              defaultValues={[filteredMinAge, filteredMaxAge]}
-              onValuesChange={(values) => {
-                setFilteredMinAge(values[0]);
-                setFilteredMaxAge(values[1]);
-              }}
-            />
-            <GenderFilter
-              defaultValue={filteredGender}
-              onValueChange={(value) => setFilteredGender(value)}
-            />
+      <TouchableWithoutFeedback onPress={toggleModal}>
+        <View style={styles.modalContainer}>
+          <View style={styles.modalView}>
+            <Text style={styles.title}>Filter Options</Text>
+            <View style={styles.filterContainer}>
+              <Slider
+                defaultValues={[filteredMinAge, filteredMaxAge]}
+                onValuesChange={(values) => {
+                  setFilteredMinAge(values[0]);
+                  setFilteredMaxAge(values[1]);
+                }}
+              />
+              <GenderFilter
+                defaultValue={filteredGender}
+                onValueChange={(value) => setFilteredGender(value)}
+              />
+            </View>
+            <TouchableOpacity
+              style={[styles.button, styles.buttonClose]}
+              onPress={handleFilterApply}
+            >
+              <Text style={styles.textStyle}>Apply Filters</Text>
+            </TouchableOpacity>
           </View>
-          <TouchableOpacity
-            style={[styles.button, styles.buttonClose]}
-            onPress={handleFilterApply}
-          >
-            <Text style={styles.textStyle}>Apply Filters</Text>
-          </TouchableOpacity>
         </View>
-      </View>
+      </TouchableWithoutFeedback>
     </Modal>
   );
 };

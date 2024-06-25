@@ -9,6 +9,7 @@ import {
   ImageBackground,
   Image,
   Modal,
+  KeyboardAvoidingView,
 } from "react-native";
 import { useNavigation } from "@react-navigation/native";
 import { CommonActions } from "@react-navigation/native";
@@ -63,7 +64,7 @@ function LogIn() {
       source={require("../assets/splash-simple.png")}
       style={styles.container}
     >
-      <View style={styles.formContainer}>
+      <KeyboardAvoidingView style={styles.formContainer}>
         <Modal visible={loading} transparent={true}>
           <View style={styles.loading}>
             <Image
@@ -100,7 +101,7 @@ function LogIn() {
         >
           <Text style={styles.buttonText}>Create Account</Text>
         </TouchableOpacity>
-      </View>
+      </KeyboardAvoidingView>
     </ImageBackground>
   );
 }
