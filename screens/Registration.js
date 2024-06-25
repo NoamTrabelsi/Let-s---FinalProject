@@ -12,6 +12,7 @@ import DropDownPicker from "react-native-dropdown-picker";
 import { useNavigation } from "@react-navigation/native";
 import { UserContext } from "../components/UserContext/UserContext";
 import axios from "axios";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 function Registration() {
   const navigation = useNavigation();
@@ -31,16 +32,7 @@ function Registration() {
     { label: "Female", value: "female" },
   ]);
 
-  const handleRegistration = () => {
-    const userInformation = { ...userInformationTemplate };
-    userInformation.firstName = userName;
-    userInformation.lastName = userLastName;
-    userInformation.email = userEmail;
-    userInformation.password = userPassword;
-    userInformation.gender = selectedGender;
-
-    setUser(userInformation);
-
+  const handleRegistration = async () => {
     const userData = {
       firstName: userName,
       lastName: userLastName,
@@ -48,18 +40,69 @@ function Registration() {
       password: userPassword,
       gender: selectedGender,
     };
-    axios
-      .post("http://192.168.0.148:5001/register", userData)
-      .then((res) => {
-        if (res.data.status === "ok") {
-          const userId = res.data.data.id;
-          fetchUserData(userId);
-          navigation.navigate("ProfileInfo");
-        } else {
-          console.log(res.data.data);
-        }
-      })
-      .catch((err) => console.log(err));
+
+    try {
+      const registerResponse = await registerUser(userData);
+      if (registerResponse.status === "ok") {
+        await loginUser(userData);
+      } else {
+        console.log(registerResponse.data);
+      }
+    } catch (err) {
+      console.log(err);
+    }
+  };
+
+  const registerUser = async (userData) => {
+    try {
+      const response = await axios.post(
+        "http://192.168.0.148:5001/register",
+        userData
+      );
+      if (response.data.status === "ok") {
+        const userId = response.data.data.id;
+        await fetchUserData(userId);
+      }
+      return response.data;
+    } catch (err) {
+      console.error("Error registering user:", err);
+      throw err;
+    }
+  };
+
+  const loginUser = async (userData) => {
+    try {
+      const response = await axios.post(
+        "http://192.168.0.148:5001/login",
+        userData
+      );
+      if (response.data.status === "ok") {
+        const token = response.data.data.token;
+        await AsyncStorage.setItem("token", token);
+        await fetchUserWithToken(token);
+        navigation.navigate("ProfileInfo");
+      }
+    } catch (err) {
+      console.error("Error logging in:", err);
+      throw err;
+    }
+  };
+
+  const fetchUserWithToken = async (token) => {
+    try {
+      const response = await axios.post("http://192.168.0.148:5001/user", {
+        token,
+      });
+      if (response.data.status === "ok") {
+        setUser(response.data.data);
+        fetchUserData(response.data.data._id);
+      } else {
+        console.log("Error fetching user:", response.data.data);
+      }
+    } catch (err) {
+      console.error("Error fetching user:", err);
+      throw err;
+    }
   };
 
   return (

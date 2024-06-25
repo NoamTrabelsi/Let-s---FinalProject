@@ -75,7 +75,7 @@ const ProfilePage = () => {
             setReviewBtnActive(true);
           }
         } catch (error) {
-          console.error("Error checking if both users clicked:", error);
+          //console.log("Error checking if both users clicked:", error);
         }
       };
 

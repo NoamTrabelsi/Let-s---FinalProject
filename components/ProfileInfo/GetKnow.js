@@ -36,7 +36,6 @@ function GetKnow({ location, setLocation, age, setAge, picture, setPicture }) {
 
   const handleCountryChange = (countryName) => {
     setLocation(countryName);
-    //updateUser("location", countryName);
     setFilteredCountries([]);
     setIsModalVisible(false);
     Keyboard.dismiss();
@@ -91,7 +90,7 @@ function GetKnow({ location, setLocation, age, setAge, picture, setPicture }) {
             const imageUrl = data.Location;
             console.log("Image uploaded successfully:", imageUrl);
             setPicture(imageUrl);
-            //updateUser("image", imageUrl);
+            updateUser("image", imageUrl); // Update user image
           }
         });
       }
@@ -103,7 +102,7 @@ function GetKnow({ location, setLocation, age, setAge, picture, setPicture }) {
   const selectAge = (textAge) => {
     const age = parseInt(textAge);
     setAge(age);
-    //updateUser("age", age);
+    updateUser("age", age); // Update user age
   };
 
   return (
@@ -112,8 +111,8 @@ function GetKnow({ location, setLocation, age, setAge, picture, setPicture }) {
         <Text style={styles.text}>Get to know you</Text>
         <View style={styles.view1}>
           <TouchableOpacity style={styles.roundButton} onPress={selectPhoto}>
-            {user.image ? (
-              <Image source={{ uri: user.image }} style={styles.image} />
+            {picture ? (
+              <Image source={{ uri: picture }} style={styles.image} />
             ) : (
               <Text style={styles.buttonText}>Add picture</Text>
             )}
@@ -124,7 +123,7 @@ function GetKnow({ location, setLocation, age, setAge, picture, setPicture }) {
               onPress={() => setIsModalVisible(true)}
             >
               <Text style={styles.buttonText}>
-                {user.location || "Current Location"}
+                {location || "Current Location"}
               </Text>
             </TouchableOpacity>
             <Modal
@@ -167,7 +166,7 @@ function GetKnow({ location, setLocation, age, setAge, picture, setPicture }) {
             </Modal>
 
             <TextInput
-              placeholder={user.age ? user.age.toString() : "Age"}
+              placeholder={age ? age.toString() : "Age"}
               placeholderTextColor="black"
               style={styles.ageBtn}
               keyboardType="numeric"

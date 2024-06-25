@@ -41,7 +41,7 @@ function LogIn() {
             .then((userRes) => {
               if (userRes.data.status === "ok") {
                 fetchUserData(userRes.data.data._id);
-                setLoading(false);
+                //setLoading(false);
                 navigation.dispatch(
                   CommonActions.reset({
                     index: 0,
