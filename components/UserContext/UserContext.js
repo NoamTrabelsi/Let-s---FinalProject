@@ -10,7 +10,8 @@ const userInformationTemplate = {
   password: "",
   age: 0,
   gender: "",
-  image: "",
+  image:
+    "https://www.pngitem.com/pimgs/m/508-5087336_person-man-user-account-profile-employee-profile-template.png",
   location: "",
   interests: {
     food: [],

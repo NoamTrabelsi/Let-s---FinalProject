@@ -137,15 +137,15 @@ const styles = StyleSheet.create({
     backgroundColor: "#FF8C00",
     padding: 10,
     borderRadius: 10,
-    borderColor: "black",
-    borderWidth: 2,
     width: "80%",
+    height: "6%",
     alignItems: "center",
     justifyContent: "center",
     marginTop: 20,
   },
   buttonText: {
-    color: "black",
+    fontSize: 16,
+    color: "white",
     fontWeight: "bold",
   },
   loading: {
