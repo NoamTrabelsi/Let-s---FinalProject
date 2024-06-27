@@ -37,9 +37,7 @@ const UserProvider = ({ children }) => {
 
   const fetchUserData = async (userId) => {
     try {
-      const response = await axios.get(
-        `http://${lOCAL_HOST}:${SERVER_PORT}/user/${userId}`
-      );
+      const response = await axios.get(`http://${lOCAL_HOST}/user/${userId}`);
       if (response.data) {
         setUser(response.data);
       }

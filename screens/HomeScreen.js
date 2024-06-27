@@ -78,15 +78,12 @@ function SearchMainScreen() {
   const fetchUsers = async (city, startDate, endDate) => {
     try {
       setLoading(true);
-      const response = await axios.post(
-        `http://${lOCAL_HOST}:${SERVER_PORT}/search`,
-        {
-          country: city,
-          startDate,
-          endDate,
-          userId: user._id,
-        }
-      );
+      const response = await axios.post(`http://${lOCAL_HOST}/search`, {
+        country: city,
+        startDate,
+        endDate,
+        userId: user._id,
+      });
 
       if (response.data.status === "ok") {
         setUsers(response.data.data);
@@ -133,10 +130,7 @@ function SearchMainScreen() {
     }
 
     try {
-      await axios.post(
-        `http://${lOCAL_HOST}:${SERVER_PORT}/update/${user._id}`,
-        updatedUser
-      );
+      await axios.post(`http://${lOCAL_HOST}/update/${user._id}`, updatedUser);
       fetchUserData(user._id);
       console.log("User trip history updated");
     } catch (err) {

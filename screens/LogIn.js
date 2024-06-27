@@ -31,14 +31,14 @@ function LogIn() {
       password,
     };
     axios
-      .post(`http://${lOCAL_HOST}:${SERVER_PORT}/login`, userData)
+      .post(`http://${lOCAL_HOST}/login`, userData)
       .then((res) => {
         console.log(res.data);
         if (res.data.status === "ok") {
           AsyncStorage.setItem("token", res.data.data.token);
           const token = res.data.data.token;
           axios
-            .post(`http://${lOCAL_HOST}:${SERVER_PORT}/user`, { token })
+            .post(`http://${lOCAL_HOST}/user`, { token })
             .then((userRes) => {
               if (userRes.data.status === "ok") {
                 fetchUserData(userRes.data.data._id);

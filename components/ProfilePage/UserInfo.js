@@ -43,7 +43,7 @@ const UserInfo = ({ pageOwner, match }) => {
 
     try {
       const response = await axios.post(
-        `http://${lOCAL_HOST}:${SERVER_PORT}/update/${pageOwner._id}`,
+        `http://${lOCAL_HOST}/update/${pageOwner._id}`,
         {
           trip_planning: updatedTripPlanning,
         }

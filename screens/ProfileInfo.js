@@ -62,7 +62,7 @@ function ProfileInfo() {
     };
 
     axios
-      .post(`http://${lOCAL_HOST}:${SERVER_PORT}/update/${userId}`, updatedData)
+      .post(`http://${lOCAL_HOST}/update/${userId}`, updatedData)
       .then((res) => {
         console.log(res.data);
         setLoading(false);

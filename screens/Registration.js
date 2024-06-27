@@ -66,7 +66,7 @@ function Registration() {
   const registerUser = async (userData) => {
     try {
       const response = await axios.post(
-        `http://${lOCAL_HOST}:${SERVER_PORT}/register`,
+        `http://${lOCAL_HOST}/register`,
         userData
       );
       if (response.data.status === "ok") {
@@ -82,10 +82,7 @@ function Registration() {
 
   const loginUser = async (userData) => {
     try {
-      const response = await axios.post(
-        `http://${lOCAL_HOST}:${SERVER_PORT}/login`,
-        userData
-      );
+      const response = await axios.post(`http://${lOCAL_HOST}/login`, userData);
       if (response.data.status === "ok") {
         const token = response.data.data.token;
         await AsyncStorage.setItem("token", token);
@@ -100,12 +97,9 @@ function Registration() {
 
   const fetchUserWithToken = async (token) => {
     try {
-      const response = await axios.post(
-        `http://${lOCAL_HOST}:${SERVER_PORT}/user`,
-        {
-          token,
-        }
-      );
+      const response = await axios.post(`http://${lOCAL_HOST}/user`, {
+        token,
+      });
       if (response.data.status === "ok") {
         setUser(response.data.data);
         fetchUserData(response.data.data._id);

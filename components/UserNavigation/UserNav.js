@@ -22,7 +22,7 @@ function UserNav() {
     const token = await AsyncStorage.getItem("token");
     if (token) {
       axios
-        .post(`http://${lOCAL_HOST}:${SERVER_PORT}/user`, { token })
+        .post(`http://${lOCAL_HOST}/user`, { token })
         .then((res) => {
           if (res.data.status === "ok") {
             fetchUserData(res.data.data._id);

@@ -34,7 +34,7 @@ const UsersReviews = ({ userReviews, user, owner, setUserReviews }) => {
     const updatedReviews = userReviews.filter((_, i) => i !== index);
     try {
       const response = await axios.post(
-        `http://${lOCAL_HOST}:${SERVER_PORT}/update/${owner._id}`,
+        `http://${lOCAL_HOST}/update/${owner._id}`,
         {
           reviews: updatedReviews,
         }

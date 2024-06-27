@@ -30,7 +30,7 @@ function Chat() {
 
   useEffect(() => {
     // connect to socket server
-    socket.current = io(`http://${lOCAL_HOST}:${SOCKET_PORT}`);
+    socket.current = io(`http://${lOCAL_HOST}`);
 
     socket.current.on("connect", () => {
       console.log("Connected to socket server");
@@ -44,7 +44,7 @@ function Chat() {
       // Mark the message as read if it is from the receiver
       if (newMessage.senderId === receiverId) {
         try {
-          await axios.post(`http://${lOCAL_HOST}:${SERVER_PORT}/mark_as_read`, {
+          await axios.post(`http://${lOCAL_HOST}/mark_as_read`, {
             messages: [newMessage._id],
           });
 
@@ -67,10 +67,10 @@ function Chat() {
 
   const createMatchInDB = async (user1Id, user2Id) => {
     try {
-      const response = await axios.post(
-        `http://${lOCAL_HOST}:${SERVER_PORT}/create_match`,
-        { user1Id, user2Id }
-      );
+      const response = await axios.post(`http://${lOCAL_HOST}/create_match`, {
+        user1Id,
+        user2Id,
+      });
     } catch (err) {
       console.error("Error creating match:", err);
     }
@@ -79,7 +79,7 @@ function Chat() {
   const checkLetsGoBtn = async () => {
     try {
       const response = await axios.post(
-        `http://${lOCAL_HOST}:${SERVER_PORT}/check_letsgo_btn`,
+        `http://${lOCAL_HOST}/check_letsgo_btn`,
         { user1Id: senderId, user2Id: receiverId }
       );
 
@@ -105,10 +105,11 @@ function Chat() {
 
   const handleLetsGo = async () => {
     try {
-      const response = await axios.post(
-        `http://${lOCAL_HOST}:${SERVER_PORT}/update_match`,
-        { user1Id: senderId, user2Id: receiverId, clickedBy: senderId }
-      );
+      const response = await axios.post(`http://${lOCAL_HOST}/update_match`, {
+        user1Id: senderId,
+        user2Id: receiverId,
+        clickedBy: senderId,
+      });
 
       if (response.data.status === "ok") {
         console.log("Match updated successfully");
@@ -137,12 +138,9 @@ function Chat() {
 
   const fetchMessages = async () => {
     try {
-      const response = await axios.get(
-        `http://${lOCAL_HOST}:${SERVER_PORT}/messages`,
-        {
-          params: { senderId, receiverId },
-        }
-      );
+      const response = await axios.get(`http://${lOCAL_HOST}/messages`, {
+        params: { senderId, receiverId },
+      });
 
       const fetchedMessages = response.data.data;
 
@@ -157,12 +155,9 @@ function Chat() {
       if (unreadMessages.length > 0) {
         unreadMessages.forEach(async (msg) => {
           try {
-            await axios.post(
-              `http://${lOCAL_HOST}:${SERVER_PORT}/mark_as_read`,
-              {
-                messages: [msg._id],
-              }
-            );
+            await axios.post(`http://${lOCAL_HOST}/mark_as_read`, {
+              messages: [msg._id],
+            });
 
             // Update the message state to set isRead to true
             setMessages((prevMessages) =>
@@ -193,9 +188,7 @@ function Chat() {
 
   const navigateToUserPage = async () => {
     //get user information from the server
-    const response = await axios.get(
-      `http://${lOCAL_HOST}:${SERVER_PORT}/user/${receiverId}`
-    );
+    const response = await axios.get(`http://${lOCAL_HOST}/user/${receiverId}`);
 
     navigation.navigate("ProfilePage", {
       foundUser: response.data,
