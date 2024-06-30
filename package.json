@@ -6,7 +6,9 @@
     "start": "npx expo start",
     "android": "npx expo start --android",
     "ios": "npx expo start --ios",
-    "web": "npx expo start --web"
+    "web": "npx expo start --web",
+    "build:android": "eas build -p android --profile production",
+    "build:ios": "eas build -p ios --profile production"
   },
   "dependencies": {
     "@ptomasroos/react-native-multi-slider": "^2.2.2",

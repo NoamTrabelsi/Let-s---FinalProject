@@ -62,7 +62,10 @@ function ProfileInfo() {
     };
 
     axios
-      .post(`http://${lOCAL_HOST}/update/${userId}`, updatedData)
+      .post(
+        `https://${process.env.EXPO_PUBLIC_HOST}/update/${userId}`,
+        updatedData
+      )
       .then((res) => {
         console.log(res.data);
         setLoading(false);

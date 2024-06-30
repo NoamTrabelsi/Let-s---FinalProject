@@ -63,76 +63,87 @@ const SearchBar = ({
         setInputContainerHeight(height);
       }}
     >
-      <View style={{ alignItems: "center" }}>
+      <View style={styles.imageContainer}>
         <Image
           source={require("../../assets/lets-find.png")}
           style={styles.image}
         />
       </View>
-      <View style={styles.searchContainer}>
-        <View style={styles.autocompleteContainer}>
-          <Autocomplete
-            value={inputText}
-            data={
-              suggestions.length > 0 && inputText.length > 0 ? suggestions : []
-            }
-            onChangeText={handleInputChange}
-            placeholder="Where to?"
-            placeholderTextColor="gray"
-            inputContainerStyle={styles.inputContainerStyle}
-            listContainerStyle={styles.autocompleteList}
-            flatListProps={{
-              keyExtractor: (_, index) => index.toString(),
-              renderItem: ({ item }) => (
-                <TouchableOpacity
-                  style={{ padding: 10 }}
-                  onPress={() => handleSelectSuggestion(item)}
-                >
-                  <View>
-                    <Text>{item}</Text>
-                  </View>
-                </TouchableOpacity>
-              ),
-            }}
-            renderTextInput={(props) => (
-              <TextInput
-                {...props}
-                style={styles.input}
-                placeholderTextColor="gray"
-              />
-            )}
+      <View style={styles.container}>
+        <View style={styles.searchContainer}>
+          <View style={styles.autocompleteContainer}>
+            <Autocomplete
+              value={inputText}
+              data={
+                suggestions.length > 0 && inputText.length > 0
+                  ? suggestions
+                  : []
+              }
+              onChangeText={handleInputChange}
+              placeholder="Where to?"
+              placeholderTextColor="gray"
+              inputContainerStyle={styles.inputContainerStyle}
+              listContainerStyle={styles.autocompleteList}
+              flatListProps={{
+                keyExtractor: (_, index) => index.toString(),
+                renderItem: ({ item }) => (
+                  <TouchableOpacity
+                    style={{ padding: 10 }}
+                    onPress={() => handleSelectSuggestion(item)}
+                  >
+                    <View>
+                      <Text>{item}</Text>
+                    </View>
+                  </TouchableOpacity>
+                ),
+              }}
+              renderTextInput={(props) => (
+                <TextInput
+                  {...props}
+                  style={styles.input}
+                  placeholderTextColor="gray"
+                />
+              )}
+            />
+          </View>
+          <TouchableOpacity
+            style={styles.filterButton}
+            onPress={toggleFilterModal}
+          >
+            <Entypo name="sound-mix" size={24} color="black" />
+          </TouchableOpacity>
+        </View>
+
+        <View style={styles.datePickersContainer}>
+          <DatePicker
+            label="Start Date"
+            date={startDate}
+            onConfirm={setStartDate}
+          />
+          <DatePicker
+            label="End Date"
+            date={endDate}
+            onConfirm={setEndDate}
+            minimumDate={startDate}
           />
         </View>
-        <TouchableOpacity
-          style={styles.filterButton}
-          onPress={toggleFilterModal}
-        >
-          <Entypo name="sound-mix" size={24} color="black" />
+
+        <TouchableOpacity onPress={handleSearchBtn} style={styles.searchButton}>
+          <Text style={styles.dateButtonText}>Search</Text>
         </TouchableOpacity>
       </View>
-
-      <View style={styles.datePickersContainer}>
-        <DatePicker
-          label="Start Date"
-          date={startDate}
-          onConfirm={setStartDate}
-        />
-        <DatePicker
-          label="End Date"
-          date={endDate}
-          onConfirm={setEndDate}
-          minimumDate={startDate}
-        />
-      </View>
-
-      <TouchableOpacity onPress={handleSearchBtn} style={styles.searchButton}>
-        <Text style={styles.dateButtonText}>Search</Text>
-      </TouchableOpacity>
     </Animated.View>
   );
 };
 
 const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+    width: "80%",
+    alignSelf: "center",
+  },
   inputContainer: {
     backgroundColor: "#FF8C00",
     paddingBottom: 80,
@@ -147,12 +158,15 @@ const styles = StyleSheet.create({
     borderBottomLeftRadius: 50,
     borderBottomRightRadius: 50,
   },
+  imageContainer: {
+    alignItems: "center",
+    width: "100%",
+  },
   searchContainer: {
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",
-    width: "90%",
-    alignSelf: "center",
+    width: "100%",
     zIndex: 2,
   },
   autocompleteContainer: {
@@ -185,8 +199,7 @@ const styles = StyleSheet.create({
     justifyContent: "space-between",
     marginTop: 10,
     marginBottom: 10,
-    width: "90%",
-    alignSelf: "center",
+    width: "100%",
   },
   datePicker: {
     flex: 1,

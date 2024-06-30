@@ -9,13 +9,13 @@ import {
   ImageBackground,
   Image,
   Modal,
+  Alert,
 } from "react-native";
 import { useNavigation } from "@react-navigation/native";
 import { CommonActions } from "@react-navigation/native";
 import { UserContext } from "../components/UserContext/UserContext";
 import axios from "axios";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import { lOCAL_HOST, SERVER_PORT, SOCKET_PORT } from "@env";
 
 function LogIn() {
   const navigation = useNavigation();
@@ -31,14 +31,14 @@ function LogIn() {
       password,
     };
     axios
-      .post(`http://${lOCAL_HOST}/login`, userData)
+      .post(`https://${process.env.EXPO_PUBLIC_HOST}/login`, userData)
       .then((res) => {
         console.log(res.data);
         if (res.data.status === "ok") {
           AsyncStorage.setItem("token", res.data.data.token);
           const token = res.data.data.token;
           axios
-            .post(`http://${lOCAL_HOST}/user`, { token })
+            .post(`https://${process.env.EXPO_PUBLIC_HOST}/user`, { token })
             .then((userRes) => {
               if (userRes.data.status === "ok") {
                 fetchUserData(userRes.data.data._id);
@@ -138,7 +138,16 @@ const styles = StyleSheet.create({
     padding: 10,
     borderRadius: 10,
     width: "85%",
+    alignItems: "center",
+    justifyContent: "center",
+    marginTop: 20,
+  },
+  alertButton: {
     height: 45,
+    backgroundColor: "#1E90FF",
+    padding: 10,
+    borderRadius: 10,
+    width: "85%",
     alignItems: "center",
     justifyContent: "center",
     marginTop: 20,

@@ -33,9 +33,9 @@ function GetKnow({ location, setLocation, age, setAge, picture, setPicture }) {
   const countries = countryList().getData();
 
   const s3 = new AWS.S3({
-    region: AWS_REGION,
-    accessKeyId: AWS_ACCESS_KEY_ID,
-    secretAccessKey: AWS_SECRET_ACCESS_KEY,
+    region: process.env.AWS_REGION,
+    accessKeyId: process.env.AWS_ACCESS_KEY_ID,
+    secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY,
   });
 
   const handleCountryChange = (countryName) => {

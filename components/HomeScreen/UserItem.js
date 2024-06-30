@@ -21,7 +21,9 @@ const UserItem = React.memo(({ item }) => {
   const fetchUserDetails = useCallback(async () => {
     try {
       setLoading(true);
-      const response = await axios.get(`http://${lOCAL_HOST}/user/${item._id}`);
+      const response = await axios.get(
+        `https://${process.env.EXPO_PUBLIC_HOST}/user/${item._id}`
+      );
       setLoading(false);
       return response.data;
     } catch (error) {

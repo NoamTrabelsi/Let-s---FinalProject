@@ -25,7 +25,6 @@ import ChatWithUser from "./ChatWithUser";
 import { formatISO } from "date-fns";
 import { UserContext } from "../components/UserContext/UserContext";
 import axios from "axios";
-import { lOCAL_HOST, SERVER_PORT, SOCKET_PORT } from "@env";
 
 const Stack = createStackNavigator();
 
@@ -78,12 +77,15 @@ function SearchMainScreen() {
   const fetchUsers = async (city, startDate, endDate) => {
     try {
       setLoading(true);
-      const response = await axios.post(`http://${lOCAL_HOST}/search`, {
-        country: city,
-        startDate,
-        endDate,
-        userId: user._id,
-      });
+      const response = await axios.post(
+        `https://${process.env.EXPO_PUBLIC_HOST}/search`,
+        {
+          country: city,
+          startDate,
+          endDate,
+          userId: user._id,
+        }
+      );
 
       if (response.data.status === "ok") {
         setUsers(response.data.data);
@@ -130,7 +132,10 @@ function SearchMainScreen() {
     }
 
     try {
-      await axios.post(`http://${lOCAL_HOST}/update/${user._id}`, updatedUser);
+      await axios.post(
+        `https://${process.env.EXPO_PUBLIC_HOST}/update/${user._id}`,
+        updatedUser
+      );
       fetchUserData(user._id);
       console.log("User trip history updated");
     } catch (err) {
@@ -229,7 +234,8 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: "#f0f0f0",
     justifyContent: "flex-start",
-    padding: 20,
+    width: "100%",
+    padding: 0, // Убедитесь, что padding установлен корректно
   },
   loading: {
     flex: 1,

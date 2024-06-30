@@ -44,7 +44,7 @@ const Chats = () => {
 
   useEffect(() => {
     // connect to socket server
-    socket.current = io(`http://${lOCAL_HOST}`, {
+    socket.current = io(`https://${process.env.EXPO_PUBLIC_HOST}`, {
       transports: ["websocket", "polling"],
       path: "/socket.io",
     });
@@ -89,7 +89,7 @@ const Chats = () => {
   const fetchChatUsers = async () => {
     try {
       const response = await axios.get(
-        `http://${lOCAL_HOST}/chat_users/${userId}`
+        `https://${process.env.EXPO_PUBLIC_HOST}/chat_users/${userId}`
       );
       const chatUsers = response.data.data;
 

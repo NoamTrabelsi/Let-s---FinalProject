@@ -55,9 +55,12 @@ function Settings() {
   const deleteUser = async () => {
     try {
       console.log("Deleting user:", user._id);
-      const response = await axios.post(`http://${lOCAL_HOST}/delete`, {
-        id: user._id, // Make sure this matches your user schema
-      });
+      const response = await axios.post(
+        `https://${process.env.EXPO_PUBLIC_HOST}/delete`,
+        {
+          id: user._id, // Make sure this matches your user schema
+        }
+      );
       console.log(response.data);
       await AsyncStorage.removeItem("token");
       resetUser();

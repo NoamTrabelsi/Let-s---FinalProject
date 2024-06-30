@@ -1,0 +1,31 @@
+{
+  "cli": {
+    "version": ">= 10.0.3"
+  },
+  "build": {
+    "development": {
+      "android" : {
+        "buildType": "apk"
+      },
+      "env": {
+        "EXPO_PUBLIC_AWS_ACCESS_KEY_ID": "AKIA2UC3DIV53JWNJGN4",
+        "EXPO_PUBLIC_AWS_SECRET_ACCESS_KEY": "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",
+        "EXPO_PUBLIC_AWS_REGION": "eu-north-1",
+        "EXPO_PUBLIC_HOST": "serene-everglades-84728-cc1f76ad11fb.herokuapp.com",
+        "APP_ICON": "./assets/icon.png"
+      }
+    },
+    "production": {
+      "env": {
+        "EXPO_PUBLIC_AWS_ACCESS_KEY_ID": "AKIA2UC3DIV53JWNJGN4",
+        "EXPO_PUBLIC_AWS_SECRET_ACCESS_KEY": "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",
+        "EXPO_PUBLIC_AWS_REGION": "eu-north-1",
+        "EXPO_PUBLIC_HOST": "serene-everglades-84728-cc1f76ad11fb.herokuapp.com",
+        "APP_ICON": "./assets/icon.png"
+      }
+    }
+  },
+  "submit": {
+    "production": {}
+  }
+}

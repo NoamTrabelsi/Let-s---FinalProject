@@ -51,7 +51,7 @@ const ProfilePage = () => {
       const fetchReviews = async () => {
         try {
           const response = await axios.get(
-            `http://${lOCAL_HOST}/get_reviews/${pageOwner._id}`
+            `https://${process.env.EXPO_PUBLIC_HOST}/get_reviews/${pageOwner._id}`
           );
           if (response.data.status === "ok") {
             setUserReviews(response.data.data);
@@ -66,7 +66,7 @@ const ProfilePage = () => {
       const canLeaveReview = async () => {
         try {
           const response = await axios.post(
-            `http://${lOCAL_HOST}/check_both_clicked`,
+            `https://${process.env.EXPO_PUBLIC_HOST}/check_both_clicked`,
             {
               user1Id: user._id,
               user2Id: pageOwner._id,
@@ -109,9 +109,12 @@ const ProfilePage = () => {
 
     // Update user reviews in the database
     axios
-      .post(`http://${lOCAL_HOST}/add_review/${pageOwner._id}`, {
-        review: newReview,
-      })
+      .post(
+        `https://${process.env.EXPO_PUBLIC_HOST}/add_review/${pageOwner._id}`,
+        {
+          review: newReview,
+        }
+      )
       .then((res) => {
         console.log(res.data);
         setUserReviews(updatedReviews);
