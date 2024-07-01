@@ -24,39 +24,55 @@ function LogIn() {
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
 
-  const handleLogin = () => {
+  const getData = async () => {
+    const token = await AsyncStorage.getItem("token");
+    if (token) {
+      try {
+        const res = await axios.post(
+          `https://${process.env.EXPO_PUBLIC_HOST}/user`,
+          { token }
+        );
+        if (res.data.status === "ok") {
+          await fetchUserData(res.data.data._id);
+        } else {
+          console.log("Error fetching user:", res.data.data);
+        }
+      } catch (err) {
+        console.log(err);
+      }
+    }
+  };
+
+  const handleLogin = async () => {
     setLoading(true);
     const userData = {
       email: email,
       password,
     };
-    axios
-      .post(`https://${process.env.EXPO_PUBLIC_HOST}/login`, userData)
-      .then((res) => {
-        console.log(res.data);
-        if (res.data.status === "ok") {
-          AsyncStorage.setItem("token", res.data.data.token);
-          const token = res.data.data.token;
-          axios
-            .post(`https://${process.env.EXPO_PUBLIC_HOST}/user`, { token })
-            .then((userRes) => {
-              if (userRes.data.status === "ok") {
-                fetchUserData(userRes.data.data._id);
-                setLoading(false);
-                navigation.dispatch(
-                  CommonActions.reset({
-                    index: 0,
-                    routes: [{ name: "UserNav" }],
-                  })
-                );
-              } else {
-                console.log("Error fetching user:", userRes.data.data);
-              }
-            })
-            .catch((err) => console.log(err));
-        }
-      })
-      .catch((err) => console.log(err));
+
+    try {
+      const res = await axios.post(
+        `https://${process.env.EXPO_PUBLIC_HOST}/login`,
+        userData
+      );
+      if (res.data.status === "ok") {
+        await AsyncStorage.setItem("token", res.data.data.token);
+        await getData();
+        setLoading(false);
+        navigation.dispatch(
+          CommonActions.reset({
+            index: 0,
+            routes: [{ name: "UserNav" }],
+          })
+        );
+      } else {
+        console.log("Login failed:", res.data.data);
+        setLoading(false);
+      }
+    } catch (err) {
+      console.log(err);
+      setLoading(false);
+    }
   };
 
   return (

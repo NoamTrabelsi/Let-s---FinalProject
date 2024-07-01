@@ -21,25 +21,25 @@ const Tab = createBottomTabNavigator();
 function UserNav() {
   const { setUser, fetchUserData } = useContext(UserContext);
 
-  async function getData() {
-    const token = await AsyncStorage.getItem("token");
-    if (token) {
-      axios
-        .post(`https://${process.env.EXPO_PUBLIC_HOST}/user`, { token })
-        .then((res) => {
-          if (res.data.status === "ok") {
-            fetchUserData(res.data.data._id);
-          } else {
-            console.log("Error fetching user:", res.data.data);
-          }
-        })
-        .catch((err) => console.log(err));
-    }
-  }
+  // async function getData() {
+  //   const token = await AsyncStorage.getItem("token");
+  //   if (token) {
+  //     axios
+  //       .post(`https://${process.env.EXPO_PUBLIC_HOST}/user`, { token })
+  //       .then((res) => {
+  //         if (res.data.status === "ok") {
+  //           fetchUserData(res.data.data._id);
+  //         } else {
+  //           console.log("Error fetching user:", res.data.data);
+  //         }
+  //       })
+  //       .catch((err) => console.log(err));
+  //   }
+  // }
 
-  useEffect(() => {
-    getData();
-  }, []);
+  // useEffect(() => {
+  //   getData();
+  // }, []);
 
   return (
     <SocketProvider>
