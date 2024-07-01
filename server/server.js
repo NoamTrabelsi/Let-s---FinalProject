@@ -288,7 +288,10 @@ io.on("connection", (socket) => {
 
       await chat.save();
 
-      io.emit("receiveMessage", chat.messages[chat.messages.length - 1]);
+      io.to(receiverId).emit(
+        "receiveMessage",
+        chat.messages[chat.messages.length - 1]
+      );
     } catch (err) {
       console.log("Error handling the message:", err);
     }

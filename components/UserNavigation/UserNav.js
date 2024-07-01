@@ -1,4 +1,3 @@
-// components/UserNavigation/UserNav.js
 import React, { useContext, useEffect } from "react";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import {
@@ -9,7 +8,7 @@ import {
 } from "@expo/vector-icons";
 import HomeScreen from "../../screens/HomeScreen";
 import ProfilePage from "../../screens/ProfilePage";
-import Chat from "../../screens/Chat";
+import Chats from "../../screens/Chat";
 import Settings from "../../screens/Settings";
 import { UserContext } from "../UserContext/UserContext";
 import { useSocket } from "../UserContext/SocketContext";
@@ -68,8 +67,8 @@ function UserNav() {
         }}
       />
       <Tab.Screen
-        name="Chat"
-        component={Chat}
+        name="Chats"
+        component={Chats}
         options={{
           tabBarIcon: ({ color, size }) => (
             <ChatIconWithBadge color={color} size={size} />

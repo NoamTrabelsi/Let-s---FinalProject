@@ -1,5 +1,10 @@
-// screens/Chat.js
-import React, { useEffect, useState, useRef } from "react";
+import React, {
+  useEffect,
+  useContext,
+  useRef,
+  useState,
+  useCallback,
+} from "react";
 import {
   SafeAreaView,
   StyleSheet,
@@ -15,6 +20,7 @@ import { useRoute, useNavigation } from "@react-navigation/native";
 import { FontAwesome } from "@expo/vector-icons";
 import axios from "axios";
 import { useSocket } from "../components/UserContext/SocketContext";
+import { UserContext } from "../components/UserContext/UserContext";
 import { lOCAL_HOST, SERVER_PORT, SOCKET_PORT } from "@env";
 
 function Chat() {
@@ -28,10 +34,11 @@ function Chat() {
 
   const scrollViewRef = useRef(null);
   const { socket } = useSocket();
+  const { user } = useContext(UserContext);
 
   useEffect(() => {
     if (socket) {
-      const handleReceiveMessage = async (newMessage) => {
+      socket.on("receiveMessage", async (newMessage) => {
         setMessages((prevMessages) => [...prevMessages, newMessage]);
         scrollViewRef.current.scrollToEnd({ animated: true });
 
@@ -53,12 +60,10 @@ function Chat() {
             console.error("Error marking message as read:", err);
           }
         }
-      };
-
-      socket.on("receiveMessage", handleReceiveMessage);
+      });
 
       return () => {
-        socket.off("receiveMessage", handleReceiveMessage);
+        socket.off("receiveMessage");
       };
     }
   }, [socket, receiverId]);
