@@ -15,20 +15,13 @@ import {
   TouchableOpacity,
   Modal,
 } from "react-native";
-import {
-  createStackNavigator,
-  CardStyleInterpolators,
-} from "@react-navigation/stack";
-import { useNavigation } from "@react-navigation/native";
+import { useNavigation, useFocusEffect } from "@react-navigation/native";
 import ChatWithUser from "./ChatWithUser";
 import ProfilePage from "./ProfilePage";
 import { UserContext } from "../components/UserContext/UserContext";
+import { useSocket } from "../components/UserContext/SocketContext";
 import axios from "axios";
-import { useFocusEffect } from "@react-navigation/native";
-import { io } from "socket.io-client";
 import { lOCAL_HOST, SERVER_PORT, SOCKET_PORT } from "@env";
-
-const Stack = createStackNavigator();
 
 const Chats = () => {
   const navigator = useNavigation();
@@ -40,45 +33,33 @@ const Chats = () => {
   const [chats, setChats] = useState([]);
   const [loading, setLoading] = useState(true);
 
-  const socket = useRef(null);
+  const socket = useSocket();
 
   useEffect(() => {
-    // connect to socket server
-    socket.current = io(`https://${process.env.EXPO_PUBLIC_HOST}`, {
-      transports: ["websocket", "polling"],
-      path: "/socket.io",
-    });
-    //console.log("socket.current", socket.current);
-
-    socket.current.on("connect", () => {
-      console.log("Connected to socket server");
-    });
-
-    socket.current.on("receiveMessage", (newMessage) => {
-      console.log("newMessage", newMessage);
-
-      // Update the chat list with a new message
-      setChats((prevChats) => {
-        return prevChats.map((chat) => {
-          if (
-            chat._id === newMessage.senderId ||
-            chat._id === newMessage.receiverId
-          ) {
-            return {
-              ...chat,
-              lastMessage: newMessage.message,
-              unreadCount: chat.unreadCount + 1,
-            };
-          }
-          return chat;
+    if (socket) {
+      socket.on("receiveMessage", (newMessage) => {
+        setChats((prevChats) => {
+          return prevChats.map((chat) => {
+            if (
+              chat._id === newMessage.senderId ||
+              chat._id === newMessage.receiverId
+            ) {
+              return {
+                ...chat,
+                lastMessage: newMessage.message,
+                unreadCount: chat.unreadCount + 1,
+              };
+            }
+            return chat;
+          });
         });
       });
-    });
 
-    return () => {
-      socket.current.disconnect();
-    };
-  }, []);
+      return () => {
+        socket.off("receiveMessage");
+      };
+    }
+  }, [socket]);
 
   useFocusEffect(
     useCallback(() => {
@@ -108,7 +89,6 @@ const Chats = () => {
   };
 
   const handleChat = async (chat) => {
-    // Navigate to chat screen
     navigator.navigate("ChatWithUser", {
       image: chat.image,
       name: chat.firstName,
@@ -189,34 +169,6 @@ const Chats = () => {
     </View>
   );
 };
-
-function ChatScreen() {
-  return (
-    <Stack.Navigator
-      screenOptions={{
-        gestureEnabled: true,
-        gestureDirection: "horizontal",
-        cardStyleInterpolator: CardStyleInterpolators.forHorizontalIOS,
-      }}
-    >
-      <Stack.Screen
-        name="Chats"
-        component={Chats}
-        options={{ headerShown: false }}
-      />
-      <Stack.Screen
-        name="ChatWithUser"
-        component={ChatWithUser}
-        options={{ headerShown: false }}
-      />
-      <Stack.Screen
-        name="ProfilePage"
-        component={ProfilePage}
-        options={{ headerShown: false }}
-      />
-    </Stack.Navigator>
-  );
-}
 
 const styles = StyleSheet.create({
   loading: {
@@ -315,4 +267,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default ChatScreen;
+export default Chats;

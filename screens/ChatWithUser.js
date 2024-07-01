@@ -12,8 +12,8 @@ import {
 } from "react-native";
 import { useRoute, useNavigation } from "@react-navigation/native";
 import { FontAwesome } from "@expo/vector-icons";
-import { io } from "socket.io-client";
 import axios from "axios";
+import { useSocket } from "../components/UserContext/SocketContext";
 import { lOCAL_HOST, SERVER_PORT, SOCKET_PORT } from "@env";
 
 function Chat() {
@@ -26,57 +26,46 @@ function Chat() {
   const [letsGoClicked, setLetsGoClicked] = useState(false);
 
   const scrollViewRef = useRef(null);
-  const socket = useRef(null);
+  const socket = useSocket();
 
   useEffect(() => {
-    // connect to socket server
-    socket.current = io(`https://${process.env.EXPO_PUBLIC_HOST}`);
+    if (socket) {
+      socket.on("receiveMessage", async (newMessage) => {
+        setMessages((prevMessages) => [...prevMessages, newMessage]);
+        scrollViewRef.current.scrollToEnd({ animated: true });
 
-    socket.current.on("connect", () => {
-      console.log("Connected to socket server");
-    });
+        if (newMessage.senderId === receiverId) {
+          try {
+            await axios.post(
+              `https://${process.env.EXPO_PUBLIC_HOST}/mark_as_read`,
+              {
+                messages: [newMessage._id],
+              }
+            );
 
-    socket.current.on("receiveMessage", async (newMessage) => {
-      // Add the new message to the state
-      setMessages((prevMessages) => [...prevMessages, newMessage]);
-      scrollViewRef.current.scrollToEnd({ animated: true });
-
-      // Mark the message as read if it is from the receiver
-      if (newMessage.senderId === receiverId) {
-        try {
-          await axios.post(
-            `https://${process.env.EXPO_PUBLIC_HOST}/mark_as_read`,
-            {
-              messages: [newMessage._id],
-            }
-          );
-
-          // Update the message state to set isRead to true
-          setMessages((prevMessages) =>
-            prevMessages.map((msg) =>
-              msg._id === newMessage._id ? { ...msg, isRead: true } : msg
-            )
-          );
-        } catch (err) {
-          console.error("Error marking message as read:", err);
+            setMessages((prevMessages) =>
+              prevMessages.map((msg) =>
+                msg._id === newMessage._id ? { ...msg, isRead: true } : msg
+              )
+            );
+          } catch (err) {
+            console.error("Error marking message as read:", err);
+          }
         }
-      }
-    });
+      });
 
-    return () => {
-      socket.current.disconnect();
-    };
-  }, [receiverId]);
+      return () => {
+        socket.off("receiveMessage");
+      };
+    }
+  }, [socket, receiverId]);
 
   const createMatchInDB = async (user1Id, user2Id) => {
     try {
-      const response = await axios.post(
-        `https://${process.env.EXPO_PUBLIC_HOST}/create_match`,
-        {
-          user1Id,
-          user2Id,
-        }
-      );
+      await axios.post(`https://${process.env.EXPO_PUBLIC_HOST}/create_match`, {
+        user1Id,
+        user2Id,
+      });
     } catch (err) {
       console.error("Error creating match:", err);
     }
@@ -121,10 +110,9 @@ function Chat() {
       );
 
       if (response.data.status === "ok") {
-        console.log("Match updated successfully");
         setLetsGoClicked(true);
       } else {
-        console.log("Error updating match");
+        console.error("Error updating match");
       }
     } catch (err) {
       console.error("Error updating match:", err);
@@ -140,8 +128,7 @@ function Chat() {
       isRead: false,
     };
 
-    console.log("newMessage: ", newMessage);
-    socket.current.emit("sendMessage", newMessage);
+    socket.emit("sendMessage", newMessage);
     setMessage("");
   };
 
@@ -156,10 +143,8 @@ function Chat() {
 
       const fetchedMessages = response.data.data;
 
-      //set the match for the chat
       setMatch(response.data.match);
 
-      // Mark messages as read
       const unreadMessages = fetchedMessages.filter(
         (msg) => msg.senderId === receiverId && !msg.isRead
       );
@@ -174,7 +159,6 @@ function Chat() {
               }
             );
 
-            // Update the message state to set isRead to true
             setMessages((prevMessages) =>
               prevMessages.map((m) =>
                 m._id === msg._id ? { ...m, isRead: true } : m
@@ -188,7 +172,7 @@ function Chat() {
 
       setMessages(fetchedMessages);
     } catch (err) {
-      console.log("Error fetching messages:", err);
+      console.error("Error fetching messages:", err);
     }
   };
 
@@ -202,15 +186,18 @@ function Chat() {
   };
 
   const navigateToUserPage = async () => {
-    //get user information from the server
-    const response = await axios.get(
-      `https://${process.env.EXPO_PUBLIC_HOST}/user/${receiverId}`
-    );
+    try {
+      const response = await axios.get(
+        `https://${process.env.EXPO_PUBLIC_HOST}/user/${receiverId}`
+      );
 
-    navigation.navigate("ProfilePage", {
-      foundUser: response.data,
-      tripMatch: match2,
-    });
+      navigation.navigate("ProfilePage", {
+        foundUser: response.data,
+        tripMatch: match2,
+      });
+    } catch (err) {
+      console.error("Error fetching user data:", err);
+    }
   };
 
   return (
