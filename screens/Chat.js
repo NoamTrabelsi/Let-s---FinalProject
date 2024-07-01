@@ -1,8 +1,8 @@
 import React, {
-  useContext,
   useEffect,
-  useState,
+  useContext,
   useRef,
+  useState,
   useCallback,
 } from "react";
 import {
@@ -16,8 +16,6 @@ import {
   Modal,
 } from "react-native";
 import { useNavigation, useFocusEffect } from "@react-navigation/native";
-import ChatWithUser from "./ChatWithUser";
-import ProfilePage from "./ProfilePage";
 import { UserContext } from "../components/UserContext/UserContext";
 import { useSocket } from "../components/UserContext/SocketContext";
 import axios from "axios";
@@ -33,11 +31,11 @@ const Chats = () => {
   const [chats, setChats] = useState([]);
   const [loading, setLoading] = useState(true);
 
-  const socket = useSocket();
+  const { socket, resetNewMessage } = useSocket();
 
   useEffect(() => {
     if (socket) {
-      socket.on("receiveMessage", (newMessage) => {
+      const handleReceiveMessage = (newMessage) => {
         setChats((prevChats) => {
           return prevChats.map((chat) => {
             if (
@@ -53,10 +51,12 @@ const Chats = () => {
             return chat;
           });
         });
-      });
+      };
+
+      socket.on("receiveMessage", handleReceiveMessage);
 
       return () => {
-        socket.off("receiveMessage");
+        socket.off("receiveMessage", handleReceiveMessage);
       };
     }
   }, [socket]);
@@ -64,7 +64,8 @@ const Chats = () => {
   useFocusEffect(
     useCallback(() => {
       fetchChatUsers();
-    }, [])
+      resetNewMessage();
+    }, [resetNewMessage])
   );
 
   const fetchChatUsers = async () => {

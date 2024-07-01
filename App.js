@@ -7,6 +7,7 @@ import Registration from "./screens/Registration";
 import ProfileInfo from "./screens/ProfileInfo";
 import Settings from "./screens/Settings";
 import UserNav from "./components/UserNavigation/UserNav";
+import UserNavWrapper from "./components/UserNavigation/UserNavWrapper";
 
 const Stack = createStackNavigator();
 
@@ -21,7 +22,7 @@ export default function App() {
           <Stack.Screen name="LogIn" component={LogIn} />
           <Stack.Screen name="Registration" component={Registration} />
           <Stack.Screen name="ProfileInfo" component={ProfileInfo} />
-          <Stack.Screen name="UserNav" component={UserNav} />
+          <Stack.Screen name="UserNav" component={UserNavWrapper} />
           <Stack.Screen name="Settings" component={Settings} />
         </Stack.Navigator>
       </NavigationContainer>

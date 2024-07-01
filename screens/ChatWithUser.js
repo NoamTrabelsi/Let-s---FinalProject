@@ -1,3 +1,4 @@
+// screens/Chat.js
 import React, { useEffect, useState, useRef } from "react";
 import {
   SafeAreaView,
@@ -26,11 +27,11 @@ function Chat() {
   const [letsGoClicked, setLetsGoClicked] = useState(false);
 
   const scrollViewRef = useRef(null);
-  const socket = useSocket();
+  const { socket } = useSocket();
 
   useEffect(() => {
     if (socket) {
-      socket.on("receiveMessage", async (newMessage) => {
+      const handleReceiveMessage = async (newMessage) => {
         setMessages((prevMessages) => [...prevMessages, newMessage]);
         scrollViewRef.current.scrollToEnd({ animated: true });
 
@@ -52,10 +53,12 @@ function Chat() {
             console.error("Error marking message as read:", err);
           }
         }
-      });
+      };
+
+      socket.on("receiveMessage", handleReceiveMessage);
 
       return () => {
-        socket.off("receiveMessage");
+        socket.off("receiveMessage", handleReceiveMessage);
       };
     }
   }, [socket, receiverId]);
