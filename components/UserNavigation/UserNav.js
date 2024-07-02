@@ -25,7 +25,7 @@ function ChatIconWithBadge({ color, size }) {
       <Ionicons name="chatbubble-outline" size={size} color={color} />
       {newMessage && (
         <View style={styles.badge}>
-          <Text style={styles.badgeText}>1</Text>
+          <Text style={styles.badgeText}>new</Text>
         </View>
       )}
     </View>
@@ -108,9 +108,9 @@ const styles = StyleSheet.create({
     position: "absolute",
     right: -6,
     top: -3,
-    backgroundColor: "red",
+    backgroundColor: "#FF8C00",
     borderRadius: 6,
-    width: 12,
+    width: 25,
     height: 12,
     justifyContent: "center",
     alignItems: "center",
