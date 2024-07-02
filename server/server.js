@@ -274,7 +274,7 @@ io.on("connection", (socket) => {
         participants: { $all: [senderId, receiverId] },
       });
 
-      console.log("match: ", match);
+      //console.log("match: ", match);
 
       if (!chat) {
         chat = new Chat({
@@ -289,6 +289,7 @@ io.on("connection", (socket) => {
       await chat.save();
 
       io.emit("receiveMessage", chat.messages[chat.messages.length - 1]);
+      io.emit("newMessage", chat.messages[chat.messages.length - 1]);
     } catch (err) {
       console.log("Error handling the message:", err);
     }

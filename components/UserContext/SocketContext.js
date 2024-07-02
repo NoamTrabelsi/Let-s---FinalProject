@@ -1,4 +1,3 @@
-// components/UserContext/SocketContext.js
 import React, {
   createContext,
   useContext,
@@ -19,19 +18,23 @@ export const SocketProvider = ({ children }) => {
   const [newMessage, setNewMessage] = useState(false);
 
   useEffect(() => {
+    if (!user) return; // Подождите, пока пользователь не будет доступен
+
     // Initialize the socket connection
-    socket.current = io(`https://${process.env.EXPO_PUBLIC_HOST}`, {
-      transports: ["websocket", "polling"],
-      path: "/socket.io",
-    });
+    // socket.current = io(`https://${process.env.EXPO_PUBLIC_HOST}`, {
+    //   transports: ["websocket", "polling"],
+    //   path: "/socket.io",
+    // });
+
+    socket.current = io("http://192.168.0.148:5000");
 
     socket.current.on("connect", () => {
-      console.log(`${user.firstName} connected to socket server (context)`);
+      console.log(`${user.firstName} подключен к сокет-серверу (context)`);
     });
 
     socket.current.on("receiveMessage", (data) => {
       if (data.receiverId === user._id) {
-        console.log(`Received message for ${data.receiverId} (context)`);
+        console.log(`Получено сообщение для ${data.receiverId} (context)`);
         setNewMessage(true);
       }
     });
@@ -39,10 +42,10 @@ export const SocketProvider = ({ children }) => {
     return () => {
       if (socket.current) {
         socket.current.disconnect();
-        console.log(`${user.firstName} disconnected (context)`);
+        console.log(`${user.firstName} отключен (context)`);
       }
     };
-  }, [user, socket]);
+  }, [user]);
 
   const resetNewMessage = () => {
     setNewMessage(false);

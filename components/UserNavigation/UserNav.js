@@ -17,41 +17,9 @@ import { View, Text, StyleSheet } from "react-native";
 
 const Tab = createBottomTabNavigator();
 
-function ChatIconWithBadge({ color, size }) {
-  const { newMessage } = useSocket();
-
-  return (
-    <View style={{ width: 24, height: 24, margin: 5 }}>
-      <Ionicons name="chatbubble-outline" size={size} color={color} />
-      {newMessage && (
-        <View style={styles.badge}>
-          <Text style={styles.badgeText}>new</Text>
-        </View>
-      )}
-    </View>
-  );
-}
-
 function UserNav() {
   const { user } = useContext(UserContext);
   const { socket, setNewMessage, resetNewMessage } = useSocket();
-
-  useEffect(() => {
-    if (socket) {
-      const handleReceiveMessage = (data) => {
-        if (data.senderId !== user._id) {
-          setNewMessage(true);
-          console.log(`Received message from ${data.senderId} (UserNav)`);
-        }
-      };
-
-      socket.on("receiveMessage", handleReceiveMessage);
-
-      return () => {
-        socket.off("receiveMessage", handleReceiveMessage);
-      };
-    }
-  }, [socket, user, setNewMessage]);
 
   return (
     <Tab.Navigator
@@ -72,7 +40,7 @@ function UserNav() {
         component={Chats}
         options={{
           tabBarIcon: ({ color, size }) => (
-            <ChatIconWithBadge color={color} size={size} />
+            <Ionicons name="chatbubble-outline" size={size} color={color} />
           ),
         }}
         listeners={({ navigation }) => ({

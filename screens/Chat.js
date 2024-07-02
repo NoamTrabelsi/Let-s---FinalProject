@@ -33,41 +33,6 @@ const Chats = () => {
 
   const { socket, resetNewMessage } = useSocket();
 
-  useEffect(() => {
-    if (socket) {
-      const handleReceiveMessage = (newMessage) => {
-        setChats((prevChats) => {
-          return prevChats.map((chat) => {
-            if (
-              chat._id === newMessage.senderId ||
-              chat._id === newMessage.receiverId
-            ) {
-              return {
-                ...chat,
-                lastMessage: newMessage.message,
-                unreadCount: chat.unreadCount + 1,
-              };
-            }
-            return chat;
-          });
-        });
-      };
-
-      socket.on("receiveMessage", handleReceiveMessage);
-
-      return () => {
-        socket.off("receiveMessage", handleReceiveMessage);
-      };
-    }
-  }, [socket]);
-
-  useFocusEffect(
-    useCallback(() => {
-      fetchChatUsers();
-      resetNewMessage();
-    }, [resetNewMessage])
-  );
-
   const fetchChatUsers = async () => {
     try {
       const response = await axios.get(
@@ -88,6 +53,39 @@ const Chats = () => {
       setLoading(false);
     }
   };
+
+  const handleReceiveMessage = useCallback((newMessage) => {
+    setChats((prevChats) => {
+      return prevChats.map((chat) => {
+        if (
+          chat._id === newMessage.senderId ||
+          chat._id === newMessage.receiverId
+        ) {
+          return {
+            ...chat,
+            lastMessage: newMessage.message,
+            unreadCount: chat.unreadCount + 1,
+          };
+        }
+        return chat;
+      });
+    });
+  }, []);
+
+  useFocusEffect(
+    useCallback(() => {
+      fetchChatUsers();
+
+      if (socket) {
+        socket.on("receiveMessage", handleReceiveMessage);
+
+        // Возвращаем функцию очистки для удаления слушателя
+        return () => {
+          socket.off("receiveMessage", handleReceiveMessage);
+        };
+      }
+    }, [socket, handleReceiveMessage])
+  );
 
   const handleChat = async (chat) => {
     navigator.navigate("ChatWithUser", {
