@@ -32,6 +32,7 @@ function Registration() {
   const [userConfirmPassword, setUserConfirmPassword] = useState("");
   const [selectedGender, setSelectedGender] = useState(null);
   const [loading, setLoading] = useState(false);
+  const [errors, setErrors] = useState({});
 
   const [open, setOpen] = useState(false);
   const [items, setItems] = useState([
@@ -39,7 +40,127 @@ function Registration() {
     { label: "Female", value: "female" },
   ]);
 
+  const validateFirstName = () => {
+    if (!userName) {
+      setErrors((prevErrors) => ({ ...prevErrors, userName: null }));
+      return true;
+    }
+
+    const namePattern = /^[A-Za-z]+(?: [A-Za-z]+)?$/;
+    if (!userName.match(namePattern)) {
+      setErrors((prevErrors) => ({
+        ...prevErrors,
+        userName: "must contain only letters",
+      }));
+      return false;
+    }
+    if (userName.length < 2) {
+      setErrors((prevErrors) => ({
+        ...prevErrors,
+        userName: "must contain at least 2 letters",
+      }));
+      return false;
+    }
+    setErrors((prevErrors) => ({ ...prevErrors, userName: null }));
+    return true;
+  };
+
+  const validateLastName = () => {
+    if (!userLastName) {
+      setErrors((prevErrors) => ({ ...prevErrors, userLastName: null }));
+      return true;
+    }
+
+    const namePattern = /^[A-Za-z]+(?: [A-Za-z]+)?$/;
+    if (!userLastName.match(namePattern)) {
+      setErrors((prevErrors) => ({
+        ...prevErrors,
+        userLastName: "must contain only letters",
+      }));
+      return false;
+    }
+    if (userLastName.length < 2) {
+      setErrors((prevErrors) => ({
+        ...prevErrors,
+        userLastName: "must contain at least 2 letters",
+      }));
+      return false;
+    }
+    setErrors((prevErrors) => ({ ...prevErrors, userLastName: null }));
+    return true;
+  };
+
+  const validateEmail = () => {
+    if (!userEmail) {
+      setErrors((prevErrors) => ({ ...prevErrors, userEmail: null }));
+      return true;
+    }
+
+    const emailPattern = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}$/;
+    if (!userEmail.match(emailPattern)) {
+      setErrors((prevErrors) => ({
+        ...prevErrors,
+        userEmail: "invalid email",
+      }));
+      return false;
+    }
+    setErrors((prevErrors) => ({ ...prevErrors, userEmail: null }));
+    return true;
+  };
+
+  const validateGender = () => {
+    if (!selectedGender) {
+      setErrors((prevErrors) => ({
+        ...prevErrors,
+        selectedGender: "gender is required",
+      }));
+      return false;
+    }
+    setErrors((prevErrors) => ({ ...prevErrors, selectedGender: null }));
+    return true;
+  };
+
+  const validatePasswords = () => {
+    if (!userPassword || !userConfirmPassword) {
+      setErrors((prevErrors) => ({ ...prevErrors, userConfirmPassword: null }));
+      return true;
+    }
+
+    if (userPassword !== userConfirmPassword) {
+      setErrors((prevErrors) => ({
+        ...prevErrors,
+        userConfirmPassword: "passwords do not match",
+      }));
+      return false;
+    }
+    if (userPassword.length < 6) {
+      setErrors((prevErrors) => ({
+        ...prevErrors,
+        userConfirmPassword: "must contain at least 6 characters",
+      }));
+      return false;
+    }
+    setErrors((prevErrors) => ({ ...prevErrors, userConfirmPassword: null }));
+    return true;
+  };
+
   const handleRegistration = async () => {
+    const isFirstNameValid = validateFirstName();
+    const isLastNameValid = validateLastName();
+    const isEmailValid = validateEmail();
+    const isGenderValid = validateGender();
+    const arePasswordsValid = validatePasswords();
+
+    if (
+      !isFirstNameValid ||
+      !isLastNameValid ||
+      !isEmailValid ||
+      !isGenderValid ||
+      !arePasswordsValid
+    ) {
+      return;
+    }
+
     const userData = {
       firstName: userName,
       lastName: userLastName,
@@ -53,6 +174,11 @@ function Registration() {
       const registerResponse = await registerUser(userData);
       if (registerResponse.status === "ok") {
         await loginUser(userData);
+      } else if (registerResponse.data === "User already exists") {
+        setErrors((prevErrors) => ({
+          ...prevErrors,
+          userEmail: "user with this email already exists",
+        }));
       } else {
         console.log(registerResponse.data);
       }
@@ -136,12 +262,16 @@ function Registration() {
           <ScrollView
             contentContainerStyle={styles.scrollViewContent}
             disableScrollViewPanResponder={true}
+            keyboardShouldPersistTaps="handled"
           >
             <Image
               source={require("../assets/logo-start.png")}
               style={styles.image}
             />
             <View style={styles.formContainer}>
+              {errors.userName && (
+                <Text style={styles.errorText}>{errors.userName}</Text>
+              )}
               <TextInput
                 placeholder="First name"
                 placeholderTextColor={"gray"}
@@ -150,7 +280,11 @@ function Registration() {
                 textContentType="username"
                 value={userName}
                 onChangeText={(text) => setUserName(text)}
+                onBlur={validateFirstName}
               />
+              {errors.userLastName && (
+                <Text style={styles.errorText}>{errors.userLastName}</Text>
+              )}
               <TextInput
                 placeholder="Last name"
                 placeholderTextColor={"gray"}
@@ -159,7 +293,11 @@ function Registration() {
                 textContentType="username"
                 value={userLastName}
                 onChangeText={(text) => setUserLastName(text)}
+                onBlur={validateLastName}
               />
+              {errors.selectedGender && (
+                <Text style={styles.errorText}>{errors.selectedGender}</Text>
+              )}
               <DropDownPicker
                 open={open}
                 value={selectedGender}
@@ -174,6 +312,9 @@ function Registration() {
                 placeholder="Select gender"
                 listMode="SCROLLVIEW"
               />
+              {errors.userEmail && (
+                <Text style={styles.errorText}>{errors.userEmail}</Text>
+              )}
               <TextInput
                 placeholder="Email"
                 placeholderTextColor={"gray"}
@@ -182,6 +323,7 @@ function Registration() {
                 textContentType="username"
                 value={userEmail}
                 onChangeText={(text) => setUserEmail(text)}
+                onBlur={validateEmail}
               />
               <TextInput
                 placeholder="Password"
@@ -190,8 +332,16 @@ function Registration() {
                 secureTextEntry={true}
                 textContentType="password"
                 value={userPassword}
-                onChangeText={(text) => setUserPassword(text)}
+                onChangeText={(text) => {
+                  setUserPassword(text);
+                }}
+                onBlur={validatePasswords}
               />
+              {errors.userConfirmPassword && (
+                <Text style={styles.errorText}>
+                  {errors.userConfirmPassword}
+                </Text>
+              )}
               <TextInput
                 placeholder="Password Validation"
                 placeholderTextColor={"gray"}
@@ -199,7 +349,10 @@ function Registration() {
                 secureTextEntry={true}
                 textContentType="password"
                 value={userConfirmPassword}
-                onChangeText={(text) => setUserConfirmPassword(text)}
+                onChangeText={(text) => {
+                  setUserConfirmPassword(text);
+                }}
+                onBlur={validatePasswords}
               />
               <TouchableOpacity
                 style={styles.button}
@@ -207,6 +360,8 @@ function Registration() {
               >
                 <Text style={styles.buttonText}>Register</Text>
               </TouchableOpacity>
+              {/* Добавляем отступ для прокрутки */}
+              <View style={{ height: 100 }} />
             </View>
           </ScrollView>
         </TouchableWithoutFeedback>
@@ -288,6 +443,18 @@ const styles = StyleSheet.create({
     width: 200,
     height: 200,
     borderRadius: 30,
+  },
+  errorText: {
+    color: "white",
+    marginBottom: 2,
+    textAlign: "center",
+    fontSize: 12,
+    borderWidth: 1,
+    borderColor: "red",
+    borderRadius: 10,
+    padding: 2,
+    backgroundColor: "red",
+    overflow: "hidden",
   },
 });
 

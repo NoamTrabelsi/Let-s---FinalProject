@@ -1,7 +1,14 @@
 import React, { useState, useEffect } from "react";
 import { StyleSheet, View, Text, TouchableOpacity } from "react-native";
 
-export const sleepOptions = ["hotel", "hostel", "rental", "out-door"];
+export const sleepOptions = [
+  "hotel",
+  "hostel",
+  "rental",
+  "camping",
+  "couchsurfing",
+  "bed and breakfast",
+];
 
 function Sleep({ userSleepInfo, setUserSleepInfo }) {
   useEffect(() => {

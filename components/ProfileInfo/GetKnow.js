@@ -19,6 +19,7 @@ import * as ImagePicker from "expo-image-picker";
 import AWS from "aws-sdk";
 import { v4 as uuidv4 } from "uuid";
 import { AWS_REGION, AWS_ACCESS_KEY_ID, AWS_SECRET_ACCESS_KEY } from "@env";
+import { Ionicons } from "@expo/vector-icons";
 import { Entypo } from "@expo/vector-icons";
 import { SimpleLineIcons } from "@expo/vector-icons";
 
@@ -33,9 +34,9 @@ function GetKnow({ location, setLocation, age, setAge, picture, setPicture }) {
   const countries = countryList().getData();
 
   const s3 = new AWS.S3({
-    region: process.env.AWS_REGION,
-    accessKeyId: process.env.AWS_ACCESS_KEY_ID,
-    secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY,
+    region: process.env.EXPO_PUBLIC_AWS_REGION,
+    accessKeyId: process.env.EXPO_PUBLIC_AWS_ACCESS_KEY_ID,
+    secretAccessKey: process.env.EXPO_PUBLIC_AWS_SECRET_ACCESS_KEY,
   });
 
   const handleCountryChange = (countryName) => {
@@ -117,15 +118,20 @@ function GetKnow({ location, setLocation, age, setAge, picture, setPicture }) {
       <View style={styles.container}>
         <Text style={styles.text}>Get to know you</Text>
         <View style={styles.view1}>
-          <TouchableOpacity style={styles.roundButton} onPress={selectPhoto}>
-            {loading ? ( // Show ActivityIndicator when loading
-              <ActivityIndicator size="large" color="#FF8C00" />
-            ) : picture ? (
-              <Image source={{ uri: picture }} style={styles.image} />
-            ) : (
-              <Text style={styles.buttonText}>Add picture</Text>
-            )}
-          </TouchableOpacity>
+          <View style={styles.imageContainer}>
+            <TouchableOpacity style={styles.roundButton} disabled={true}>
+              {loading ? (
+                <ActivityIndicator size="large" color="#FF8C00" />
+              ) : picture ? (
+                <Image source={{ uri: picture }} style={styles.image} />
+              ) : (
+                <Text style={styles.buttonText}>Add picture</Text>
+              )}
+            </TouchableOpacity>
+            <TouchableOpacity style={styles.addButton} onPress={selectPhoto}>
+              <Ionicons name="add-circle-sharp" size={40} color="white" />
+            </TouchableOpacity>
+          </View>
           <View>
             <View
               style={{
@@ -223,11 +229,27 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "space-around",
   },
-  roundButton: {
+  imageContainer: {
+    position: "relative",
     width: 130,
     height: 130,
+  },
+  roundButton: {
+    width: "100%",
+    height: "100%",
     borderRadius: 75, // Half the height of the button - stable for creating a circle
     backgroundColor: "white", // Button background color
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  addButton: {
+    position: "absolute",
+    right: -5,
+    bottom: 0,
+    width: 40,
+    height: 40,
+    borderRadius: 20,
+    backgroundColor: "#FF8C00",
     justifyContent: "center",
     alignItems: "center",
   },
@@ -308,8 +330,8 @@ const styles = StyleSheet.create({
     fontWeight: "bold",
   },
   image: {
-    width: 130,
-    height: 130,
+    width: "100%",
+    height: "100%",
     borderRadius: 75,
   },
 });

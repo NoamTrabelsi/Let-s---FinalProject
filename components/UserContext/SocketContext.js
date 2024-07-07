@@ -26,7 +26,7 @@ export const SocketProvider = ({ children }) => {
     //   path: "/socket.io",
     // });
 
-    socket.current = io("http://192.168.0.148:5000");
+    socket.current = io("http://192.168.0.153:5000");
 
     socket.current.on("connect", () => {
       console.log(`${user.firstName} подключен к сокет-серверу (context)`);
