@@ -25,6 +25,7 @@ function ProfileInfo() {
   const navigation = useNavigation();
   const { user, updateUser, fetchUserData } = useContext(UserContext);
   const [loading, setLoading] = useState(false);
+  const [error, setError] = useState("");
 
   useEffect(() => {
     if (user && user._id) {
@@ -46,6 +47,11 @@ function ProfileInfo() {
   const [aboutUser, setAboutUser] = useState(user.about ? user.about : "");
 
   const handleSave = () => {
+    if (!location || !age) {
+      setError("Location and Age are required fields.");
+      return;
+    }
+    setError("");
     setLoading(true);
     const userId = user._id;
     const updatedData = {
@@ -76,7 +82,10 @@ function ProfileInfo() {
           })
         );
       })
-      .catch((err) => console.log(err));
+      .catch((err) => {
+        console.log(err);
+        setLoading(false);
+      });
   };
 
   return (
@@ -114,7 +123,9 @@ function ProfileInfo() {
             setUserAdventureInfo={setUserAdventureInfo}
           />
         </View>
+
         <View style={styles.viewBtn}>
+          {error ? <Text style={styles.errorText}>{error}</Text> : null}
           <TouchableOpacity style={styles.createBtm} onPress={handleSave}>
             <Text style={styles.buttonText}>Save</Text>
           </TouchableOpacity>
@@ -150,6 +161,18 @@ const styles = StyleSheet.create({
   buttonText: {
     color: "white",
     fontWeight: "bold",
+  },
+  errorText: {
+    color: "white",
+    marginBottom: -5,
+    textAlign: "center",
+    fontSize: 12,
+    borderWidth: 1,
+    borderColor: "red",
+    borderRadius: 10,
+    padding: 2,
+    backgroundColor: "red",
+    overflow: "hidden",
   },
   loading: {
     flex: 1,

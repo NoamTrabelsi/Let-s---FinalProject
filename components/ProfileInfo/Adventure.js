@@ -2,24 +2,23 @@ import React, { useState, useEffect } from "react";
 import { StyleSheet, View, Text, TouchableOpacity } from "react-native";
 
 export const adventureOptions = [
-  "museum",
-  "concert",
-  "culinary",
+  "museums",
+  "historical sites",
+  "concerts",
+  "theater",
+  "restaurants",
+  "local cuisine",
   "spa",
   "beach",
-  "sport",
-  "extreme",
-  "trips",
-  "climbing",
-  "chill",
-  "casino",
-  "bar",
+  "hiking",
+  "cycling",
+  "bars",
   "clubs",
-  "coffee shop",
-  "new places",
-  "nature",
-  "renaissance",
+  "city tours",
+  "nature walks",
   "shopping",
+  "sightseeing",
+  "extreme",
 ];
 
 function Adventure({ userAdventureInfo, setUserAdventureInfo }) {

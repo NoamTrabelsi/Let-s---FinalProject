@@ -84,7 +84,8 @@ const styles = StyleSheet.create({
     backgroundColor: "rgba(0,0,0,0.5)",
   },
   modalView: {
-    margin: 20,
+    width: "90%",
+    maxWidth: 400,
     backgroundColor: "white",
     borderRadius: 10,
     padding: 20,
@@ -97,12 +98,12 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.3,
     shadowRadius: 4,
     elevation: 5,
-    width: "90%",
   },
   title: {
     fontSize: 24,
     fontWeight: "bold",
     marginBottom: 15,
+    textAlign: "center",
   },
   filterContainer: {
     width: "100%",

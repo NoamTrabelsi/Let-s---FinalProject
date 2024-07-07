@@ -1,17 +1,33 @@
-import React from "react";
+import React, { useState } from "react";
 import { View, Text, TextInput, StyleSheet } from "react-native";
 
+const MAX_LENGTH = 300;
+
 const About = ({ aboutUser, setAboutUser }) => {
+  const [remainingChars, setRemainingChars] = useState(
+    MAX_LENGTH - aboutUser.length
+  );
+
+  const handleTextChange = (text) => {
+    if (text.length <= MAX_LENGTH) {
+      setAboutUser(text);
+      setRemainingChars(MAX_LENGTH - text.length);
+    }
+  };
+
   return (
     <View style={styles.container}>
       <Text style={styles.textContainer}>About Me</Text>
+      <Text style={styles.charCounter}>
+        Remaining characters: {remainingChars} / {MAX_LENGTH}
+      </Text>
       <TextInput
         style={styles.aboutInput}
         multiline={true}
         editable={true}
         value={aboutUser}
         blurOnSubmit={true}
-        onChangeText={(text) => setAboutUser(text)}
+        onChangeText={handleTextChange}
       />
     </View>
   );
@@ -25,6 +41,10 @@ const styles = StyleSheet.create({
     marginTop: 12,
     fontSize: 20,
     fontWeight: "bold",
+  },
+  charCounter: {
+    fontSize: 12,
+    color: "black",
   },
   aboutInput: {
     marginTop: 10,

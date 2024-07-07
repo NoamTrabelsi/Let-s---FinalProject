@@ -7,6 +7,9 @@ export const transportOptions = [
   "bicycle",
   "moped",
   "rental car",
+  "ride sharing",
+  "scooter",
+  "taxi",
 ];
 
 function Movement({ userMovementInfo, setUserMovementInfo }) {

@@ -1,6 +1,8 @@
 import React from "react";
-import { View, Text, StyleSheet } from "react-native";
+import { View, Text, StyleSheet, Dimensions } from "react-native";
 import MultiSlider from "@ptomasroos/react-native-multi-slider";
+
+const { width } = Dimensions.get("window");
 
 const Slider = ({ onValuesChange, defaultValues }) => {
   return (
@@ -13,7 +15,7 @@ const Slider = ({ onValuesChange, defaultValues }) => {
       </View>
       <MultiSlider
         values={[defaultValues[0], defaultValues[1]]}
-        sliderLength={280}
+        sliderLength={width * 0.8}
         onValuesChange={onValuesChange}
         min={18}
         max={60}
@@ -46,11 +48,13 @@ const styles = StyleSheet.create({
     borderRadius: 10,
     marginVertical: 10,
     elevation: 3,
+    alignItems: "center",
   },
   textContainer: {
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",
+    width: "100%",
     marginBottom: 10,
   },
   label: {

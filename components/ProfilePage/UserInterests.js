@@ -15,7 +15,7 @@ const UserInterests = ({ interests, options, title, icon }) => (
               style={styles.interestTag}
               disabled={true}
             >
-              <Text>{options[index]}</Text>
+              <Text style={styles.interestTagText}>{options[index]}</Text>
             </TouchableOpacity>
           );
         }
@@ -46,7 +46,7 @@ const styles = StyleSheet.create({
     marginHorizontal: 10,
   },
   interestTag: {
-    color: "black",
+    color: "white",
     fontSize: 12,
     fontWeight: "bold",
     margin: 2,
@@ -58,6 +58,11 @@ const styles = StyleSheet.create({
     borderRadius: 20,
     justifyContent: "center",
     alignItems: "center",
+  },
+  interestTagText: {
+    color: "black",
+    fontSize: 12,
+    fontWeight: "bold",
   },
 });
 

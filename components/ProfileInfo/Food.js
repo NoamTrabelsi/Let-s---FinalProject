@@ -1,7 +1,14 @@
 import React, { useState, useEffect } from "react";
 import { StyleSheet, View, Text, TouchableOpacity } from "react-native";
 
-export const foodOptions = ["everything", "vegetarian", "vegan", "Gluten-free"];
+export const foodOptions = [
+  "everything",
+  "vegetarian",
+  "vegan",
+  "raw",
+  "kosher",
+  "halal",
+];
 
 function Food({ userFoodInfo, setUserFoodInfo }) {
   useEffect(() => {

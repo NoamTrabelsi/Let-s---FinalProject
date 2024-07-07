@@ -1,9 +1,10 @@
 import React, {
   useCallback,
   useState,
-  useEffect,
   useRef,
   useContext,
+  useMemo,
+  useEffect,
 } from "react";
 import {
   SafeAreaView,
@@ -38,7 +39,7 @@ function SearchMainScreen() {
   const [isFilterModalVisible, setFilterModalVisible] = useState(false);
 
   const [minAge, setMinAge] = useState(18);
-  const [maxAge, setMaxAge] = useState(60);
+  const [maxAge, setMaxAge] = useState(90);
   const [gender, setGender] = useState("all");
 
   const [users, setUsers] = useState([]);
@@ -94,7 +95,7 @@ function SearchMainScreen() {
         setUsers([]);
       }
     } catch (err) {
-      console.error("Error fetching users:", err);
+      //console.error("Error fetching users:", err);
       setUsers([]);
     } finally {
       setLoading(false);
@@ -144,13 +145,13 @@ function SearchMainScreen() {
   };
 
   // Filter users based on age and gender
-  const filterUsers = () => {
+  const filteredUsers = useMemo(() => {
     return users.filter((user) => {
       const matchesAge = user.age >= minAge && user.age <= maxAge;
       const matchesGender = gender === "all" || user.gender === gender;
       return matchesAge && matchesGender;
     });
-  };
+  }, [users, minAge, maxAge, gender]);
 
   const inputContainerTranslateY = scrollY.interpolate({
     inputRange: [0, inputContainerHeight],
@@ -193,7 +194,7 @@ function SearchMainScreen() {
       />
 
       <UsersList
-        users={filterUsers()}
+        users={filteredUsers}
         scrollY={scrollY}
         inputContainerHeight={inputContainerHeight}
       />
