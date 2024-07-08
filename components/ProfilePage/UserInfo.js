@@ -226,7 +226,7 @@ const styles = StyleSheet.create({
     shadowRadius: 5,
     elevation: 2,
     width: 150,
-    position: "relative", // Добавлено для позиционирования значка
+    position: "relative",
   },
   searchingCountry: {
     fontSize: 14,

@@ -3,7 +3,11 @@ import { View, Image, StyleSheet } from "react-native";
 
 const UserProfileHeader = ({ imageUri }) => (
   <View style={styles.profileHeader}>
-    <Image source={{ uri: imageUri }} style={styles.profileImage} />
+    <Image
+      source={{ uri: imageUri }}
+      style={styles.profileImage}
+      testID="profile-image"
+    />
   </View>
 );
 
