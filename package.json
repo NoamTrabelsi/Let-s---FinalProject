@@ -72,7 +72,7 @@
       "^@env$": "<rootDir>/jestSetup.js"
     },
     "transformIgnorePatterns": [
-      "node_modules/(?!(react-native|@react-native|react-native-button|@react-native-community|@react-navigation|@ptomasroos|@react-native-async-storage|@react-native-community/datetimepicker|@react-native-community/netinfo|@react-native-picker|@react-native-firebase|expo|@expo|@unimodules|expo-modules-core|unimodules|react-native-dropdown-picker|react-native-gesture-handler|react-native-reanimated|react-native-svg|@expo/vector-icons|socket.io-client|uuid|expo-image-picker)/)"
+      "node_modules/(?!(react-native|@react-native|react-native-button|@react-native-community|@react-navigation|@ptomasroos|@react-native-async-storage|@react-native-community/datetimepicker|@react-native-community/netinfo|@react-native-picker|@react-native-firebase|expo|@expo|@unimodules|expo-modules-core|unimodules|react-native-dropdown-picker|react-native-gesture-handler|react-native-reanimated|react-native-svg|@expo/vector-icons|socket.io-client|uuid|expo-image-picker|react-native-modal-datetime-picker|react-native-autocomplete-input)/)"
     ]
   }
 }

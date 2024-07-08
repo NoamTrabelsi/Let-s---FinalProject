@@ -28,6 +28,7 @@ function UserNav() {
     >
       <Tab.Screen
         name="Search"
+        testID="search"
         component={HomeScreen}
         options={{
           tabBarIcon: ({ color, size }) => (
@@ -37,6 +38,7 @@ function UserNav() {
       />
       <Tab.Screen
         name="Chats"
+        testID="chats"
         component={Chats}
         options={{
           tabBarIcon: ({ color, size }) => (
@@ -51,6 +53,7 @@ function UserNav() {
       />
       <Tab.Screen
         name="ProfilePage"
+        testID="profile"
         component={ProfilePage}
         options={{
           tabBarIcon: ({ color, size }) => (
@@ -60,6 +63,7 @@ function UserNav() {
       />
       <Tab.Screen
         name="Settings"
+        testID="settings"
         component={Settings}
         options={{
           tabBarIcon: ({ color, size }) => (

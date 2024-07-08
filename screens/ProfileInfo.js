@@ -8,7 +8,6 @@ import {
   Modal,
   Image,
 } from "react-native";
-import Destination from "../components/ProfileInfo/Destination";
 import About from "../components/ProfileInfo/About";
 import Food from "../components/ProfileInfo/Food";
 import Sleep from "../components/ProfileInfo/Sleep";
