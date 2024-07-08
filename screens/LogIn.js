@@ -98,6 +98,7 @@ function LogIn() {
           textContentType="username"
           value={email}
           onChangeText={(text) => setEmail(text)}
+          testID="email"
         />
         <TextInput
           placeholder="Password"
@@ -107,13 +108,19 @@ function LogIn() {
           textContentType="password"
           value={password}
           onChangeText={(text) => setPassword(text)}
+          testID="password"
         />
-        <TouchableOpacity style={styles.button} onPress={handleLogin}>
+        <TouchableOpacity
+          style={styles.button}
+          onPress={handleLogin}
+          testID="loginButton"
+        >
           <Text style={styles.buttonText}>Log In</Text>
         </TouchableOpacity>
         <TouchableOpacity
           style={styles.button}
           onPress={() => navigation.navigate("Registration")}
+          testID="createAccountButton"
         >
           <Text style={styles.buttonText}>Create Account</Text>
         </TouchableOpacity>
