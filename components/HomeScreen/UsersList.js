@@ -3,7 +3,6 @@ import { View, Text, Animated, StyleSheet } from "react-native";
 import UserItem from "./UserItem";
 
 const UsersList = ({ users, scrollY, inputContainerHeight }) => {
-  console.log(users.length);
   return (
     <View style={{ flex: 1, backgroundColor: "#f0f0f0" }}>
       {users.length === 0 ? (
