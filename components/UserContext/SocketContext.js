@@ -26,15 +26,15 @@ export const SocketProvider = ({ children }) => {
     //   path: "/socket.io",
     // });
 
-    socket.current = io("http://192.168.0.153:5000");
+    socket.current = io("http://192.168.0.148:5000");
 
     socket.current.on("connect", () => {
-      console.log(`${user.firstName} подключен к сокет-серверу (context)`);
+      console.log(`${user.firstName} connected to socket (context)`);
     });
 
     socket.current.on("receiveMessage", (data) => {
       if (data.receiverId === user._id) {
-        console.log(`Получено сообщение для ${data.receiverId} (context)`);
+        console.log(`recieved message for ${data.receiverId} (context)`);
         setNewMessage(true);
       }
     });
@@ -42,7 +42,7 @@ export const SocketProvider = ({ children }) => {
     return () => {
       if (socket.current) {
         socket.current.disconnect();
-        console.log(`${user.firstName} отключен (context)`);
+        console.log(`${user.firstName} disconnected (context)`);
       }
     };
   }, [user]);

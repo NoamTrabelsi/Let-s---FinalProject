@@ -1,4 +1,3 @@
-// AddReviewModal.js
 import React from "react";
 import {
   View,
@@ -8,7 +7,24 @@ import {
   Modal,
   StyleSheet,
 } from "react-native";
-import StarRating from "./StarRating"; // Adjust the import path as necessary
+import { FontAwesome } from "@expo/vector-icons";
+
+const StarRating = ({ rating, setRating }) => (
+  <View style={styles.starRatingContainer}>
+    {Array.from({ length: 5 }).map((_, index) => (
+      <TouchableOpacity
+        key={index}
+        onPress={() => setRating(Math.max(1, index + 1))}
+      >
+        <FontAwesome
+          name={index < rating ? "star" : "star-o"}
+          size={32}
+          color="orange"
+        />
+      </TouchableOpacity>
+    ))}
+  </View>
+);
 
 const AddReviewModal = ({
   isModalVisible,
@@ -106,6 +122,11 @@ const styles = StyleSheet.create({
     backgroundColor: "#808080",
     padding: 10,
     borderRadius: 5,
+  },
+  starRatingContainer: {
+    flexDirection: "row",
+    justifyContent: "center",
+    marginBottom: 10,
   },
   buttonText: {
     color: "white",
