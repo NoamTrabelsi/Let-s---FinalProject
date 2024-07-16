@@ -38,6 +38,7 @@ function Registration() {
   const [items, setItems] = useState([
     { label: "Male", value: "male" },
     { label: "Female", value: "female" },
+    { label: "Other", value: "other" },
   ]);
 
   const validateFirstName = () => {

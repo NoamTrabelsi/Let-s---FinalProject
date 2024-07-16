@@ -37,6 +37,7 @@ function SearchMainScreen() {
   const [startDateHelp, setStartDateHelp] = useState();
   const [endDateHelp, setEndDateHelp] = useState();
   const [isFilterModalVisible, setFilterModalVisible] = useState(false);
+  const [searchPerformed, setSearchPerformed] = useState(false);
 
   const [minAge, setMinAge] = useState(18);
   const [maxAge, setMaxAge] = useState(90);
@@ -72,6 +73,7 @@ function SearchMainScreen() {
       updatedStartDate ? formatDate(new Date(updatedStartDate)) : null,
       updatedEndDate ? formatDate(new Date(updatedEndDate)) : null
     );
+    setSearchPerformed(true);
   };
 
   // Fetch users from server
@@ -197,6 +199,7 @@ function SearchMainScreen() {
         users={filteredUsers}
         scrollY={scrollY}
         inputContainerHeight={inputContainerHeight}
+        searchPerformed={searchPerformed}
       />
     </SafeAreaView>
   );

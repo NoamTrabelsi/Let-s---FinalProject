@@ -2,10 +2,15 @@ import React, { memo } from "react";
 import { View, Text, Animated, StyleSheet } from "react-native";
 import UserItem from "./UserItem";
 
-const UsersList = ({ users, scrollY, inputContainerHeight }) => {
+const UsersList = ({
+  users,
+  scrollY,
+  inputContainerHeight,
+  searchPerformed,
+}) => {
   return (
     <View style={{ flex: 1, backgroundColor: "#f0f0f0" }}>
-      {users.length === 0 ? (
+      {users.length === 0 && searchPerformed ? (
         <View style={styles.emptyContainer}>
           <Text style={styles.emptyText}>No users found</Text>
         </View>
@@ -43,6 +48,7 @@ const styles = StyleSheet.create({
   emptyText: {
     fontSize: 18,
     color: "gray",
+    textAlign: "center",
   },
 });
 
