@@ -6,18 +6,18 @@ import { UserContext } from "../UserContext/UserContext";
 const minimumValue = 50;
 
 function cosineSimilarity(vecA, vecB) {
-  const maxLength = Math.max(vecA.length, vecB.length);
-  const extendedVecA = [...vecA, ...Array(maxLength - vecA.length).fill(0)];
-  const extendedVecB = [...vecB, ...Array(maxLength - vecB.length).fill(0)];
+  const minLength = Math.min(vecA.length, vecB.length);
+  const truncatedVecA = vecA.slice(0, minLength);
+  const truncatedVecB = vecB.slice(0, minLength);
 
   let dotProduct = 0;
   let normA = 0;
   let normB = 0;
 
-  for (let i = 0; i < maxLength; i++) {
-    dotProduct += extendedVecA[i] * extendedVecB[i];
-    normA += extendedVecA[i] ** 2;
-    normB += extendedVecB[i] ** 2;
+  for (let i = 0; i < minLength; i++) {
+    dotProduct += truncatedVecA[i] * truncatedVecB[i];
+    normA += truncatedVecA[i] ** 2;
+    normB += truncatedVecB[i] ** 2;
   }
 
   if (normA === 0 || normB === 0) {
