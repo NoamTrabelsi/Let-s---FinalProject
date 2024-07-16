@@ -17,7 +17,6 @@ import countryList from "react-select-country-list";
 import { UserContext } from "../UserContext/UserContext";
 import * as ImagePicker from "expo-image-picker";
 import AWS from "aws-sdk";
-import { v4 as uuidv4 } from "uuid";
 import { AWS_REGION, AWS_ACCESS_KEY_ID, AWS_SECRET_ACCESS_KEY } from "@env";
 import { Ionicons } from "@expo/vector-icons";
 import { Entypo } from "@expo/vector-icons";
@@ -25,6 +24,7 @@ import { SimpleLineIcons } from "@expo/vector-icons";
 
 // Load required polyfill
 import "react-native-get-random-values";
+import { v4 as uuidv4 } from "uuid";
 
 function GetKnow({ location, setLocation, age, setAge, picture, setPicture }) {
   const { user, updateUser } = useContext(UserContext);
