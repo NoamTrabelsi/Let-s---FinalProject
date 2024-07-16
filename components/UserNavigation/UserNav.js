@@ -14,6 +14,8 @@ import Settings from "../../screens/Settings";
 import { UserContext } from "../UserContext/UserContext";
 import { useSocket } from "../UserContext/SocketContext";
 import { View, Text, StyleSheet } from "react-native";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import axios from "axios";
 
 const Tab = createBottomTabNavigator();
 
@@ -33,8 +35,28 @@ function ChatIconWithBadge({ color, size }) {
 }
 
 function UserNav() {
-  const { user } = useContext(UserContext);
+  const { user, fetchUserData } = useContext(UserContext);
   const { socket, setNewMessage, resetNewMessage } = useSocket();
+
+  async function getData() {
+    const token = await AsyncStorage.getItem("token");
+    if (token) {
+      axios
+        .post(`https://${process.env.EXPO_PUBLIC_HOST}/user`, { token })
+        .then((res) => {
+          if (res.data.status === "ok") {
+            fetchUserData(res.data.data._id);
+          } else {
+            console.log("Error fetching user:", res.data.data);
+          }
+        })
+        .catch((err) => console.log(err));
+    }
+  }
+
+  useEffect(() => {
+    getData();
+  }, []);
 
   useEffect(() => {
     if (socket) {

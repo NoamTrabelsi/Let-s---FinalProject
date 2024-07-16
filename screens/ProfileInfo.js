@@ -46,7 +46,7 @@ function ProfileInfo() {
   );
   const [aboutUser, setAboutUser] = useState(user.about ? user.about : "");
 
-  const handleSave = () => {
+  const handleSave = async () => {
     if (!location || !age) {
       setError("Location and Age are required fields.");
       return;
@@ -67,13 +67,13 @@ function ProfileInfo() {
       about: aboutUser,
     };
 
-    axios
+    await axios
       .post(
         `https://${process.env.EXPO_PUBLIC_HOST}/update/${userId}`,
         updatedData
       )
       .then((res) => {
-        console.log(res.data);
+        //console.log(res.data);
         setLoading(false);
         navigation.dispatch(
           CommonActions.reset({
