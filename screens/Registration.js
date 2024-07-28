@@ -43,8 +43,11 @@ function Registration() {
 
   const validateFirstName = () => {
     if (!userName) {
-      setErrors((prevErrors) => ({ ...prevErrors, userName: null }));
-      return true;
+      setErrors((prevErrors) => ({
+        ...prevErrors,
+        userName: "First name is required",
+      }));
+      return false;
     }
 
     const namePattern = /^[A-Za-z]+(?: [A-Za-z]+)?$/;
@@ -68,8 +71,11 @@ function Registration() {
 
   const validateLastName = () => {
     if (!userLastName) {
-      setErrors((prevErrors) => ({ ...prevErrors, userLastName: null }));
-      return true;
+      setErrors((prevErrors) => ({
+        ...prevErrors,
+        userLastName: "Last name is required",
+      }));
+      return false;
     }
 
     const namePattern = /^[A-Za-z]+(?: [A-Za-z]+)?$/;
@@ -93,8 +99,11 @@ function Registration() {
 
   const validateEmail = () => {
     if (!userEmail) {
-      setErrors((prevErrors) => ({ ...prevErrors, userEmail: null }));
-      return true;
+      setErrors((prevErrors) => ({
+        ...prevErrors,
+        userEmail: "Email is required",
+      }));
+      return false;
     }
 
     const emailPattern = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}$/;
@@ -113,7 +122,7 @@ function Registration() {
     if (!selectedGender) {
       setErrors((prevErrors) => ({
         ...prevErrors,
-        selectedGender: "gender is required",
+        selectedGender: "Gender is required",
       }));
       return false;
     }
@@ -122,26 +131,40 @@ function Registration() {
   };
 
   const validatePasswords = () => {
-    if (!userPassword || !userConfirmPassword) {
-      setErrors((prevErrors) => ({ ...prevErrors, userConfirmPassword: null }));
-      return true;
-    }
-
-    if (userPassword !== userConfirmPassword) {
+    if (!userPassword) {
       setErrors((prevErrors) => ({
         ...prevErrors,
-        userConfirmPassword: "passwords do not match",
+        userPassword: "Password is required",
       }));
       return false;
     }
     if (userPassword.length < 6) {
       setErrors((prevErrors) => ({
         ...prevErrors,
-        userConfirmPassword: "must contain at least 6 characters",
+        userPassword: "Must contain at least 6 characters",
       }));
       return false;
     }
-    setErrors((prevErrors) => ({ ...prevErrors, userConfirmPassword: null }));
+    if (!userConfirmPassword) {
+      setErrors((prevErrors) => ({
+        ...prevErrors,
+        userConfirmPassword: "Password confirmation is required",
+      }));
+      return false;
+    }
+    if (userPassword !== userConfirmPassword) {
+      setErrors((prevErrors) => ({
+        ...prevErrors,
+        userConfirmPassword: "Passwords do not match",
+      }));
+      return false;
+    }
+
+    setErrors((prevErrors) => ({
+      ...prevErrors,
+      userPassword: null,
+      userConfirmPassword: null,
+    }));
     return true;
   };
 
@@ -326,6 +349,9 @@ function Registration() {
                 onChangeText={(text) => setUserEmail(text)}
                 onBlur={validateEmail}
               />
+              {errors.userPassword && (
+                <Text style={styles.errorText}>{errors.userPassword}</Text>
+              )}
               <TextInput
                 placeholder="Password"
                 placeholderTextColor={"gray"}
@@ -361,7 +387,6 @@ function Registration() {
               >
                 <Text style={styles.buttonText}>Register</Text>
               </TouchableOpacity>
-              {/* Добавляем отступ для прокрутки */}
               <View style={{ height: 100 }} />
             </View>
           </ScrollView>
