@@ -181,7 +181,7 @@ function Chat() {
 
       setMessages(fetchedMessages);
     } catch (err) {
-      console.error("Error fetching messages:", err);
+      console.log("no messages");
     }
   };
 

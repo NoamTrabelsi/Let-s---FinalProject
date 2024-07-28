@@ -1,6 +1,8 @@
 // components/UserNavigation/UserNav.js
 import React, { useContext, useEffect } from "react";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
+import { createStackNavigator } from "@react-navigation/stack";
+import ChatWithUser from "../../screens/ChatWithUser";
 import {
   Octicons,
   Ionicons,
@@ -18,6 +20,17 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import axios from "axios";
 
 const Tab = createBottomTabNavigator();
+const ChatStack = createStackNavigator();
+
+function ChatsStackScreen() {
+  return (
+    <ChatStack.Navigator screenOptions={{ headerShown: false }}>
+      <ChatStack.Screen name="ChatsList" component={Chats} />
+      <ChatStack.Screen name="ChatWithUser" component={ChatWithUser} />
+      <ChatStack.Screen name="ProfilePage" component={ProfilePage} />
+    </ChatStack.Navigator>
+  );
+}
 
 function ChatIconWithBadge({ color, size }) {
   const { newMessage } = useSocket();
@@ -91,7 +104,7 @@ function UserNav() {
       />
       <Tab.Screen
         name="Chats"
-        component={Chats}
+        component={ChatsStackScreen}
         options={{
           tabBarIcon: ({ color, size }) => (
             <ChatIconWithBadge color={color} size={size} />
