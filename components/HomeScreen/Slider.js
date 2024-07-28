@@ -15,7 +15,7 @@ const Slider = ({ onValuesChange, defaultValues }) => {
       </View>
       <MultiSlider
         values={[defaultValues[0], defaultValues[1]]}
-        sliderLength={width * 0.8}
+        sliderLength={width * 0.6}
         onValuesChange={onValuesChange}
         min={18}
         max={60}

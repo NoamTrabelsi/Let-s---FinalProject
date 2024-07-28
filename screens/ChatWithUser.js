@@ -15,6 +15,7 @@ import {
   TextInput,
   TouchableOpacity,
   Image,
+  Platform,
 } from "react-native";
 import { useRoute, useNavigation } from "@react-navigation/native";
 import { FontAwesome } from "@expo/vector-icons";
@@ -230,7 +231,7 @@ function Chat() {
         </TouchableOpacity>
       </View>
       <KeyboardAvoidingView
-        behavior="padding"
+        behavior={Platform.OS === "ios" ? "padding" : "height"}
         style={{ flex: 1, backgroundColor: "transparent" }}
       >
         <Image
@@ -304,7 +305,7 @@ const styles = StyleSheet.create({
     zIndex: 1,
     position: "absolute",
     width: "100%",
-    height: "15%",
+    height: 100,
     paddingHorizontal: 20,
     borderBottomLeftRadius: 50,
     borderBottomRightRadius: 50,
