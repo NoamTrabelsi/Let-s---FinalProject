@@ -9,3 +9,5 @@ Developed using MERN stack technology, the project offers flexibility for expans
 ![Profile page](https://github.com/NoamTrabelsi/Lets-FinalProject-/blob/main/assets/photo_2024-07-20_20-49-37.jpg)
 ![Registration page](https://github.com/NoamTrabelsi/Lets-FinalProject-/blob/main/assets/photo_2024-07-20_20-49-40.jpg)
 ![Search Page](https://github.com/NoamTrabelsi/Lets-FinalProject-/blob/main/assets/photo_2024-07-20_20-49-42.jpg)
+
+<img width=“964” alt=“java 8 and prio java 8  array review example” src=“https://github.com/jaimehernan95/arrayReview-java/blob/master/images/%20arrayExample.png”>
