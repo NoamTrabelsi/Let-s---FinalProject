@@ -5,3 +5,7 @@ Using a Vector Similarity-based matching algorithm, users can find suitable part
 Initial findings show users experience increased security and high satisfaction from finding suitable travel partners. The ability to customize searches and receive feedback is highly valued.
 
 Developed using MERN stack technology, the project offers flexibility for expansion. In the future, the app can be extended to find partners not only for trips but also for daily activities such as going to the cinema, sports, and events, increasing the target audience and adding significant value.
+
+![Profile page](https://github.com/NoamTrabelsi/Lets-FinalProject-/blob/main/assets/photo_2024-07-20_20-49-37.jpg)
+![Registration page](https://github.com/NoamTrabelsi/Lets-FinalProject-/blob/main/assets/photo_2024-07-20_20-49-40.jpg)
+![Search Page](https://github.com/NoamTrabelsi/Lets-FinalProject-/blob/main/assets/photo_2024-07-20_20-49-42.jpg)
